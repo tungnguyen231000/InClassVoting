@@ -1,0 +1,271 @@
+﻿@model IEnumerable<InClassVoting.Models.Question>
+
+@{
+    ViewBag.Title = "QuestionBankSearch";
+    Layout = "~/Areas/teacher/Views/Shared/_QuestionBankLayout.cshtml";
+}
+
+
+<!-- Modal Edit Chapter Name -->
+@using (Html.BeginForm("EditChapter", "Chapter", FormMethod.Post))
+{
+    <div class="modal fade" id="editChapterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h5" id="exampleModalLabel">Edit Chapter Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="h5">New Chapter Name</p>
+                    <div style="display:flex; margin-bottom:25px">
+                        <input type="hidden" name="chid" value="@ViewBag.Chapter.ChID" />
+                        <input type="text" id="fname" name="newChapterName" value="@ViewBag.Chapter.Name" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal -->
+<!-- Modal Confirm Delete Chapter -->
+@using (Html.BeginForm("DeleteChapter", "Chapter", FormMethod.Post))
+{
+    <div class="modal fade" id="confirmDeleteChapterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h5" id="exampleModalLabel">Delete Chapter @ViewBag.Chapter.Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color:red"> You will delete all questions inside this chapter!!!</p>
+                    <p style="color:red">
+                        Do you wish to continue?
+                    </p>
+                    <input type="hidden" name="chid" value="@ViewBag.Chapter.ChID" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal -->
+<!-- Modal new Question -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h5" id="exampleModalLabel">Create new Question</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="h5">Choose type of question.</p>
+                <div style="display:flex; margin-bottom:25px">
+                    <a href="~/Question/CreateMultipleChoiceQuestion">Mutiple Choice</a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                @*<button type="button" class="btn btn-primary">Create Question</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+
+@if (Model.Count() == 0)
+{
+
+    <div class="bg-gray-100 flex-1 p-6 md:mt-16">
+        <!-- start navbar -->
+        <div style="  height: 90px;">
+            <div style="  height: 90px;">
+                <div style="display: flex; height: 40px;">
+                    <h1 class="h5 mg-top">@ViewBag.CourseName -> @ViewBag.Chapter.Name</h1>
+                    <!-- Example single danger button -->
+                    &nbsp;&nbsp;&nbsp;
+                    <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
+                        <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
+
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editChapterModal">Rename</a></li>
+                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteChapterModal">Delete</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            @using (Html.BeginForm("QuestionBankSearch", "Search", FormMethod.Get))
+            {
+                <div class="block-search-dropdown">
+                    <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+                        <div class="mr-2 transition duration-500 px-3 border-b">
+                            <input type="hidden" name="chapterId" value="@ViewBag.Chapter.ChID" />
+                            <input style="width: 90% " class="search-box flex-1" type="text" name="searchText" value="@ViewBag.SearchText">
+                            <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
+
+                        </div>
+                    </div>
+                    <div style="width:33%" class="btn-group mg-left">
+                        <h1 style="margin:auto">Question Type: </h1>
+                        <select onchange="this.form.submit()" name="QType" class="btn-indigo mg-left">
+                            <option value="-1">All Type </option>
+                            @foreach (var questionType in ViewBag.QuestionType)
+                            {
+                                if (questionType.QTypeID == ViewBag.SelectedType)
+                                {
+                                    <option value="@questionType.QTypeID" selected>@questionType.Name </option>
+                                }
+                                else
+                                {
+                                    <option value="@questionType.QTypeID">@questionType.Name </option>
+                                }
+
+                            }
+                        </select>
+                    </div>
+                </div>
+            }
+            <p style="text-align: center; margin-top: 10%; font-size: larger;">0 Questions Found!</p>
+
+            <div style="display:flex">
+                <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    New Question
+                </button>
+
+            </div>
+        </div>
+
+        @*<p style="text-align: center; margin-top: 10%; font-size: larger;">There is no Question...</p>*@
+
+    </div>
+
+
+}
+else
+{
+
+    <div class="bg-gray-100 flex-1 p-6 md:mt-16">
+        <!-- start navbar -->
+
+        <div style="  height: 90px;">
+            <div style="display: flex; height: 40px;">
+                <h1 class="h5 mg-top">@ViewBag.CourseName -> @ViewBag.Chapter.Name</h1>
+                <!-- Example single danger button -->
+                &nbsp;&nbsp;&nbsp;
+                <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
+                    <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
+
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editChapterModal">Rename</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteChapterModal">Delete</a></li>
+
+                    </ul>
+                </div>
+                @*<button type="button" data-bs-toggle="modal" data-bs-target="#editChapterModal"><i class="fas fa-pencil-alt "></i></button>*@
+                <div style="display: flex; margin-left: auto;">
+                    <a href="#" style="background-color:aquamarine; margin-right:6px" class="btn"> New Quiz</a>
+                </div>
+            </div>
+        </div>
+        <!-- end navbar -->
+        <!-- General Report -->
+
+
+
+        @using (Html.BeginForm("QuestionBankSearch", "Search", FormMethod.Get))
+        {
+
+            <div class="block-search-dropdown">
+                <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+                    <div class="mr-2 transition duration-500 px-3 border-b">
+                        <input type="hidden" name="chapterId" value="@ViewBag.Chapter.ChID" />
+                        <input style="width: 90% " class="search-box flex-1" type="text" name="searchText" value="@ViewBag.SearchText">
+                        <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
+                    </div>
+                </div>
+                <div style="width:33%" class="btn-group mg-left">
+                    <h1 style="margin:auto">Question Type: </h1>
+                    <select onchange="this.form.submit()" name="QType" class="btn-indigo mg-left">
+                        <option value="-1">All Type </option>
+                        @foreach (var questionType in ViewBag.QuestionType)
+                        {
+                            if (questionType.QTypeID == ViewBag.SelectedType)
+                            {
+                                <option value="@questionType.QTypeID" selected>@questionType.Name </option>
+                            }
+                            else
+                            {
+                                <option value="@questionType.QTypeID">@questionType.Name </option>
+                            }
+
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+
+
+        <div class="tb-mg-top">
+            @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
+            {
+                <input type="hidden" name="chapterId" value="@ViewBag.Chapter.ChID" />
+                <input type="hidden" name="searchUrl" value="@ViewBag.SearchUrl" />
+                <table class="table">
+                    <thead>
+                        <tr>
+
+                            <th scope="col">No</th>
+                            <td scope="col"></td>
+                            <th style="width: 47%;" scope="col">Question</th>
+
+                            <th scope="col">Type</th>
+                            <th scope="col">Mark</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int questionNo = 0;
+                        }
+                        @foreach (var question in Model)
+                        {
+                            questionNo++;
+
+                            <tr>
+                                <th scope="row">@questionNo</th>
+                                <td><input type="checkbox" name="questionId" class="form-check-input" id="exampleCheck1" value="@question.QID"></td>
+                                <td><a href="~/Question/Edit" type="button">@question.Text</a></td>
+
+                                <td>@question.QuestionType.Name</td>
+                                <td>@question.Mark</td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+                <div style="display:flex">
+                    <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        New Question
+                    </button>
+
+                    <button type="submit" style="margin-left:6px" class="btn-indigo">Delete Question</button>
+                </div>
+            }
+
+        </div>
+    </div>
+
+}
+<!-- End General Report -->

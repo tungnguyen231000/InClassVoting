@@ -1,0 +1,132 @@
+﻿@model IEnumerable<InClassVoting.Models.Quiz>
+
+@{
+    ViewBag.Title = "ViewQuizByCourse";
+    Layout = "~/Areas/teacher/Views/Shared/_QuizLibraryLayout.cshtml";
+}
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <!-- start navbar -->
+
+    <div style="  height: 90px;">
+        <div style="display: flex; height: 40px;">
+            <h1 class="h5 mg-top">@ViewBag.Course.Name</h1>
+            <!-- Example single danger button -->
+
+            <p>&nbsp;</p>
+            <div style="display: flex; margin-left: auto;">
+                @using (Html.BeginForm("CreateNewQuiz", "Quiz", FormMethod.Get))
+                {
+                    <input type="hidden" name="cid" value="@ViewBag.Course.CID" />
+                    <input type="hidden" name="questions" />
+                    <button type="submit" class="btn-indigo mg_btn">
+                        New Quiz
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- end navbar -->
+    <!-- General Report -->
+    @if (Model.Count() == 0)
+    {
+        <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Quiz In This Course</p>
+    }
+    else
+    {
+        <div class="block-search-dropdown">
+            <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+
+                <div class="mr-2 transition duration-500 px-3 border-b">
+                    <input class="search-box flex-1" type="text" placeholder="search">
+                    <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="tb-mg-top">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th style="width: 30%;" scope="col">Quiz Name</th>
+                        <th scope="col">Total Mark</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">Status</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int no = 0;
+                    }
+                    @foreach (var quiz in Model)
+                    {
+                        no++;
+                        <tr>
+                            <th scope="row">@no</th>
+                            <td><a href="~/Teacher/Quiz/QuizDetail?qzId=@quiz.QuizID" type="button">@quiz.QuizName ( @quiz.NumOfQuestion Questions)</a></td>
+                            <td>@quiz.Mark</td>
+                            @{
+                                string time = "";
+                                if (quiz.Time != null)
+                                {
+                                    int quizTime = quiz.Time ?? 0;
+                                    if (quiz.Time >= 60)
+                                    {
+
+                                        int minute = quizTime / 60;
+                                        if (minute >= 10)
+                                        {
+                                            time = time + minute.ToString() + ":";
+                                        }
+                                        else
+                                        {
+                                            time = time + "0" + minute.ToString() + ":";
+                                        }
+                                        if (quiz.Time - minute * 60 < 10)
+                                        {
+                                            time = time + "0" + (quiz.Time - minute * 60).ToString();
+                                        }
+                                        else
+                                        {
+                                            time = time + (quiz.Time - minute * 60).ToString();
+                                        }
+
+
+                                    }
+                                    else
+                                    {
+                                        if (quiz.Time < 10)
+                                        {
+                                            time = time + "00:" + "0" + quiz.Time.ToString();
+                                        }
+                                        else
+                                        {
+                                            time = time + "00:" + quiz.Time.ToString();
+                                        }
+
+                                    }
+                                }
+
+                            }
+                            <td>@time</td>
+                            <td>@quiz.Status</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+
+    }
+
+    @*<p style="text-align: center; margin-top: 10%; font-size: larger;">There is no Question...</p>*@
+
+
+
+</div>
+

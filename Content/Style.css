@@ -1,0 +1,271 @@
+﻿.shadow {
+  
+    /*background-color: #ccc;*/
+    -moz-box-shadow: 3px 3px #666;
+    -webkit-box-shadow: 3px 3px #666;
+    box-shadow: 3px 3px #666;
+}
+.home{
+	margin-left:auto;
+	margin-right:auto;
+	
+}
+.text_color_button_start {
+    color: currentColor;
+}
+.cl-icon {
+	color: #667eea;
+}
+.checkbox {
+    width: 20px;
+    height: 30px;
+}
+.text_overflow {
+    width: 200px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.mg_btn{
+    margin-right:7.5px;
+}
+.mg-left{
+	margin-left:auto;
+}
+.mg-top{
+	margin-top:auto;
+}
+.tb-mg-top {
+	margin-top: 25px;
+}
+.search-box{
+	padding:0.5rem;
+}
+.search-size{
+	width:85%;
+}
+.wrap-home {
+    border-radius: 10px;
+    overflow: hidden;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 177px 130px 33px 95px;
+}
+.home-form {
+    width: 350px;
+}
+.home-form-title {
+    font-family: Poppins-Bold;
+    font-size: 30px;
+    color: #333333;
+    line-height: 1.2;
+    text-align: center;
+    width: 100%;
+    display: block;
+    padding-bottom: 54px;
+}
+.layout-cource {
+    width: 80%;
+    margin-left: auto;
+}
+.layout-content{
+    display:contents;
+}
+.block-search-dropdown{
+	display:flex;
+}
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+*,
+*:after,
+*:before {
+	box-sizing: border-box;
+}
+
+:root {
+	--c-blue-900: #081030;
+	--c-blue-800: #111b40;
+	--c-blue-700: #152148;
+	--c-blue-500: #1d7bdb;
+	--c-blue-300: #293359;
+	--c-blue-200: #4e5985;
+	--c-blue-100: #dfe8ff;
+
+	* {
+		scrollbar-width: 0;
+	}
+
+	*::-webkit-scrollbar {
+		background-color: transparent;
+		width: 12px;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		border-radius: 99px;
+		background-color: var(--c-blue-200);
+		border: 4px solid var(--c-blue-700);
+	}
+}
+
+
+
+
+
+details {
+	position: relative;
+	
+	summary {
+				
+		background-color: var(--c-blue-700);
+		border: 2px solid var(--c-blue-300);
+		padding: 1rem;
+		position: relative;
+		border-radius: 8px;
+		padding-right: 3rem;
+		cursor: pointer;
+		list-style: none; // Remove arrow
+		&::-webkit-details-marker {
+			display: none; // Remove arrow
+		}
+
+		&:hover,
+		&:focus {
+			border-color: var(--c-blue-500);
+		}
+
+		i {
+			position: absolute;
+			top: 50%;
+			right: 0.75rem;
+			transform: translateY(-50%);
+			transform-origin: center center;
+		}
+	}
+
+	&[open]summary {
+		border-color: var(--c-blue-500);
+		i {
+			color: var(--c-blue-500);
+			transform: scaleY(-1) translateY(50%);
+		}
+		  
+	}
+
+	& > div {
+		margin-top: 8px;
+		background-color: var(--c-blue-700);
+		border: 2px solid var(--c-blue-300);
+		border-radius: 8px;
+		display: flex;
+		flex-direction: column;
+		padding: 0.5rem;
+		max-height: 500px;
+		overflow-y: auto;
+		position: relative;
+		padding-bottom: 50px;
+
+		label {
+			position: relative;
+			cursor: pointer;
+		}
+
+		input {
+			-webkit-appearance: none;
+			appearance: none;
+			visibility: hidden;
+			position: absolute;
+		}
+
+		input:checked + span {
+			background-color: var(--c-blue-500);
+		}
+
+		span:hover {
+			background-color: var(--c-blue-800);
+		}
+
+		span {
+			display: block;
+			padding: 1rem;
+			border-radius: 8px;
+			margin-top: 0.25rem;
+		}
+	}
+	&:after {
+		content: "";
+		display: block;
+		position: absolute;
+		bottom: 2px;
+		left: 4px;
+		width: calc(100% - 16px);
+		height: 50px;
+		flex-shrink: 0;
+		background-image: linear-gradient(to top, var(--c-blue-700), transparent);
+		// outline: 2px solid hotpink;
+		border-radius: 8px;
+		pointer-events: none;
+	}
+}
+*, *:before, *:after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+	appearance: none;
+}
+
+
+
+.hoverme {
+	width: 50px;
+	height: 50px;
+	margin: auto;
+	position: relative;
+	background: #f6f6f6;
+	border-radius: 25px;
+	outline: 0;
+	cursor: pointer;
+	top: 40vh;
+	transition: all .3s ease;
+}
+
+
+
+.hoverme {
+	&:hover
+
+{
+	background: rgba(#f6f6f6, .3);
+	& > .pop
+
+{
+	opacity: 1;
+	width: 200px;
+	height: 200px;
+}
+
+}
+}
+
+.pop {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	background: #ffffff;
+	border-radius: 100%;
+	z-index: -1;
+	margin: auto;
+	transition: all .3s ease;
+	& > p
+
+{
+	color: #353535;
+	font-size: 20px;
+}
+}
+

@@ -1,0 +1,258 @@
+﻿@model dynamic
+
+@{
+    ViewBag.Title = "QuizDetail";
+    Layout = "~/Areas/teacher/Views/Shared/_QuizLibraryLayout.cshtml";
+}
+
+
+<!-- Modal Edit Quiz -->
+@using (Html.BeginForm("EditQuizName", "Quiz", FormMethod.Post))
+{
+    <div class="modal fade" id="editquizModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h5" id="exampleModalLabel">Edit Quiz</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="h5"> Enter New Quiz Name</p>
+                    <div style="display:flex; margin-bottom:25px">
+                        <input type="hidden" value="@ViewBag.Quiz.QuizID" name="qzID" />
+                        <input type="text" id="fname" name="newQuizName" value="@ViewBag.Quiz.QuizName">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Changed</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- End Modal -->
+<!-- Modal add question -->
+<div class="modal fade" id="addQuestionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div style="margin-right: 46%;" class="modal-dialog">
+        <div style="width: 180%;" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h5" id="exampleModalLabel">@ViewBag.Course.Name </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body ">
+
+                <div style="margin-top:10px;margin-bottom:10px" class="block-search-dropdown">
+                    <div style="width: fit-content;" class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+
+                        <div class="mr-2 transition duration-500 px-3 border-b">
+
+                            <input class="search-box flex-1" type="text" id="searchString" placeholder="search">
+                            <button type="button" onclick="reloadModalAddQuestion()" class="search-box">
+                                <i class="fad fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="btn-group mg-left">
+                        <input id="qzidAddModal" type="hidden" value="@ViewBag.Quiz.QuizID" name="qzID">
+                        <input id="cidAddModal" type="hidden" value="@ViewBag.Course.CID" />
+                        <h1 style="margin:auto;margin-right:10px">Chapter: </h1>
+                        <select id="ddlChapter" onchange="reloadModalAddQuestion()" class="btn-indigo mg-left ">
+                            <option value="-1">All Chapter </option>
+                            @foreach (var chapter in ViewBag.ChapterList)
+                            {
+                                <option value="@chapter.ChID">@chapter.Name</option>
+                            }
+
+                        </select>
+                    </div>
+                    <div class="btn-group mg-left">
+
+                        <h1 style="margin: auto; margin-right: 10px">Question Type: </h1>
+                        <select id="ddlQtype" onchange="reloadModalAddQuestion()" class="btn-indigo mg-left ">
+                            <option value="-1">All Type</option>
+                            @foreach (var type in ViewBag.QuestionType)
+                            {
+                                <option value="@type.QTypeID">@type.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                @using (Html.BeginForm("AddQuestionToQuiz", "Quiz", FormMethod.Post))
+                {
+                    <div id="divShowQuestions">
+                        @{
+                            Html.RenderAction("ShowQuestionForEditQuiz", "Quiz", new { chid = "-1", cid = ViewBag.Course.CID, qzid = ViewBag.Quiz.QuizID, qtype = "-1", searchText = "" });
+
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" value="@ViewBag.Quiz.QuizID" name="qzID">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+<!-- Modal Confirm -->
+@using (Html.BeginForm("DeleteQuiz", "Quiz", FormMethod.Post))
+{
+    <div class="modal fade" id="confirmDeleteQuizModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h5" id="exampleModalLabel">Delete Quiz @ViewBag.Quiz.QuizName</h5>
+                    <input type="hidden" name="qzID" value="@ViewBag.Quiz.QuizID" />
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="h5"> Are you Sure?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- End Modal -->
+<!-- link -->
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <!-- start navbar -->
+    <div style=" height: 63px; border-bottom: solid;">
+        <div style="display: flex; height: 40px;">
+            <h1 class="h5 mg-top">@ViewBag.Course.Name</h1>
+            <!-- Example single danger button -->
+
+            <p>&nbsp;</p>
+            <div style="display: flex; margin-left: auto;">
+
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex">
+        <h1 style="margin-top:auto;margin-bottom:auto" class="h5">@ViewBag.Quiz.QuizName  </h1>
+        <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
+            <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
+
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
+                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editquizModal">Rename</a></li>
+                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteQuizModal">Delete  </a></li>
+
+            </ul>
+        </div>
+        @*<i style="margin-left:20px;margin-top:auto;margin-bottom:auto" class="fas fa-marker"></i>*@
+    </div>
+    @if (ViewBag.CountQuest == 0)
+    {
+
+        <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Quiz</p>
+        <div style="display: flex; margin-left: auto;">
+            <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
+                Add Question
+            </button>
+        </div>
+    }
+    else
+    {
+        <div style="display:flex;margin-top:20px">
+            <div style="display:flex">
+                <h1 style="margin: auto " class="h5">Link quiz: </h1>
+                @{
+                    string quizLink = "https://localhost:44320/Student/Quiz/DoQuizPaperTest?qzID=";
+                    quizLink = quizLink + ViewBag.Quiz.QuizID;
+
+
+                }
+                <p class="h5" style="margin: auto; margin-left: 10px;">@quizLink</p>
+            </div>
+            <a style="background-color:aquamarine;margin-left:20px" class="btn ">Copy</a>
+        </div><div class="tb-mg-top">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th style="width: 47%;" scope="col">Question</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Mark</th>
+                        <td scope="col"> </td>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int countQuestion = 0;}
+                    @if (Model.Questions != null)
+                    {
+                        foreach (var question in Model.Questions)
+                        {
+                            countQuestion++;
+                            <tr>
+                                <th scope="row">@countQuestion</th>
+                                <td><a href="#" type="button">@question.Text </a></td>
+                                <td>@question.QuestionType.Name</td>
+                                <td>@question.Mark</td>
+                                <td><a href="~/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.QuestionType.QTypeID" class="fas fa-trash-alt"></a></td>
+                            </tr>
+                        }
+                    }
+                    @if (Model.Matchings != null)
+                    {
+                        foreach (var match in Model.Matchings)
+                        {
+                            countQuestion++;
+                            <tr>
+                                <th scope="row">@countQuestion</th>
+                                <td><a href="#" type="button">@match.ColumnA  @match.ColumnB </a></td>
+                                <td>Matching</td>
+                                <td>@match.Mark</td>
+                                <td><a href="~/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@match.MID&&qtype=5" class="fas fa-trash-alt"></a></td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div style="display: flex; margin-left: auto;">
+            <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
+                Add Question
+            </button>
+
+
+        </div>
+        <div style="display: flex; margin-top:15px">
+            <a href="~/Quiz/ViewQuizByCourse?cid=@ViewBag.Course.CID" style="background-color: aquamarine; margin-left: auto; margin-right: 10px;" class="btn ">Save</a>
+            <a style="background-color: aquamarine; width: 177px;" class="btn ">Start</a>
+        </div>
+    }
+
+</div>
+
+
+<script type="text/javascript">
+
+    function reloadModalAddQuestion() {
+        console.log("jhhh");
+        var chid = document.getElementById("ddlChapter").value;
+        var cid = document.getElementById("cidAddModal").value;
+        var qzid = document.getElementById("qzidAddModal").value;
+        var qtype = document.getElementById("ddlQtype").value;
+        var searchText = document.getElementById("searchString").value;
+        $("#divShowQuestions").load('@Url.Action("ShowQuestionForEditQuiz", "Quiz")' +
+            '?chid=' + chid + '&cid=' + cid + '&qzid=' + qzid + '&qtype=' + qtype + '&searchText=' + searchText);
+    }
+
+</script>

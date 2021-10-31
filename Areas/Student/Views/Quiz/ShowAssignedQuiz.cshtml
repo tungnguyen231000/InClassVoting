@@ -1,0 +1,48 @@
+﻿@model IEnumerable<InClassVoting.Models.Quiz>
+
+@{
+    ViewBag.Title = "ShowAssignedQuiz";
+    Layout = "~/Areas/Student/Views/Shared/_Layout.cshtml";
+}
+
+<table class="table">
+    <tr>
+        <th>
+            Quiz Name
+        </th>
+        <th>
+           Number of Question
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Mark)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Time)
+        </th>
+        <th>
+            Course Name
+        </th>
+
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            <a href="~/Student/Quiz/DoQuizPaperTest?qzid=@item.QuizID" type="button">@item.QuizName</a>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NumOfQuestion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Mark)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Time)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Course.Name)
+        </td>
+    </tr>
+}
+
+</table>

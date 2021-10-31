@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8ab2708d2f764031b39b4bddb7d3406c" Name="Diagram1">
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.Chapter" Width="1.5" PointX="3" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.Course" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.MatchQuestion" Width="1.5" PointX="5.25" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.Passage" Width="1.5" PointX="5.25" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.Question" Width="1.5" PointX="7.5" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.QuestionType" Width="1.5" PointX="5.25" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.Quiz" Width="1.5" PointX="3" PointY="7.875" IsExpanded="true" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Chapter__CourseI__1B0907CE" ManuallyRouted="false" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__MatchQues__Chapt__2A4B4B5E" ManuallyRouted="false" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Passage__Chapter__1DE57479" ManuallyRouted="false" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Question__Chapte__22AA2996" ManuallyRouted="false" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Quiz__CourseID__2D27B809" ManuallyRouted="false" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Question__Passag__239E4DCF" ManuallyRouted="false" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Question__Qtype__24927208" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.QuestionAnswer" Width="1.5" PointX="9.75" PointY="4.375" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__QuestionA__Quest__276EDEB3" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
