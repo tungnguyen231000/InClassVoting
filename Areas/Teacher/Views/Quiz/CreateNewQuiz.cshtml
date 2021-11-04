@@ -19,7 +19,8 @@
             <div class="modal-body ">
 
                 <div style="margin-top:10px;margin-bottom:10px" class="block-search-dropdown">
-                    <div style="width: fit-content;" class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+                    <div style="width: fit-content;" class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10
+                         md:mb-10 md:border-b md:border-gray-200">
 
                         <div class="mr-2 transition duration-500 px-3 border-b">
 
@@ -59,17 +60,15 @@
                     <div id="divShowQuestionsForNewQuiz">
                         @{
                             Html.RenderAction("ShowQuestionForNewQuiz", "Quiz", new { chid = "-1", cid = ViewBag.Course.CID, qtype = "-1", searchText = "" });
-
                         }
-
                     </div>
                     <div class="modal-footer">
+                        <input type="hidden" name="tempName" id="tempName">
                         <input type="hidden" name="cid" value="@ViewBag.Course.CID">
                         <input id="questSet" name="questSet" type="hidden" value="@ViewBag.Questions">
-                        <button type="submit" class="btn btn-primary">Add</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" onclick="getTempQuizInfo()">Add</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
                     </div>
-
                 }
             </div>
         </div>
@@ -88,7 +87,15 @@
     </div>
     <div style="display: flex; height: 50px; margin-top: 15px;">
         <h1 style="margin-top:auto;margin-bottom:auto" class="h5">Quiz Name: &nbsp; </h1>
-        <input style="margin-left:20px" class="fas fa-marker" type="text" id="newName" placeholder="enter name of test" />
+        @if (ViewBag.TempName != null)
+        {
+            <input style="margin-left:20px" class="fas fa-marker" type="text" id="newName" value="@ViewBag.TempName" />
+        }
+        else
+        {
+            <input style="margin-left:20px" class="fas fa-marker" type="text" id="newName" placeholder="enter name of test" />
+        }
+
     </div>
     @if (ViewBag.CountQuest == 0)
     {
@@ -125,7 +132,7 @@
                                 <td><a href="#" type="button">@question.Text </a></td>
                                 <td>@question.QuestionType.Name</td>
                                 <td>@question.Mark</td>
-                                <td><a href="~/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@question.QID&qtype=@question.QuestionType.QTypeID&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID" class="fas fa-trash-alt"></a></td>
+                                <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@question.QID&qtype=@question.QuestionType.QTypeID&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID&tempName=@ViewBag.TempName" class="fas fa-trash-alt"></a></td>
                             </tr>
                         }
                     }
@@ -139,7 +146,7 @@
                                 <td><a href="#" type="button">@match.ColumnA  @match.ColumnB </a></td>
                                 <td>Matching</td>
                                 <td>@match.Mark</td>
-                                <td><a href="~/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@match.MID&qtype=5&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID" class="fas fa-trash-alt"></a></td>
+                                <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@match.MID&qtype=5&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID&tempName=@ViewBag.TempName" class="fas fa-trash-alt"></a></td>
                             </tr>
                         }
                     }
@@ -164,12 +171,14 @@
                         <input type="hidden" name="questions" value="@ViewBag.Questions">
                         <input type="hidden" name="cid" value="@ViewBag.Course.CID">
                         <a>Mix Question :</a>
-                        <input type="checkbox" name="cbMixQuestions" class="form-check-input" id="exampleCheck1" value="1" />
-                        <input type="hidden" name="cbMixQuestions" value="0" />
-                        <div style="margin-left:15px">
-                            <a>Number Of Random Question :</a>
-                            <input name="rdQuestionNum" type="number" />
-                        </div>
+                            <input type="checkbox" name="cbMixQuestions" class="form-check-input" id="exampleCheck1" value="1" />
+                            <input type="hidden" name="cbMixQuestions" value="0" />
+                        
+                            <div style="margin-left:15px">
+                                <a>Number Of Random Question :</a>
+                                <input name="rdQuestionNum" type="number" min="1" max="@ViewBag.CountQuest" value=""/>
+                            </div>
+                        
                     </div>
 
                 </div>
@@ -178,8 +187,6 @@
                     <a style="background-color: aquamarine; margin-left:10px " class="btn ">Cancel</a>
                 </div>
             }
-
-
 
         </div>
     }
@@ -203,8 +210,19 @@
     }
 
     function getQuizName() {
-        var newName = document.getElementById("newName").value
+        var newName = document.getElementById("newName").value;
         document.getElementById("quizName").value = newName;
+    }
+
+    function getTempQuizInfo() {
+        console.log("hihih");
+
+        var tempName = document.getElementById("newName").value;
+        document.getElementById("tempName").value = tempName;
+
+      
+
+        console.log(tempName + "===" );
     }
 
 

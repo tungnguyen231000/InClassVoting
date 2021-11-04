@@ -29,6 +29,19 @@
           <Property Name="ColumnA" Type="nvarchar(max)" />
           <Property Name="ColumnB" Type="nvarchar(max)" />
           <Property Name="Solution" Type="nvarchar(max)" />
+          <Property Name="Time" Type="int" />
+          <Property Name="Mark" Type="float" />
+        </EntityType>
+        <EntityType Name="MatchQuestionDone">
+          <Key>
+            <PropertyRef Name="M_DoneID" />
+          </Key>
+          <Property Name="M_DoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChapterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ColumnA" Type="nvarchar(max)" />
+          <Property Name="ColumnB" Type="nvarchar(max)" />
+          <Property Name="Solution" Type="nvarchar(max)" />
+          <Property Name="Time" Type="int" />
           <Property Name="Mark" Type="float" />
         </EntityType>
         <EntityType Name="Passage">
@@ -37,6 +50,14 @@
           </Key>
           <Property Name="PID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ChapterID" Type="int" />
+          <Property Name="Text" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Passage_Done">
+          <Key>
+            <PropertyRef Name="P_DoneID" />
+          </Key>
+          <Property Name="P_DoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChapterName" Type="nvarchar" MaxLength="100" />
           <Property Name="Text" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Question">
@@ -62,6 +83,29 @@
           <Property Name="Text" Type="nvarchar(max)" />
           <Property Name="IsCorrect" Type="bit" />
         </EntityType>
+        <EntityType Name="QuestionAnswerDone">
+          <Key>
+            <PropertyRef Name="QA_DoneID" />
+          </Key>
+          <Property Name="QA_DoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuestionID" Type="int" Nullable="false" />
+          <Property Name="Text" Type="nvarchar(max)" />
+          <Property Name="IsCorrect" Type="bit" />
+        </EntityType>
+        <EntityType Name="QuestionDone">
+          <Key>
+            <PropertyRef Name="Q_DoneID" />
+          </Key>
+          <Property Name="Q_DoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChapterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="PassageID" Type="int" />
+          <Property Name="Text" Type="nvarchar(max)" />
+          <Property Name="Mark" Type="float" />
+          <Property Name="Qtype" Type="int" Nullable="false" />
+          <Property Name="MixChoice" Type="bit" />
+          <Property Name="Time" Type="int" />
+          <Property Name="ImageData" Type="varbinary(max)" />
+        </EntityType>
         <EntityType Name="QuestionType">
           <Key>
             <PropertyRef Name="QTypeID" />
@@ -84,6 +128,59 @@
           <Property Name="StudentGuide" Type="nvarchar(max)" />
           <Property Name="Status" Type="varchar" MaxLength="50" />
           <Property Name="Time" Type="int" />
+        </EntityType>
+        <EntityType Name="Quiz_QuizDone">
+          <Key>
+            <PropertyRef Name="Q_qDoneID" />
+          </Key>
+          <Property Name="Q_qDoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuizID" Type="int" />
+          <Property Name="QuizDoneID" Type="int" />
+        </EntityType>
+        <EntityType Name="QuizDone">
+          <Key>
+            <PropertyRef Name="QuizDoneID" />
+          </Key>
+          <Property Name="QuizDoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Quiz_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="CourseID" Type="int" Nullable="false" />
+          <Property Name="Questions" Type="nvarchar(max)" />
+          <Property Name="NumOfQuestion" Type="int" />
+          <Property Name="TotalMark" Type="float" />
+          <Property Name="MixQuestion" Type="bit" />
+          <Property Name="MixQuestionNumber" Type="int" />
+          <Property Name="Time" Type="int" />
+          <Property Name="CreatedDate" Type="date" />
+        </EntityType>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="SID" />
+          </Key>
+          <Property Name="SID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="200" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Student_Answer">
+          <Key>
+            <PropertyRef Name="SAID" />
+          </Key>
+          <Property Name="SAID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="QuizDoneID" Type="int" Nullable="false" />
+          <Property Name="StudentID" Type="int" Nullable="false" />
+          <Property Name="Question" Type="varchar" MaxLength="100" />
+          <Property Name="Answer" Type="nvarchar" MaxLength="200" />
+          <Property Name="IsCorrect" Type="bit" />
+        </EntityType>
+        <EntityType Name="Student_QuizDone">
+          <Key>
+            <PropertyRef Name="StudentID" />
+            <PropertyRef Name="QuizDoneID" />
+          </Key>
+          <Property Name="StudentID" Type="int" Nullable="false" />
+          <Property Name="QuizDoneID" Type="int" Nullable="false" />
+          <Property Name="ReceivedQuestions" Type="nvarchar(max)" />
+          <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="TotalMark" Type="float" />
         </EntityType>
         <Association Name="FK__Chapter__CourseI__1B0907CE">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
@@ -169,6 +266,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__QuestionA__Quest__3D5E1FD2">
+          <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="1" />
+          <End Role="QuestionAnswerDone" Type="Self.QuestionAnswerDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuestionDone">
+              <PropertyRef Name="Q_DoneID" />
+            </Principal>
+            <Dependent Role="QuestionAnswerDone">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Passa__37A5467C">
+          <End Role="Passage_Done" Type="Self.Passage_Done" Multiplicity="0..1" />
+          <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Passage_Done">
+              <PropertyRef Name="P_DoneID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="PassageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Qtype__38996AB5">
+          <End Role="QuestionType" Type="Self.QuestionType" Multiplicity="1" />
+          <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuestionType">
+              <PropertyRef Name="QTypeID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="Qtype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Quiz__CourseID__2D27B809">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
           <End Role="Quiz" Type="Self.Quiz" Multiplicity="*" />
@@ -181,15 +314,108 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__Quiz_Quiz__QuizD__6A30C649">
+          <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="0..1" />
+          <End Role="Quiz_QuizDone" Type="Self.Quiz_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Principal>
+            <Dependent Role="Quiz_QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Quiz_Quiz__QuizI__693CA210">
+          <End Role="Quiz" Type="Self.Quiz" Multiplicity="0..1" />
+          <End Role="Quiz_QuizDone" Type="Self.Quiz_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Quiz">
+              <PropertyRef Name="QuizID" />
+            </Principal>
+            <Dependent Role="Quiz_QuizDone">
+              <PropertyRef Name="QuizID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuizDone__Course__66603565">
+          <End Role="Course" Type="Self.Course" Multiplicity="1" />
+          <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="CID" />
+            </Principal>
+            <Dependent Role="QuizDone">
+              <PropertyRef Name="CourseID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student_A__QuizD__70DDC3D8">
+          <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="1" />
+          <End Role="Student_Answer" Type="Self.Student_Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Principal>
+            <Dependent Role="Student_Answer">
+              <PropertyRef Name="QuizDoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student_A__Stude__71D1E811">
+          <End Role="Student" Type="Self.Student" Multiplicity="1" />
+          <End Role="Student_Answer" Type="Self.Student_Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="Student_Answer">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student_Q__QuizD__6E01572D">
+          <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="1" />
+          <End Role="Student_QuizDone" Type="Self.Student_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Principal>
+            <Dependent Role="Student_QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student_Q__Stude__6D0D32F4">
+          <End Role="Student" Type="Self.Student" Multiplicity="1" />
+          <End Role="Student_QuizDone" Type="Self.Student_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="Student_QuizDone">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="QuestionBank_Demo4ModelStoreContainer">
           <EntitySet Name="Chapter" EntityType="Self.Chapter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Course" EntityType="Self.Course" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="MatchQuestion" EntityType="Self.MatchQuestion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MatchQuestionDone" EntityType="Self.MatchQuestionDone" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Passage" EntityType="Self.Passage" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Passage_Done" EntityType="Self.Passage_Done" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QuestionAnswer" EntityType="Self.QuestionAnswer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuestionAnswerDone" EntityType="Self.QuestionAnswerDone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuestionDone" EntityType="Self.QuestionDone" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QuestionType" EntityType="Self.QuestionType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Quiz" EntityType="Self.Quiz" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Quiz_QuizDone" EntityType="Self.Quiz_QuizDone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuizDone" EntityType="Self.QuizDone" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Student" EntityType="Self.Student" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Student_Answer" EntityType="Self.Student_Answer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Student_QuizDone" EntityType="Self.Student_QuizDone" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__Chapter__CourseI__1B0907CE" Association="Self.FK__Chapter__CourseI__1B0907CE">
             <End Role="Course" EntitySet="Course" />
             <End Role="Chapter" EntitySet="Chapter" />
@@ -218,9 +444,49 @@
             <End Role="Question" EntitySet="Question" />
             <End Role="QuestionAnswer" EntitySet="QuestionAnswer" />
           </AssociationSet>
+          <AssociationSet Name="FK__QuestionA__Quest__3D5E1FD2" Association="Self.FK__QuestionA__Quest__3D5E1FD2">
+            <End Role="QuestionDone" EntitySet="QuestionDone" />
+            <End Role="QuestionAnswerDone" EntitySet="QuestionAnswerDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Passa__37A5467C" Association="Self.FK__QuestionD__Passa__37A5467C">
+            <End Role="Passage_Done" EntitySet="Passage_Done" />
+            <End Role="QuestionDone" EntitySet="QuestionDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Qtype__38996AB5" Association="Self.FK__QuestionD__Qtype__38996AB5">
+            <End Role="QuestionType" EntitySet="QuestionType" />
+            <End Role="QuestionDone" EntitySet="QuestionDone" />
+          </AssociationSet>
           <AssociationSet Name="FK__Quiz__CourseID__2D27B809" Association="Self.FK__Quiz__CourseID__2D27B809">
             <End Role="Course" EntitySet="Course" />
             <End Role="Quiz" EntitySet="Quiz" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Quiz_Quiz__QuizD__6A30C649" Association="Self.FK__Quiz_Quiz__QuizD__6A30C649">
+            <End Role="QuizDone" EntitySet="QuizDone" />
+            <End Role="Quiz_QuizDone" EntitySet="Quiz_QuizDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Quiz_Quiz__QuizI__693CA210" Association="Self.FK__Quiz_Quiz__QuizI__693CA210">
+            <End Role="Quiz" EntitySet="Quiz" />
+            <End Role="Quiz_QuizDone" EntitySet="Quiz_QuizDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuizDone__Course__66603565" Association="Self.FK__QuizDone__Course__66603565">
+            <End Role="Course" EntitySet="Course" />
+            <End Role="QuizDone" EntitySet="QuizDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student_A__QuizD__70DDC3D8" Association="Self.FK__Student_A__QuizD__70DDC3D8">
+            <End Role="QuizDone" EntitySet="QuizDone" />
+            <End Role="Student_Answer" EntitySet="Student_Answer" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student_A__Stude__71D1E811" Association="Self.FK__Student_A__Stude__71D1E811">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="Student_Answer" EntitySet="Student_Answer" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student_Q__QuizD__6E01572D" Association="Self.FK__Student_Q__QuizD__6E01572D">
+            <End Role="QuizDone" EntitySet="QuizDone" />
+            <End Role="Student_QuizDone" EntitySet="Student_QuizDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student_Q__Stude__6D0D32F4" Association="Self.FK__Student_Q__Stude__6D0D32F4">
+            <End Role="Student" EntitySet="Student" />
+            <End Role="Student_QuizDone" EntitySet="Student_QuizDone" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -235,9 +501,9 @@
           <Property Name="CourseID" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Course" Relationship="Self.FK__Chapter__CourseI__1B0907CE" FromRole="Chapter" ToRole="Course" />
-          <NavigationProperty Name="MatchQuestions" Relationship="Self.FK__MatchQues__Chapt__2A4B4B5E" FromRole="Chapter" ToRole="MatchQuestion" />
           <NavigationProperty Name="Passages" Relationship="Self.FK__Passage__Chapter__1DE57479" FromRole="Chapter" ToRole="Passage" />
           <NavigationProperty Name="Questions" Relationship="Self.FK__Question__Chapte__22AA2996" FromRole="Chapter" ToRole="Question" />
+          <NavigationProperty Name="MatchQuestions" Relationship="QuestionBank_Demo4Model.FK__MatchQues__Chapt__08B54D69" FromRole="Chapter" ToRole="MatchQuestion" />
         </EntityType>
         <EntityType Name="Course">
           <Key>
@@ -246,19 +512,8 @@
           <Property Name="CID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Chapters" Relationship="Self.FK__Chapter__CourseI__1B0907CE" FromRole="Course" ToRole="Chapter" />
-          <NavigationProperty Name="Quizs" Relationship="Self.FK__Quiz__CourseID__2D27B809" FromRole="Course" ToRole="Quiz" />
-        </EntityType>
-        <EntityType Name="MatchQuestion">
-          <Key>
-            <PropertyRef Name="MID" />
-          </Key>
-          <Property Name="MID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChapterId" Type="Int32" Nullable="false" />
-          <Property Name="ColumnA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ColumnB" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Solution" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Mark" Type="Double" />
-          <NavigationProperty Name="Chapter" Relationship="Self.FK__MatchQues__Chapt__2A4B4B5E" FromRole="MatchQuestion" ToRole="Chapter" />
+          <NavigationProperty Name="Quizs" Relationship="QuestionBank_Demo4Model.FK__Quiz__CourseID__2D27B809" FromRole="Course" ToRole="Quiz" />
+          <NavigationProperty Name="QuizDones" Relationship="QuestionBank_Demo4Model.FK__QuizDone__Course__66603565" FromRole="Course" ToRole="QuizDone" />
         </EntityType>
         <EntityType Name="Passage">
           <Key>
@@ -295,23 +550,7 @@
           <Property Name="QTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Questions" Relationship="Self.FK__Question__Qtype__24927208" FromRole="QuestionType" ToRole="Question" />
-        </EntityType>
-        <EntityType Name="Quiz">
-          <Key>
-            <PropertyRef Name="QuizID" />
-          </Key>
-          <Property Name="QuizID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="QuizName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="CourseID" Type="Int32" Nullable="false" />
-          <Property Name="Questions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="NumOfQuestion" Type="Int32" />
-          <Property Name="Mark" Type="Double" />
-          <Property Name="MixQuestion" Type="Boolean" />
-          <Property Name="MixQuestionNumber" Type="Int32" />
-          <Property Name="StudentGuide" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Time" Type="Int32" />
-          <NavigationProperty Name="Course" Relationship="Self.FK__Quiz__CourseID__2D27B809" FromRole="Quiz" ToRole="Course" />
+          <NavigationProperty Name="QuestionDones" Relationship="QuestionBank_Demo4Model.FK__QuestionD__Qtype__6477ECF3" FromRole="QuestionType" ToRole="QuestionDone" />
         </EntityType>
         <Association Name="FK__Chapter__CourseI__1B0907CE">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
@@ -322,18 +561,6 @@
             </Principal>
             <Dependent Role="Chapter">
               <PropertyRef Name="CourseID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__MatchQues__Chapt__2A4B4B5E">
-          <End Role="Chapter" Type="Self.Chapter" Multiplicity="1" />
-          <End Role="MatchQuestion" Type="Self.MatchQuestion" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Chapter">
-              <PropertyRef Name="ChID" />
-            </Principal>
-            <Dependent Role="MatchQuestion">
-              <PropertyRef Name="ChapterId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -358,18 +585,6 @@
             </Principal>
             <Dependent Role="Question">
               <PropertyRef Name="ChapterID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Quiz__CourseID__2D27B809">
-          <End Role="Course" Type="Self.Course" Multiplicity="1" />
-          <End Role="Quiz" Type="Self.Quiz" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Course">
-              <PropertyRef Name="CID" />
-            </Principal>
-            <Dependent Role="Quiz">
-              <PropertyRef Name="CourseID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -400,18 +615,12 @@
         <EntityContainer Name="DBModel" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Chapters" EntityType="Self.Chapter" />
           <EntitySet Name="Courses" EntityType="Self.Course" />
-          <EntitySet Name="MatchQuestions" EntityType="Self.MatchQuestion" />
           <EntitySet Name="Passages" EntityType="Self.Passage" />
           <EntitySet Name="Questions" EntityType="Self.Question" />
           <EntitySet Name="QuestionTypes" EntityType="Self.QuestionType" />
-          <EntitySet Name="Quizs" EntityType="Self.Quiz" />
           <AssociationSet Name="FK__Chapter__CourseI__1B0907CE" Association="Self.FK__Chapter__CourseI__1B0907CE">
             <End Role="Course" EntitySet="Courses" />
             <End Role="Chapter" EntitySet="Chapters" />
-          </AssociationSet>
-          <AssociationSet Name="FK__MatchQues__Chapt__2A4B4B5E" Association="Self.FK__MatchQues__Chapt__2A4B4B5E">
-            <End Role="Chapter" EntitySet="Chapters" />
-            <End Role="MatchQuestion" EntitySet="MatchQuestions" />
           </AssociationSet>
           <AssociationSet Name="FK__Passage__Chapter__1DE57479" Association="Self.FK__Passage__Chapter__1DE57479">
             <End Role="Chapter" EntitySet="Chapters" />
@@ -420,10 +629,6 @@
           <AssociationSet Name="FK__Question__Chapte__22AA2996" Association="Self.FK__Question__Chapte__22AA2996">
             <End Role="Chapter" EntitySet="Chapters" />
             <End Role="Question" EntitySet="Questions" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Quiz__CourseID__2D27B809" Association="Self.FK__Quiz__CourseID__2D27B809">
-            <End Role="Course" EntitySet="Courses" />
-            <End Role="Quiz" EntitySet="Quizs" />
           </AssociationSet>
           <AssociationSet Name="FK__Question__Passag__239E4DCF" Association="Self.FK__Question__Passag__239E4DCF">
             <End Role="Passage" EntitySet="Passages" />
@@ -438,7 +643,66 @@
             <End Role="Question" EntitySet="Questions" />
             <End Role="QuestionAnswer" EntitySet="QuestionAnswers" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="Passage_Done" EntityType="QuestionBank_Demo4Model.Passage_Done" />
+          <EntitySet Name="QuestionDones" EntityType="QuestionBank_Demo4Model.QuestionDone" />
+          <AssociationSet Name="FK__QuestionD__Passa__6383C8BA" Association="QuestionBank_Demo4Model.FK__QuestionD__Passa__6383C8BA">
+            <End Role="Passage_Done" EntitySet="Passage_Done" />
+            <End Role="QuestionDone" EntitySet="QuestionDones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Qtype__6477ECF3" Association="QuestionBank_Demo4Model.FK__QuestionD__Qtype__6477ECF3">
+            <End Role="QuestionType" EntitySet="QuestionTypes" />
+            <End Role="QuestionDone" EntitySet="QuestionDones" />
+          </AssociationSet>
+          <EntitySet Name="Students" EntityType="QuestionBank_Demo4Model.Student" />
+          <EntitySet Name="QuestionAnswerDones" EntityType="QuestionBank_Demo4Model.QuestionAnswerDone" />
+          <AssociationSet Name="FK__QuestionA__Quest__02FC7413" Association="QuestionBank_Demo4Model.FK__QuestionA__Quest__02FC7413">
+            <End Role="QuestionDone" EntitySet="QuestionDones" />
+            <End Role="QuestionAnswerDone" EntitySet="QuestionAnswerDones" />
+          </AssociationSet>
+          <EntitySet Name="MatchQuestions" EntityType="QuestionBank_Demo4Model.MatchQuestion" />
+          <EntitySet Name="MatchQuestionDones" EntityType="QuestionBank_Demo4Model.MatchQuestionDone" />
+          <AssociationSet Name="FK__MatchQues__Chapt__08B54D69" Association="QuestionBank_Demo4Model.FK__MatchQues__Chapt__08B54D69">
+            <End Role="Chapter" EntitySet="Chapters" />
+            <End Role="MatchQuestion" EntitySet="MatchQuestions" />
+          </AssociationSet>
+          <EntitySet Name="Quizs" EntityType="QuestionBank_Demo4Model.Quiz" />
+          <EntitySet Name="Quiz_QuizDone" EntityType="QuestionBank_Demo4Model.Quiz_QuizDone" />
+          <AssociationSet Name="FK__Quiz__CourseID__2D27B809" Association="QuestionBank_Demo4Model.FK__Quiz__CourseID__2D27B809">
+            <End Role="Course" EntitySet="Courses" />
+            <End Role="Quiz" EntitySet="Quizs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Quiz_Quiz__QuizI__160F4887" Association="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizI__160F4887">
+            <End Role="Quiz" EntitySet="Quizs" />
+            <End Role="Quiz_QuizDone" EntitySet="Quiz_QuizDone" />
+          </AssociationSet>
+          <EntitySet Name="Student_Answer" EntityType="QuestionBank_Demo4Model.Student_Answer" />
+          <AssociationSet Name="FK__Student_A__Stude__5DCAEF64" Association="QuestionBank_Demo4Model.FK__Student_A__Stude__5DCAEF64">
+            <End Role="Student" EntitySet="Students" />
+            <End Role="Student_Answer" EntitySet="Student_Answer" />
+          </AssociationSet>
+          <EntitySet Name="Student_QuizDone" EntityType="QuestionBank_Demo4Model.Student_QuizDone" />
+          <AssociationSet Name="FK__Student_Q__Stude__60A75C0F" Association="QuestionBank_Demo4Model.FK__Student_Q__Stude__60A75C0F">
+            <End Role="Student" EntitySet="Students" />
+            <End Role="Student_QuizDone" EntitySet="Student_QuizDone" />
+          </AssociationSet>
+          <EntitySet Name="QuizDones" EntityType="QuestionBank_Demo4Model.QuizDone" />
+          <AssociationSet Name="FK__QuizDone__Course__66603565" Association="QuestionBank_Demo4Model.FK__QuizDone__Course__66603565">
+            <End Role="Course" EntitySet="Courses" />
+            <End Role="QuizDone" EntitySet="QuizDones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Quiz_Quiz__QuizD__6A30C649" Association="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizD__6A30C649">
+            <End Role="QuizDone" EntitySet="QuizDones" />
+            <End Role="Quiz_QuizDone" EntitySet="Quiz_QuizDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student_A__QuizD__70DDC3D8" Association="QuestionBank_Demo4Model.FK__Student_A__QuizD__70DDC3D8">
+            <End Role="QuizDone" EntitySet="QuizDones" />
+            <End Role="Student_Answer" EntitySet="Student_Answer" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Student_Q__QuizD__6E01572D" Association="QuestionBank_Demo4Model.FK__Student_Q__QuizD__6E01572D">
+            <End Role="QuizDone" EntitySet="QuizDones" />
+            <End Role="Student_QuizDone" EntitySet="Student_QuizDone" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="QuestionAnswer">
           <Key>
             <PropertyRef Name="QAID" />
@@ -461,7 +725,295 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        <EntityType Name="Passage_Done">
+          <Key>
+            <PropertyRef Name="P_DoneID" />
+          </Key>
+          <Property Name="P_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ChapterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="QuestionDones" Relationship="QuestionBank_Demo4Model.FK__QuestionD__Passa__6383C8BA" FromRole="Passage_Done" ToRole="QuestionDone" />
+        </EntityType>
+        <EntityType Name="QuestionDone">
+          <Key>
+            <PropertyRef Name="Q_DoneID" />
+          </Key>
+          <Property Name="Q_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PassageID" Type="Int32" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="Qtype" Type="Int32" Nullable="false" />
+          <Property Name="MixChoice" Type="Boolean" />
+          <Property Name="Time" Type="Int32" />
+          <Property Name="ImageData" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="ChapterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Passage_Done" Relationship="QuestionBank_Demo4Model.FK__QuestionD__Passa__6383C8BA" FromRole="QuestionDone" ToRole="Passage_Done" />
+          <NavigationProperty Name="QuestionType" Relationship="QuestionBank_Demo4Model.FK__QuestionD__Qtype__6477ECF3" FromRole="QuestionDone" ToRole="QuestionType" />
+          <NavigationProperty Name="QuestionAnswerDones" Relationship="QuestionBank_Demo4Model.FK__QuestionA__Quest__02FC7413" FromRole="QuestionDone" ToRole="QuestionAnswerDone" />
+        </EntityType>
+        <Association Name="FK__QuestionD__Passa__6383C8BA">
+          <End Type="QuestionBank_Demo4Model.Passage_Done" Role="Passage_Done" Multiplicity="0..1" />
+          <End Type="QuestionBank_Demo4Model.QuestionDone" Role="QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Passage_Done">
+              <PropertyRef Name="P_DoneID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="PassageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Qtype__6477ECF3">
+          <End Type="QuestionBank_Demo4Model.QuestionType" Role="QuestionType" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.QuestionDone" Role="QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuestionType">
+              <PropertyRef Name="QTypeID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="Qtype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Student">
+          <Key>
+            <PropertyRef Name="SID" />
+          </Key>
+          <Property Name="SID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Student_Answer" Relationship="QuestionBank_Demo4Model.FK__Student_A__Stude__5DCAEF64" FromRole="Student" ToRole="Student_Answer" />
+          <NavigationProperty Name="Student_QuizDone" Relationship="QuestionBank_Demo4Model.FK__Student_Q__Stude__60A75C0F" FromRole="Student" ToRole="Student_QuizDone" />
+        </EntityType>
+        <EntityType Name="QuestionAnswerDone">
+          <Key>
+            <PropertyRef Name="QA_DoneID" />
+          </Key>
+          <Property Name="QA_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuestionID" Type="Int32" Nullable="false" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsCorrect" Type="Boolean" />
+          <NavigationProperty Name="QuestionDone" Relationship="QuestionBank_Demo4Model.FK__QuestionA__Quest__02FC7413" FromRole="QuestionAnswerDone" ToRole="QuestionDone" />
+        </EntityType>
+        <Association Name="FK__QuestionA__Quest__02FC7413">
+          <End Type="QuestionBank_Demo4Model.QuestionDone" Role="QuestionDone" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.QuestionAnswerDone" Role="QuestionAnswerDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuestionDone">
+              <PropertyRef Name="Q_DoneID" />
+            </Principal>
+            <Dependent Role="QuestionAnswerDone">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MatchQuestion">
+          <Key>
+            <PropertyRef Name="MID" />
+          </Key>
+          <Property Name="MID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChapterId" Type="Int32" Nullable="false" />
+          <Property Name="ColumnA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ColumnB" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Solution" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Time" Type="Int32" />
+          <Property Name="Mark" Type="Double" />
+          <NavigationProperty Name="Chapter" Relationship="QuestionBank_Demo4Model.FK__MatchQues__Chapt__08B54D69" FromRole="MatchQuestion" ToRole="Chapter" />
+        </EntityType>
+        <EntityType Name="MatchQuestionDone">
+          <Key>
+            <PropertyRef Name="M_DoneID" />
+          </Key>
+          <Property Name="M_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChapterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="ColumnA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ColumnB" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Solution" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Time" Type="Int32" />
+          <Property Name="Mark" Type="Double" />
+        </EntityType>
+        <Association Name="FK__MatchQues__Chapt__08B54D69">
+          <End Type="QuestionBank_Demo4Model.Chapter" Role="Chapter" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.MatchQuestion" Role="MatchQuestion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Chapter">
+              <PropertyRef Name="ChID" />
+            </Principal>
+            <Dependent Role="MatchQuestion">
+              <PropertyRef Name="ChapterId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Quiz">
+          <Key>
+            <PropertyRef Name="QuizID" />
+          </Key>
+          <Property Name="QuizID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuizName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CourseID" Type="Int32" Nullable="false" />
+          <Property Name="Questions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NumOfQuestion" Type="Int32" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="MixQuestion" Type="Boolean" />
+          <Property Name="MixQuestionNumber" Type="Int32" />
+          <Property Name="StudentGuide" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Time" Type="Int32" />
+          <NavigationProperty Name="Course" Relationship="QuestionBank_Demo4Model.FK__Quiz__CourseID__2D27B809" FromRole="Quiz" ToRole="Course" />
+          <NavigationProperty Name="Quiz_QuizDone" Relationship="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizI__160F4887" FromRole="Quiz" ToRole="Quiz_QuizDone" />
+        </EntityType>
+        <EntityType Name="Quiz_QuizDone">
+          <Key>
+            <PropertyRef Name="Q_qDoneID" />
+          </Key>
+          <Property Name="Q_qDoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuizID" Type="Int32" />
+          <Property Name="QuizDoneID" Type="Int32" />
+          <NavigationProperty Name="Quiz" Relationship="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizI__160F4887" FromRole="Quiz_QuizDone" ToRole="Quiz" />
+          <NavigationProperty Name="QuizDone" Relationship="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizD__6A30C649" FromRole="Quiz_QuizDone" ToRole="QuizDone" />
+        </EntityType>
+        <Association Name="FK__Quiz__CourseID__2D27B809">
+          <End Type="QuestionBank_Demo4Model.Course" Role="Course" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.Quiz" Role="Quiz" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="CID" />
+            </Principal>
+            <Dependent Role="Quiz">
+              <PropertyRef Name="CourseID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Quiz_Quiz__QuizI__160F4887">
+          <End Type="QuestionBank_Demo4Model.Quiz" Role="Quiz" Multiplicity="0..1" />
+          <End Type="QuestionBank_Demo4Model.Quiz_QuizDone" Role="Quiz_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Quiz">
+              <PropertyRef Name="QuizID" />
+            </Principal>
+            <Dependent Role="Quiz_QuizDone">
+              <PropertyRef Name="QuizID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Student_Answer">
+          <Key>
+            <PropertyRef Name="SAID" />
+          </Key>
+          <Property Name="SAID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="QuizDoneID" Type="Int32" Nullable="false" />
+          <Property Name="StudentID" Type="Int32" Nullable="false" />
+          <Property Name="Question" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Answer" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsCorrect" Type="Boolean" />
+          <NavigationProperty Name="Student" Relationship="QuestionBank_Demo4Model.FK__Student_A__Stude__5DCAEF64" FromRole="Student_Answer" ToRole="Student" />
+          <NavigationProperty Name="QuizDone" Relationship="QuestionBank_Demo4Model.FK__Student_A__QuizD__70DDC3D8" FromRole="Student_Answer" ToRole="QuizDone" />
+        </EntityType>
+        <Association Name="FK__Student_A__Stude__5DCAEF64">
+          <End Type="QuestionBank_Demo4Model.Student" Role="Student" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.Student_Answer" Role="Student_Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="Student_Answer">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Student_QuizDone">
+          <Key>
+            <PropertyRef Name="StudentID" />
+            <PropertyRef Name="QuizDoneID" />
+          </Key>
+          <Property Name="StudentID" Type="Int32" Nullable="false" />
+          <Property Name="QuizDoneID" Type="Int32" Nullable="false" />
+          <Property Name="ReceivedQuestions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TotalMark" Type="Double" />
+          <NavigationProperty Name="Student" Relationship="QuestionBank_Demo4Model.FK__Student_Q__Stude__60A75C0F" FromRole="Student_QuizDone" ToRole="Student" />
+          <NavigationProperty Name="QuizDone" Relationship="QuestionBank_Demo4Model.FK__Student_Q__QuizD__6E01572D" FromRole="Student_QuizDone" ToRole="QuizDone" />
+        </EntityType>
+        <Association Name="FK__Student_Q__Stude__60A75C0F">
+          <End Type="QuestionBank_Demo4Model.Student" Role="Student" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.Student_QuizDone" Role="Student_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Student">
+              <PropertyRef Name="SID" />
+            </Principal>
+            <Dependent Role="Student_QuizDone">
+              <PropertyRef Name="StudentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="QuizDone">
+          <Key>
+            <PropertyRef Name="QuizDoneID" />
+          </Key>
+          <Property Name="QuizDoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Quiz_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CourseID" Type="Int32" Nullable="false" />
+          <Property Name="Questions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="NumOfQuestion" Type="Int32" />
+          <Property Name="TotalMark" Type="Double" />
+          <Property Name="MixQuestion" Type="Boolean" />
+          <Property Name="MixQuestionNumber" Type="Int32" />
+          <Property Name="Time" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="Course" Relationship="QuestionBank_Demo4Model.FK__QuizDone__Course__66603565" FromRole="QuizDone" ToRole="Course" />
+          <NavigationProperty Name="Quiz_QuizDone" Relationship="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizD__6A30C649" FromRole="QuizDone" ToRole="Quiz_QuizDone" />
+          <NavigationProperty Name="Student_Answer" Relationship="QuestionBank_Demo4Model.FK__Student_A__QuizD__70DDC3D8" FromRole="QuizDone" ToRole="Student_Answer" />
+          <NavigationProperty Name="Student_QuizDone" Relationship="QuestionBank_Demo4Model.FK__Student_Q__QuizD__6E01572D" FromRole="QuizDone" ToRole="Student_QuizDone" />
+        </EntityType>
+        <Association Name="FK__QuizDone__Course__66603565">
+          <End Type="QuestionBank_Demo4Model.Course" Role="Course" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.QuizDone" Role="QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="CID" />
+            </Principal>
+            <Dependent Role="QuizDone">
+              <PropertyRef Name="CourseID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Quiz_Quiz__QuizD__6A30C649">
+          <End Type="QuestionBank_Demo4Model.QuizDone" Role="QuizDone" Multiplicity="0..1" />
+          <End Type="QuestionBank_Demo4Model.Quiz_QuizDone" Role="Quiz_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Principal>
+            <Dependent Role="Quiz_QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student_A__QuizD__70DDC3D8">
+          <End Type="QuestionBank_Demo4Model.QuizDone" Role="QuizDone" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.Student_Answer" Role="Student_Answer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Principal>
+            <Dependent Role="Student_Answer">
+              <PropertyRef Name="QuizDoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Student_Q__QuizD__6E01572D">
+          <End Type="QuestionBank_Demo4Model.QuizDone" Role="QuizDone" Multiplicity="1" />
+          <End Type="QuestionBank_Demo4Model.Student_QuizDone" Role="Student_QuizDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Principal>
+            <Dependent Role="Student_QuizDone">
+              <PropertyRef Name="QuizDoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -481,18 +1033,6 @@
               <MappingFragment StoreEntitySet="Course">
                 <ScalarProperty Name="CID" ColumnName="CID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MatchQuestions">
-            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.MatchQuestion">
-              <MappingFragment StoreEntitySet="MatchQuestion">
-                <ScalarProperty Name="MID" ColumnName="MID" />
-                <ScalarProperty Name="ChapterId" ColumnName="ChapterId" />
-                <ScalarProperty Name="ColumnA" ColumnName="ColumnA" />
-                <ScalarProperty Name="ColumnB" ColumnName="ColumnB" />
-                <ScalarProperty Name="Solution" ColumnName="Solution" />
-                <ScalarProperty Name="Mark" ColumnName="Mark" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -528,23 +1068,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Quizs">
-            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.Quiz">
-              <MappingFragment StoreEntitySet="Quiz">
-                <ScalarProperty Name="QuizID" ColumnName="QuizID" />
-                <ScalarProperty Name="QuizName" ColumnName="QuizName" />
-                <ScalarProperty Name="CourseID" ColumnName="CourseID" />
-                <ScalarProperty Name="Questions" ColumnName="Questions" />
-                <ScalarProperty Name="NumOfQuestion" ColumnName="NumOfQuestion" />
-                <ScalarProperty Name="Mark" ColumnName="Mark" />
-                <ScalarProperty Name="MixQuestion" ColumnName="MixQuestion" />
-                <ScalarProperty Name="MixQuestionNumber" ColumnName="MixQuestionNumber" />
-                <ScalarProperty Name="StudentGuide" ColumnName="StudentGuide" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="QuestionAnswers">
             <EntityTypeMapping TypeName="QuestionBank_Demo4Model.QuestionAnswer">
               <MappingFragment StoreEntitySet="QuestionAnswer">
@@ -552,6 +1075,140 @@
                 <ScalarProperty Name="Text" ColumnName="Text" />
                 <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
                 <ScalarProperty Name="QAID" ColumnName="QAID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Passage_Done">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.Passage_Done">
+              <MappingFragment StoreEntitySet="Passage_Done">
+                <ScalarProperty Name="ChapterName" ColumnName="ChapterName" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="P_DoneID" ColumnName="P_DoneID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuestionDones">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.QuestionDone">
+              <MappingFragment StoreEntitySet="QuestionDone">
+                <ScalarProperty Name="ChapterName" ColumnName="ChapterName" />
+                <ScalarProperty Name="ImageData" ColumnName="ImageData" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="MixChoice" ColumnName="MixChoice" />
+                <ScalarProperty Name="Qtype" ColumnName="Qtype" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="PassageID" ColumnName="PassageID" />
+                <ScalarProperty Name="Q_DoneID" ColumnName="Q_DoneID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Students">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.Student">
+              <MappingFragment StoreEntitySet="Student">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="SID" ColumnName="SID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuestionAnswerDones">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.QuestionAnswerDone">
+              <MappingFragment StoreEntitySet="QuestionAnswerDone">
+                <ScalarProperty Name="IsCorrect" ColumnName="IsCorrect" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
+                <ScalarProperty Name="QA_DoneID" ColumnName="QA_DoneID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MatchQuestions">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.MatchQuestion">
+              <MappingFragment StoreEntitySet="MatchQuestion">
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Solution" ColumnName="Solution" />
+                <ScalarProperty Name="ColumnB" ColumnName="ColumnB" />
+                <ScalarProperty Name="ColumnA" ColumnName="ColumnA" />
+                <ScalarProperty Name="ChapterId" ColumnName="ChapterId" />
+                <ScalarProperty Name="MID" ColumnName="MID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MatchQuestionDones">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.MatchQuestionDone">
+              <MappingFragment StoreEntitySet="MatchQuestionDone">
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Solution" ColumnName="Solution" />
+                <ScalarProperty Name="ColumnB" ColumnName="ColumnB" />
+                <ScalarProperty Name="ColumnA" ColumnName="ColumnA" />
+                <ScalarProperty Name="ChapterName" ColumnName="ChapterName" />
+                <ScalarProperty Name="M_DoneID" ColumnName="M_DoneID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Quizs">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.Quiz">
+              <MappingFragment StoreEntitySet="Quiz">
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="StudentGuide" ColumnName="StudentGuide" />
+                <ScalarProperty Name="MixQuestionNumber" ColumnName="MixQuestionNumber" />
+                <ScalarProperty Name="MixQuestion" ColumnName="MixQuestion" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="NumOfQuestion" ColumnName="NumOfQuestion" />
+                <ScalarProperty Name="Questions" ColumnName="Questions" />
+                <ScalarProperty Name="CourseID" ColumnName="CourseID" />
+                <ScalarProperty Name="QuizName" ColumnName="QuizName" />
+                <ScalarProperty Name="QuizID" ColumnName="QuizID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Quiz_QuizDone">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.Quiz_QuizDone">
+              <MappingFragment StoreEntitySet="Quiz_QuizDone">
+                <ScalarProperty Name="QuizDoneID" ColumnName="QuizDoneID" />
+                <ScalarProperty Name="QuizID" ColumnName="QuizID" />
+                <ScalarProperty Name="Q_qDoneID" ColumnName="Q_qDoneID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Student_Answer">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.Student_Answer">
+              <MappingFragment StoreEntitySet="Student_Answer">
+                <ScalarProperty Name="IsCorrect" ColumnName="IsCorrect" />
+                <ScalarProperty Name="Answer" ColumnName="Answer" />
+                <ScalarProperty Name="Question" ColumnName="Question" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+                <ScalarProperty Name="QuizDoneID" ColumnName="QuizDoneID" />
+                <ScalarProperty Name="SAID" ColumnName="SAID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Student_QuizDone">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.Student_QuizDone">
+              <MappingFragment StoreEntitySet="Student_QuizDone">
+                <ScalarProperty Name="TotalMark" ColumnName="TotalMark" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ReceivedQuestions" ColumnName="ReceivedQuestions" />
+                <ScalarProperty Name="QuizDoneID" ColumnName="QuizDoneID" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuizDones">
+            <EntityTypeMapping TypeName="QuestionBank_Demo4Model.QuizDone">
+              <MappingFragment StoreEntitySet="QuizDone">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="MixQuestionNumber" ColumnName="MixQuestionNumber" />
+                <ScalarProperty Name="MixQuestion" ColumnName="MixQuestion" />
+                <ScalarProperty Name="TotalMark" ColumnName="TotalMark" />
+                <ScalarProperty Name="NumOfQuestion" ColumnName="NumOfQuestion" />
+                <ScalarProperty Name="Questions" ColumnName="Questions" />
+                <ScalarProperty Name="CourseID" ColumnName="CourseID" />
+                <ScalarProperty Name="Quiz_Name" ColumnName="Quiz_Name" />
+                <ScalarProperty Name="QuizDoneID" ColumnName="QuizDoneID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -17,6 +17,7 @@
             <div style="display: flex; margin-left: auto;">
                 @using (Html.BeginForm("CreateNewQuiz", "Quiz", FormMethod.Get))
                 {
+                    <input type="hidden" name="tempName" value="">
                     <input type="hidden" name="cid" value="@ViewBag.Course.CID" />
                     <input type="hidden" name="questions" />
                     <button type="submit" class="btn-indigo mg_btn">

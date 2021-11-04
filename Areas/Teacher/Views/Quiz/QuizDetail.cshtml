@@ -204,7 +204,7 @@
                                 <td><a href="#" type="button">@question.Text </a></td>
                                 <td>@question.QuestionType.Name</td>
                                 <td>@question.Mark</td>
-                                <td><a href="~/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.QuestionType.QTypeID" class="fas fa-trash-alt"></a></td>
+                                <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.QuestionType.QTypeID" class="fas fa-trash-alt"></a></td>
                             </tr>
                         }
                     }
@@ -218,7 +218,7 @@
                                 <td><a href="#" type="button">@match.ColumnA  @match.ColumnB </a></td>
                                 <td>Matching</td>
                                 <td>@match.Mark</td>
-                                <td><a href="~/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@match.MID&&qtype=5" class="fas fa-trash-alt"></a></td>
+                                <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@match.MID&&qtype=5" class="fas fa-trash-alt"></a></td>
                             </tr>
                         }
                     }
@@ -230,12 +230,9 @@
             <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
                 Add Question
             </button>
-
-
         </div>
-        <div style="display: flex; margin-top:15px">
-            <a href="~/Quiz/ViewQuizByCourse?cid=@ViewBag.Course.CID" style="background-color: aquamarine; margin-left: auto; margin-right: 10px;" class="btn ">Save</a>
-            <a style="background-color: aquamarine; width: 177px;" class="btn ">Start</a>
+        <div style="display: flex; margin-top: 15px; margin-right:auto">
+            <a href="~/Teacher/Quiz/QuizStarted?qzid=@ViewBag.Quiz.QuizID" style="background-color: aquamarine; margin-left: auto; width: 177px;" class="btn ">Start Quiz</a>
         </div>
     }
 
@@ -245,7 +242,6 @@
 <script type="text/javascript">
 
     function reloadModalAddQuestion() {
-        console.log("jhhh");
         var chid = document.getElementById("ddlChapter").value;
         var cid = document.getElementById("cidAddModal").value;
         var qzid = document.getElementById("qzidAddModal").value;

@@ -19,6 +19,7 @@ namespace InClassVoting.Models
         {
             this.Chapters = new HashSet<Chapter>();
             this.Quizs = new HashSet<Quiz>();
+            this.QuizDones = new HashSet<QuizDone>();
         }
     
         public int CID { get; set; }
@@ -28,5 +29,7 @@ namespace InClassVoting.Models
         public virtual ICollection<Chapter> Chapters { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Quiz> Quizs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<QuizDone> QuizDones { get; set; }
     }
 }

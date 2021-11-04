@@ -111,79 +111,40 @@
 </div>
 <!-- End Modal -->
 
-@if (Model.Count() == 0 && ViewBag.MatchQuestion == null)
-{
-    <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-        <!-- start navbar -->
-        <div style="  height: 90px;">
-            <div style="  height: 90px;">
-                <div style="display: flex; height: 40px;">
-                    <h1 class="h5 mg-top">@ViewBag.CourseName -> @ViewBag.Chapter.Name</h1>
-                    <!-- Example single danger button -->
-                    &nbsp;&nbsp;&nbsp;
-                    <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
-                        <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <!-- start navbar -->
+    <div style="  height: 90px;">
+        <div style="display: flex; height: 40px;">
+            <h1 class="h5 mg-top">@ViewBag.CourseName -> @ViewBag.Chapter.Name</h1>
+            <!-- Example single danger button -->
+            &nbsp;&nbsp;&nbsp;
+            <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
+                <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
 
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editChapterModal">Rename</a></li>
-                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteChapterModal">Delete</a></li>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editChapterModal">Rename</a></li>
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteChapterModal">Delete</a></li>
 
-                        </ul>
-                    </div>
-                </div>
+                </ul>
             </div>
+        </div>
+    </div>
 
-            <div style="display:flex">
-                <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    New Question
-                </button>
 
-            </div>
+    @if (Model.Count() == 0 && ViewBag.MatchQuestion == null)
+    {
+
+        <div style="display:flex">
+            <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                New Question
+            </button>
+
         </div>
         <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Chapter</p>
-        @*<p style="text-align: center; margin-top: 10%; font-size: larger;">There is no Question...</p>*@
-
-    </div>
-}
-else
-{
-
-    <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-        <!-- start navbar -->
-
-        <div style="  height: 90px;">
-            <div style="display: flex; height: 40px;">
-                <h1 class="h5 mg-top">@ViewBag.CourseName -> @ViewBag.Chapter.Name</h1>
-                <!-- Example single danger button -->
-                &nbsp;&nbsp;&nbsp;
-                <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
-                    <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
-
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
-                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editChapterModal">Rename</a></li>
-                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteChapterModal">Delete</a></li>
-
-                    </ul>
-                </div>
-                @*<button type="button" data-bs-toggle="modal" data-bs-target="#editChapterModal"><i class="fas fa-pencil-alt "></i></button>*@
-                <div style="display: flex; margin-left: auto;">
-                    @using (Html.BeginForm("CreateQuiz", "Quiz", FormMethod.Get))
-                    {
-                        <input type="hidden" name="chapterID" value="@ViewBag.Chapter.ChID" />
-                        <input type="hidden" name="questionList" id="questionIdList" />
-                        <input type="hidden" name="matchingList" id="matchIdList" />
-                        <button type="submit" style="background-color:aquamarine" margin-right:6px" class="btn" onclick="getCheckedQuestion"> New Quiz </button>
-                    }
-
-                </div>
-            </div>
-        </div>
-        <!-- end navbar -->
-        <!-- General Report -->
-
-
-
-        @using (Html.BeginForm("QuestionBankSearch", "Search", FormMethod.Get))
+    }
+    else
+    {
+        using (Html.BeginForm("QuestionBankSearch", "Search", FormMethod.Get))
         {
             <div class="block-search-dropdown">
                 <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
@@ -207,8 +168,6 @@ else
                 </div>
             </div>
         }
-
-
         <div class="tb-mg-top">
             @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
             {
@@ -278,7 +237,6 @@ else
             }
 
         </div>
-    </div>
-
-}
+    }
+</div>
 <!-- End General Report -->
