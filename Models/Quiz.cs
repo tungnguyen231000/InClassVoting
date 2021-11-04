@@ -14,6 +14,12 @@ namespace InClassVoting.Models
     
     public partial class Quiz
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Quiz()
+        {
+            this.Quiz_QuizDone = new HashSet<Quiz_QuizDone>();
+        }
+    
         public int QuizID { get; set; }
         public string QuizName { get; set; }
         public int CourseID { get; set; }
@@ -27,5 +33,7 @@ namespace InClassVoting.Models
         public Nullable<int> Time { get; set; }
     
         public virtual Course Course { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Quiz_QuizDone> Quiz_QuizDone { get; set; }
     }
 }

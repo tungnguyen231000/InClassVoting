@@ -12,26 +12,22 @@ namespace InClassVoting.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Chapter
+    public partial class Student
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Chapter()
+        public Student()
         {
-            this.Passages = new HashSet<Passage>();
-            this.Questions = new HashSet<Question>();
-            this.MatchQuestions = new HashSet<MatchQuestion>();
+            this.Student_Answer = new HashSet<Student_Answer>();
+            this.Student_QuizDone = new HashSet<Student_QuizDone>();
         }
     
-        public int ChID { get; set; }
-        public int CourseID { get; set; }
+        public int SID { get; set; }
+        public string Email { get; set; }
         public string Name { get; set; }
     
-        public virtual Course Course { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Passage> Passages { get; set; }
+        public virtual ICollection<Student_Answer> Student_Answer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Question> Questions { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<MatchQuestion> MatchQuestions { get; set; }
+        public virtual ICollection<Student_QuizDone> Student_QuizDone { get; set; }
     }
 }

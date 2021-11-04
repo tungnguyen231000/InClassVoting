@@ -9,7 +9,8 @@
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     <div class="grid xl:grid-cols-1 xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full">
         <div class="topcontent xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
-            <h1 class="h4 text-center">@ViewBag.Quiz.QuizName</h1>
+
+            <h1 class="h4 text-center">@ViewBag.Quiz.Quiz_Name</h1>
         </div>
         <!--Time CountDown-->
         <div class="topcontent xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6">
@@ -92,77 +93,92 @@
         <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 bg-gray border border-black-400">
 
             <div>
-                @if (ViewBag.QuizMultipleChoiceQuestions != null)
+                @using (Html.BeginForm("SubmitQuiz", "Quiz", FormMethod.Post))
                 {
-
-                    int countQuestion = 0;
-
-                    foreach (var question in ViewBag.QuizMultipleChoiceQuestions)
+                    if (ViewBag.QuizMultipleChoiceQuestions != null)
                     {
-                        countQuestion++;
-                        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
+                        <p>  Student ID: </p>
+                        <input type="text" style="width:95%" class="w-full pl-3" name="studentID" />
+                        <input type="hidden" style="width:95%" class="w-full pl-3" name="qDoneID" value="@ViewBag.Quiz.QuizDoneID" />
+                        int countQuestion = 0;
 
-                            <span>
-                                Question @countQuestion:  <span />
-                        </div>
-                        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
-                            <div>
-                                <textarea class="p-2 w-full" name="create-question-question" rows="4" id="question" placeholder="Question ..." readonly> @question.Text </textarea>
+                        foreach (var question in ViewBag.QuizMultipleChoiceQuestions)
+                        {
+                            countQuestion++;
+                            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
+
+                                <span> Question @countQuestion:  <span />
+                            </div>
+                            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
+                                <div>
+                                    <textarea class="p-2 w-full" name="create-question-question" rows="4" id="question" placeholder="Question ..." readonly> @question.Text </textarea>
+                                </div>
+
                             </div>
 
-                        </div>
-
-                        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
-                            <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 20px">
-                                @{
-                                    int countAnswer = 0;
-                                }
-                                @foreach (var answers in question.QuestionAnswers)
-                                {
-                                    countAnswer++;
-                                    <tr>
-                                        <td class="td-option">
-                                            <input type="checkbox" id="cb-option1" name="cb-option1" value="1">
-                                            <input type="hidden" id="cb-option1" name="cb-option1" value="0">
-                                        </td>
-                                        <td>
-                                            @if (countAnswer == 1)
-                                            {<label>A.</label>}
-                                            else if (countAnswer == 2)
-                                            {<label>B.</label>}
-                                            else if (countAnswer == 3)
-                                            {<label>C.</label>}
-                                            else if (countAnswer == 4)
-                                            {<label>D.</label>}
-                                            else if (countAnswer == 5)
-                                            {<label>E.</label>}
-                                            else if (countAnswer == 6)
-                                            {<label>F.</label>}
-                                            &nbsp;
-                                            <input type="text" style="width:95%" class="w-full pl-3" name="option1" placeholder="Option 1" value="@answers.Text" readonly>
-                                        </td>
-                                    </tr>
-                                }
+                            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
 
 
-                            </table>
-                        </div>
-                        <hr />
+                                <input type="hidden" name="qid" value="@question.Q_DoneID" />
+                                <input type="hidden" name="qtype" value="1" />
+                                <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 20px">
+                                    @{
+                                        int countAnswer = 0;
+                                    }
+                                    @foreach (var answers in question.QuestionAnswerDones)
+                                    {
+                                        countAnswer++;
+                                        <tr>
+                                            <td class="td-option">
+                                                <input type="hidden" name="numberOfAnswer" value="@countAnswer">
+                                                <input type="checkbox" id="cbOption" name="cbOption" value="@answers.QA_DoneID">
+                                                
+                                            </td>
+                                            <td>
+                                                @if (countAnswer == 1)
+                                                {<label>A.</label>}
+                                                else if (countAnswer == 2)
+                                                {<label>B.</label>}
+                                                else if (countAnswer == 3)
+                                                {<label>C.</label>}
+                                                else if (countAnswer == 4)
+                                                {<label>D.</label>}
+                                                else if (countAnswer == 5)
+                                                {<label>E.</label>}
+                                                else if (countAnswer == 6)
+                                                {<label>F.</label>}
+                                                &nbsp;
+                                                <input type="hidden" style="width:95%" class="w-full pl-3" name="optionID" value="@answers.QA_DoneID" readonly>
+                                                <input type="text" style="width:95%" class="w-full pl-3" name="option" value="@answers.Text" readonly>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+
+
+                            </div>
+                            <hr />
+                        }
                     }
+
+                    <div class=" inline-block mt-4">
+                        <input type="submit" class="float-right btn btn-bs-primary" value="Finish Quiz" />
+                    </div>
                 }
-
-
             </div>
             <!--End Form Test-->
+
         </div>
 
 
-        <div class=" inline-block mt-4">
-            <input type="button" class="float-right btn btn-bs-primary" name="name" value="Finish Quiz" />
-        </div>
+
 
 
 
     </div>
 
 </div>
+<script type="text/javascript">
+  
+   
+</script>

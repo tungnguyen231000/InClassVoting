@@ -1,0 +1,74 @@
+﻿@model IEnumerable<InClassVoting.Models.QuizDone>
+
+@{
+    ViewBag.Title = "ViewReportListByCourse";
+    Layout = "~/Areas/Teacher/Views/Shared/_ReportLayout.cshtml";
+}
+
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <!-- start navbar -->
+
+    <div style="  height: 90px;">
+        <div style="display: flex; height: 40px;">
+            <h1 class="h5 mg-top">@ViewBag.Course.Name</h1>
+            <!-- Example single danger button -->
+        </div>
+    </div>
+    <!-- end navbar -->
+    <!-- General Report -->
+    @if (Model.Count() == 0)
+    {
+        <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Quiz In This Course</p>
+    }
+    else
+    {
+        <div class="block-search-dropdown">
+            <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+
+                <div class="mr-2 transition duration-500 px-3 border-b">
+                    <input class="search-box flex-1" type="text" placeholder="search">
+                    <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="tb-mg-top">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">No</th>
+                        <th style="width: 30%;" scope="col">Quiz Name</th>
+                        <th scope="col">Total Mark</th>
+                        <th scope="col">Done Date</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int no = 0;
+                    }
+                    @foreach (var quiz in Model)
+                    {
+                        no++;
+                        <tr>
+                            <th scope="row">@no</th>
+                            <td><a href="~/Teacher/Report/ReportDetail?quizprId=@quiz.QuizDoneID" type="button">@quiz.Quiz_Name ( @quiz.NumOfQuestion Questions)</a></td>
+                            <td>@quiz.TotalMark</td>
+                            <td>@quiz.CreatedDate</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+
+    }
+</div>
+
+    @*<p style="text-align: center; margin-top: 10%; font-size: larger;">There is no Question...</p>*@
+
+

@@ -12,16 +12,13 @@ namespace InClassVoting.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class MatchQuestion
+    public partial class QuestionAnswerDone
     {
-        public int MID { get; set; }
-        public int ChapterId { get; set; }
-        public string ColumnA { get; set; }
-        public string ColumnB { get; set; }
-        public string Solution { get; set; }
-        public Nullable<int> Time { get; set; }
-        public Nullable<double> Mark { get; set; }
+        public int QA_DoneID { get; set; }
+        public int QuestionID { get; set; }
+        public string Text { get; set; }
+        public Nullable<bool> IsCorrect { get; set; }
     
-        public virtual Chapter Chapter { get; set; }
+        public virtual QuestionDone QuestionDone { get; set; }
     }
 }

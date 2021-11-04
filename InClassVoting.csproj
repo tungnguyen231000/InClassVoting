@@ -148,6 +148,7 @@
     <Compile Include="Areas\Teacher\Controllers\HomeController.cs" />
     <Compile Include="Areas\Teacher\Controllers\QuestionBankController\QuestionController.cs" />
     <Compile Include="Areas\Teacher\Controllers\QuizLibraryController\QuizController.cs" />
+    <Compile Include="Areas\Teacher\Controllers\ReportController\ReportController.cs" />
     <Compile Include="Areas\Teacher\Controllers\SearchController\SearchController.cs" />
     <Compile Include="Areas\Teacher\teacherAreaRegistration.cs" />
     <Compile Include="Controllers\HomeTotalController.cs" />
@@ -178,7 +179,13 @@
     <Compile Include="Models\MatchQuestion.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\MatchQuestionDone.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Passage.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Passage_Done.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Question.cs">
@@ -187,10 +194,31 @@
     <Compile Include="Models\QuestionAnswer.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\QuestionAnswerDone.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\QuestionDone.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\QuestionType.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Quiz.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\QuizDone.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Quiz_QuizDone.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Student.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Student_Answer.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Student_QuizDone.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -277,6 +305,13 @@
     <Content Include="Areas\Student\Views\Home\Home.cshtml" />
     <Content Include="Areas\Student\Views\Quiz\ShowAssignedQuiz.cshtml" />
     <Content Include="Areas\Student\Views\Quiz\DoQuizPaperTest.cshtml" />
+    <Content Include="Areas\Teacher\Views\Quiz\QuizStarted.cshtml" />
+    <Content Include="Areas\Student\Views\Quiz\QuizNotStartYet.cshtml" />
+    <Content Include="Areas\Teacher\Views\Course\_ShowCourseListForReport.cshtml" />
+    <Content Include="Areas\Teacher\Views\Shared\_ReportLayout.cshtml" />
+    <Content Include="Areas\Teacher\Views\Report\ReportHome.cshtml" />
+    <Content Include="Areas\Teacher\Views\Report\ViewReportListByCourse.cshtml" />
+    <Content Include="Areas\Teacher\Views\Report\ReportDetail.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\dragdropimage.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
@@ -311,6 +346,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Student\Data\" />
+    <Folder Include="Areas\Student\Views\Default\" />
     <Folder Include="Areas\Teacher\Data\" />
     <Folder Include="Areas\Teacher\Views\Chapter\" />
     <Folder Include="Views\Default\" />

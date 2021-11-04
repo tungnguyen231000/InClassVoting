@@ -28,6 +28,16 @@ namespace InClassVoting.Areas.teacher.Controllers
             return PartialView("_ShowCourseListForQuizLibrary");
        
         }
+
+        public PartialViewResult ShowCourseListForReport()
+        {
+            ViewBag.CourseList = db.Courses.ToList();
+            ViewBag.ChapterList = db.Chapters.ToList();
+            ViewBag.CourseCount = db.Courses.Count();
+            return PartialView("_ShowCourseListForReport");
+
+        }
+
         //Create New Course
         [HttpPost]
         public ActionResult CreateCourse(string newcourseName, string chid)
