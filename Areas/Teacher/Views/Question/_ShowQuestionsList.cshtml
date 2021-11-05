@@ -1,0 +1,60 @@
+﻿@*@model IEnumerable<InClassVoting.Models.Question>*@
+@model dynamic
+@if (ViewBag.CountQuest == 0)
+{
+<p style="text-align: center; margin-top: 10%; font-size: larger;">0 Question Found...</p> }
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+
+            <th scope="col">No</th>
+            <td scope="col"></td>
+            <th style="width: 47%;" scope="col">Question</th>
+            <th scope="col">Type</th>
+            <th scope="col">Mark</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{ int countQuestion = 0;}
+        @if (Model.Questions != null)
+        {
+            foreach (var question in Model.Questions)
+            {
+                countQuestion++;
+<tr>
+    <th scope="row">@countQuestion</th>
+    <td><input type="checkbox" name="questionId" class="form-check-input" id="cbQuestID" value="@question.QID"></td>
+    <td><a href="~/Teacher/Question/EditMultipleChoiceQuestion?qid=@question.QID" type="button">@question.Text</a></td>
+    <td>@question.QuestionType.Name</td>
+    <td>@question.Mark</td>
+</tr>
+}
+}
+        @if (Model.Matchings != null)
+        {
+            foreach (var match in Model.Matchings)
+            {
+                countQuestion++;
+<tr>
+    <th scope="row">@countQuestion</th>
+    <td><input type="checkbox" name="matchQuestionId" class="form-check-input" id="cbQuestID" value="@match.MID"></td>
+    <td><a href="~Teacher/Question/Edit?qid=@match.MID&&qtype=5" type="button">@match.ColumnA  @match.ColumnB</a></td>
+    <td>Matching</td>
+    <td>@match.Mark</td>
+</tr>
+}
+}
+
+    </tbody>
+</table>
+                <div style="display:flex">
+                    <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        New Question
+                    </button>
+
+                    <button type="submit" style="margin-left:6px" class="btn-indigo">Delete Question</button>
+                </div>}
+

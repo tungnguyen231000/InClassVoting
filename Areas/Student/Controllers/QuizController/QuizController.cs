@@ -53,7 +53,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
                     foreach (KeyValuePair<int, string> keyValuePair in questionSet)
                     {
-                        if (keyValuePair.Value.Equals("MultipleChoice"))
+                        if (keyValuePair.Value.Equals("Multiple Choice"))
                         {
                             var quest = db.QuestionDones.Find(keyValuePair.Key);
                             mulChoiceList.Add(quest);

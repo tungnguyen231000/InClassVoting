@@ -312,6 +312,7 @@
     <Content Include="Areas\Teacher\Views\Report\ReportHome.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ViewReportListByCourse.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportDetail.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\_ShowQuestionsList.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\dragdropimage.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />

@@ -507,7 +507,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         string[] questAndType = quest.Split(new char[] { '-' });
                         int qID = int.Parse(questAndType[0]);
-                        questionSet.Add(qID, questAndType[1]);
+                        if (questAndType[1].Contains("+"))
+                        {
+                            string[] qTypeSplit = questAndType[1].Split(new char[] { '+' });
+                            string qtypeFixed = qTypeSplit[0] + " " + qTypeSplit[1];
+                            questionSet.Add(qID, questAndType[1]);
+                        }
+                        else
+                        {
+                            questionSet.Add(qID, questAndType[1]);
+                        }
+
                     }
 
                 }
@@ -538,6 +548,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             return View(dyQuestions);
         }
 
+        //Create new quiz
         [HttpPost]
         public ActionResult CreateNewQuiz(string cid, string quizName, string questions, string cbMixQuestions, string rdQuestionNum)
         {
@@ -552,9 +563,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             quiz.CourseID = courseID;
             Debug.WriteLine(cid + "==-=-=-=" + quiz.CourseID);
             int mixChoice = int.Parse(cbMixQuestions);
-
-
-
 
             if (mixChoice == 1)
             {
@@ -619,7 +627,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             int latestQuizID = int.Parse(db.Quizs.OrderByDescending(q => q.QuizID).Select(q => q.QuizID).First().ToString());
             return Redirect("~/Teacher/Quiz/QuizDetail?qzid=" + latestQuizID);
         }
-        //Show Question List For New Quiz
+        //Show question list for new quiz
         public PartialViewResult ShowQuestionForNewQuiz(string chid, string cid, string qtype, string searchText, string questions)
         {
             /*Debug.WriteLine("0000099999" + questions);*/
@@ -781,7 +789,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             return PartialView("_ShowQuestionForNewQuiz");
         }
 
-        //Get Temporary Question List
+        //Add question to a temporary list
         [HttpPost]
         public ActionResult AddQuestionToTemporaryQuiz(FormCollection collection, string cid, string questSet, string tempName)
         {
@@ -789,9 +797,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             var questions = collection["qID"];
             var matchings = collection["mID"];
             /*Debug.WriteLine("ok========" + questSet);*/
+
+            //if temparory question list have question inside
             if (!questSet.Equals(""))
             {
-                /*Debug.WriteLine("yayayayya");*/
                 if (questions != null)
                 {
                     string[] ids = collection["qID"].Split(new char[] { ',' });
@@ -800,9 +809,18 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         int questID = int.Parse(id);
                         var q = db.Questions.Find(questID);
-                        questSet = questSet + ";" + q.QID.ToString() + "-" + q.QuestionType.Name;
-                        /* Debug.WriteLine("========2==");
-                         Debug.WriteLine(questSet);*/
+                        if (q.QuestionType.Name.Contains(" "))
+                        {
+                            string[] qtypeSplit = q.QuestionType.Name.Split(new char[] { ' ' });
+                            questSet = questSet + ";" + q.QID.ToString() + "-" + qtypeSplit[0] + "+" + qtypeSplit[1];
+                        }
+                        else
+                        {
+                            questSet = questSet + ";" + q.QID.ToString() + "-" + q.QuestionType.Name;
+                        }
+
+                        /*Debug.WriteLine("========2==");
+                        Debug.WriteLine(questSet);*/
 
                     }
                 }
@@ -816,16 +834,16 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         int matchID = int.Parse(id);
                         var m = db.MatchQuestions.Find(matchID);
                         questSet = questSet + ";" + m.MID.ToString() + "-" + "Matching";
-                        /* Debug.WriteLine("====3======");
-                         Debug.WriteLine(questSet);
-                         Debug.WriteLine(questSet);
- */
+                        /*Debug.WriteLine("====3======");
+                        Debug.WriteLine(questSet);
+                        Debug.WriteLine(questSet);
+*/
                     }
                 }
             }
             else
             {
-                /*    Debug.WriteLine("nahhhh");*/
+                Debug.WriteLine("nahhhh");
                 if (questions != null)
                 {
                     string[] ids = collection["qID"].Split(new char[] { ',' });
@@ -834,9 +852,18 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         int questID = int.Parse(id);
                         var q = db.Questions.Find(questID);
-                        questSet = questSet + q.QID.ToString() + "-" + q.QuestionType.Name + ";";
-                        /* Debug.WriteLine("==========4");
-                         Debug.WriteLine(questSet);*/
+                        if (q.QuestionType.Name.Contains(" "))
+                        {
+                            string[] qtypeSplit = q.QuestionType.Name.Split(new char[] { ' ' });
+                            questSet = questSet + q.QID.ToString() + "-" + qtypeSplit[0] + "+" + qtypeSplit[1] + ";";
+                        }
+                        else
+                        {
+                            questSet = questSet + q.QID.ToString() + "-" + q.QuestionType.Name + ";";
+                        }
+
+                        /*Debug.WriteLine("==========4");
+                        Debug.WriteLine(questSet);*/
 
                     }
 
@@ -851,14 +878,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         int matchID = int.Parse(id);
                         var m = db.MatchQuestions.Find(matchID);
                         questSet = questSet + m.MID.ToString() + "-" + "Matching" + ";";
-                        /*   Debug.WriteLine("==========5");
-                           Debug.WriteLine(questSet);
-   */
+                        /*Debug.WriteLine("==========5");
+                        Debug.WriteLine(questSet);*/
+
                     }
                 }
-                Debug.WriteLine(questSet);
                 questSet = questSet.Substring(0, questSet.Length - 1);
-                Debug.WriteLine(questSet);
+                /*Debug.WriteLine(questSet);*/
             }
 
 
@@ -876,6 +902,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
         }
 
+        //Delete question inside temporary list
         public ActionResult DeleteQuestionsInsideTemporaryQuiz(string qid, string qtype, string questSet, string cid, string tempName)
         {
             /* Debug.WriteLine(questSet+"000000000000");*/
@@ -905,6 +932,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
         }
 
+        // teacher click on start quiz button
         public ActionResult QuizStarted(string qzid)
         {
             int quizID = int.Parse(qzid);
@@ -1020,7 +1048,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 saveQuiz.NumOfQuestion = qSaveNumOfQuest;
                 saveQuiz.TotalMark = qSaveMark;
                 saveQuiz.Time = qSaveTime;
-                saveQuiz.Questions = qStringForQuizSave.Substring(0,qStringForQuizSave.Length-1) ;
+                saveQuiz.Questions = qStringForQuizSave.Substring(0, qStringForQuizSave.Length - 1);
                 saveQuiz.MixQuestion = quiz.MixQuestion;
                 saveQuiz.MixQuestionNumber = quiz.MixQuestionNumber;
                 saveQuiz.CourseID = quiz.Course.CID;
@@ -1048,6 +1076,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
         }
 
+        // teacher click on finish quiz button
         public ActionResult FinishQuiz(string qzid)
         {
 
