@@ -1,7 +1,9 @@
 ﻿using InClassVoting.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -21,21 +23,65 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         {
             int chapID = int.Parse(chid);
             var chapter = db.Chapters.Find(chapID);
-            var questionList = db.Questions.Where(q => q.ChapterID == chapID).ToList();
-            var matchingQuest = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
-
-            List<Question> questions = questionList.OrderByDescending(q => q.QID).ToList();
             ViewBag.CourseName = chapter.Course.Name;
             ViewBag.Chapter = chapter;
             ViewBag.QuestionType = db.QuestionTypes.ToList();
-            ViewBag.MatchQuestion = null;
+            ViewBag.CountQuest = db.Questions.Where(q => q.ChapterID == chapID).Count() + db.MatchQuestions.Where(m => m.ChapterId == chapID).Count();
+            return View();
+        }
 
-            if (matchingQuest.Count() != 0)
+        public ActionResult ShowQuestionsList(string chid, string qtype, string searchText)
+        {
+            int chapID = int.Parse(chid);
+
+            var questions = db.Questions.Where(q => q.ChapterID == chapID).ToList();
+            var matchings = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
+            List<Question> qList = new List<Question>();
+            List<MatchQuestion> mList = new List<MatchQuestion>();
+
+            if (qtype != null)
             {
-                ViewBag.MatchQuestion = matchingQuest;
+                int qTypeID = int.Parse(qtype);
+                if (qTypeID == -1)
+                {
+                    mList = matchings;
+                    qList = questions;
+                }
+                else
+                {
+                    if (qTypeID == 5)
+                    {
+                        mList = matchings;
+                    }
+                    else
+                    {
+                        qList = questions.Where(q => q.Qtype == qTypeID).ToList();
+                    }
+
+                }
+
             }
 
-            return View(questions);
+            if (searchText != null && !searchText.Equals(""))
+            {
+                if (mList != null)
+                {
+                    mList = mList.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
+                                    m.ColumnB.ToLower().Contains(searchText.ToLower().Trim())).ToList();
+                }
+                if (qList != null)
+                {
+                    qList = qList.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim())).ToList();
+                }
+
+            }
+
+            dynamic dyQuestions = new ExpandoObject();
+            dyQuestions.Questions = qList;
+            dyQuestions.Matchings = mList;
+            ViewBag.CountQuest = qList.Count() + mList.Count();
+
+            return PartialView("_ShowQuestionsList", dyQuestions);
         }
 
         public ActionResult DeleteQuestion(string chapterId, FormCollection collection, string searchUrl)
@@ -43,7 +89,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int chapID = int.Parse(chapterId);
             var questions = collection["questionId"];
             var matchQuestions = collection["matchQuestionId"];
-
             //check if question id and matching question id list is null
             if (questions == null && matchQuestions == null)
             {
@@ -65,10 +110,42 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                         {
                             db.QuestionAnswers.Remove(qa);
                         }
+
                         var question = db.Questions.Find(qid);
+
+                        //delete question in a quiz
+                        string qIdAndType = qid + "-" + question.QuestionType.Name;
+                        var quizContainQuests = db.Quizs.Where(qz => qz.Questions.Contains(qIdAndType));
+                        if (quizContainQuests != null)
+                        {
+                            foreach (Quiz qz in quizContainQuests)
+                            {
+                                string newSet = "";
+                                string[] questSet = qz.Questions.Split(new char[] { ';' });
+                                foreach(string set in questSet)
+                                {
+                                    if (!set.Equals(qIdAndType))
+                                    {
+                                        newSet =newSet+ set + ";";
+                                    }
+                                }
+
+                                qz.Time = qz.Time - question.Time;
+                                qz.Mark = qz.Mark - question.Mark;
+                                qz.NumOfQuestion = qz.NumOfQuestion - 1;
+                                if (newSet != "") {
+                                    qz.Questions = newSet.Substring(0, newSet.Length - 1);
+                                }
+                                else
+                                {
+                                    qz.Questions = null;
+                                }
+                                db.Entry(qz).State = EntityState.Modified;
+                            }
+                        }
+                        //delete question
                         db.Questions.Remove(question);
                         db.SaveChanges();
-
                     }
                 }
 
@@ -81,9 +158,39 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                         int mid = int.Parse(id);
 
                         var matchQuest = db.MatchQuestions.Find(mid);
+                        
+                        //delete match question inside quiz
+                        string qIdAndType = mid + "-" + "Matching";
+                        var quizContainQuests = db.Quizs.Where(qz => qz.Questions.Contains(qIdAndType));
+                        if (quizContainQuests != null)
+                        {
+                            foreach (Quiz qz in quizContainQuests)
+                            {
+                                string newSet = "";
+                                string[] questSet = qz.Questions.Split(new char[] { ';' });
+                                foreach (string set in questSet)
+                                {
+                                    if (!set.Equals(qIdAndType))
+                                    {
+                                        newSet = newSet + set + ";";
+                                    }
+                                }
+                                qz.Time = qz.Time - matchQuest.Time;
+                                qz.Mark = qz.Mark - matchQuest.Mark;
+                                qz.NumOfQuestion = qz.NumOfQuestion - 1;
+                                if (newSet != "")
+                                {
+                                    qz.Questions = newSet.Substring(0, newSet.Length - 1);
+                                }
+                                else
+                                {
+                                    qz.Questions = null;
+                                }
+                                db.Entry(qz).State = EntityState.Modified;
+                            }
+                        }
                         db.MatchQuestions.Remove(matchQuest);
                         db.SaveChanges();
-
                     }
                 }
 
