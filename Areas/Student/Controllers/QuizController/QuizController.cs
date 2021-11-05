@@ -53,7 +53,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
                     foreach (KeyValuePair<int, string> keyValuePair in questionSet)
                     {
-                        if (keyValuePair.Value.Equals("MultipleChoice"))
+                        if (keyValuePair.Value.Equals("Multiple Choice"))
                         {
                             var quest = db.QuestionDones.Find(keyValuePair.Key);
                             mulChoiceList.Add(quest);
@@ -94,23 +94,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             string[] cbAnswer = form["cbOption"].Split(new char[] { ',' });
             string[] questionList = form["qid"].Split(new char[] { ','});
             Debug.WriteLine("////"+ check1 + "//" + studentID + "//=" + check2 + "//?");
-            /* Dictionary<int, int> optionChoice = new Dictionary<int, int>();*/
-            //==================================================
-         /*   foreach (string st in cbAnswer)
-            {
-                Debug.WriteLine("cbbvlue:" + st);
-            }
-            foreach (string st in answer)
-            {
-                Debug.WriteLine("answer:" + st);
-            }*/
-
-            //=============================
-            /*for (int i = 0; i < answer.Length; i++)
-            {
-                Debug.WriteLine(cbAnswer[i].ToString() + "-=-=-=-=" + cbAnswer.Length + "///" + answer.Length);
-                optionChoice.Add(int.Parse(answer[i]), int.Parse(cbAnswer[i]));
-            }*/
+           
             foreach (var q in questionList)
             {
                 var mulQuest = db.QuestionDones.Find(int.Parse(q));
@@ -150,35 +134,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 }
                 db.Student_Answer.Add(studentChoice);
                 qListStr = qListStr + q + "-MultipleChoice;";
-                /*foreach(KeyValuePair<int,int> keyValue in optionChoice)
-                {
-                    Debug.WriteLine(keyValue.Value);
-                    Student_Answer studentChoice = new Student_Answer();
-                    if (keyValue.Value == 1)
-                    {
-                        var qAnswer = db.QuestionAnswerDones.Find(keyValue.Key);
-                        studentChoice.QuizDoneID = qzDoneID;
-                        studentChoice.StudentID = sID;
-                        studentChoice.Question = q + "-MultipleChoice";
-                        studentChoice.Answer = qAnswer.Text;
-                        
-                        if (qAnswer.IsCorrect == true)
-                        {
-                            studentChoice.IsCorrect = true;
-                            totalMark = totalMark + mulQuest.Mark;
-                        }
-                        else
-                        {
-                            studentChoice.IsCorrect = false;
-                        }
-
-                        Debug.WriteLine(q + "-=-=-=-=" + keyValue.Value + "///" );
-                        db.Student_Answer.Add(studentChoice);
-                    }
-                    
-                    db.SaveChanges();
-                     db.Student_Answer.Add(studentChoice);
-                }*/
+              
             }
             
             Student_QuizDone report = new Student_QuizDone();
