@@ -110,6 +110,12 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         public ActionResult DeleteQuiz(string qzID)
         {
             int quizID = int.Parse(qzID);
+            var quiz_quizDoneList = db.Quiz_QuizDone.Where(qq => qq.QuizID == quizID).ToList();
+            foreach (var qqd in quiz_quizDoneList)
+            {
+                db.Quiz_QuizDone.Remove(qqd);
+                db.SaveChanges();
+            }
             var quiz = db.Quizs.Find(quizID);
             db.Quizs.Remove(quiz);
             db.SaveChanges();
