@@ -318,6 +318,9 @@
     <Content Include="Areas\Teacher\Views\Report\ReportDetail.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\_ShowQuestionsList.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\_ShowQuizList.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\EditReadingQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\CreateShortAnswerQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\EditShortAnswerQuestion.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\countdown.js" />
     <Content Include="Scripts\dragdropimage.js" />

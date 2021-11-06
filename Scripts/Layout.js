@@ -1,4 +1,4 @@
-﻿// get the close btn
+﻿// get the close btns
 var alert_button = document.getElementsByClassName("alert-btn-close");
 
 // looping into all alert close btns

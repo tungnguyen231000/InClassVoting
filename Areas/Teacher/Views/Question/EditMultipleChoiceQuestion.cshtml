@@ -6,129 +6,103 @@
 
 
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-    @using (Html.BeginForm("EditMultipleChoiceQuestion", "Question", FormMethod.Post))
+    @using (Html.BeginForm("EditMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "checkbox-form" }))
     {
-
-        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
-        <div class="grid xl:grid-cols-1 xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full">
-
-            <div class="topcontent xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center border bg-gray p-6  border-black-400">
-                <div>
-                    <input class="border border-black-400 pl-1 float-right ml-5" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
-                    <input class="border border-black-400 pl-1 float-right" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+        <div class="grid grid-cols-1 w-full ">
+            <div class="w-full items-center bg-gray">
+                <div class="text-center">
+                    <h1 class="h6">
+                        <span>Question Type:</span>
+                        <span>Multiple Choice</span>
+                        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
+                        <input type="hidden" name="qid" value="@ViewBag.Question.QID" />
+                    </h1>
                 </div>
-            </div>
 
-            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
-                <h1 class="h6">
-                    <span>Question Type:</span>
-                    <span>Multiple Choice</span>
-                </h1>
-                @if (ViewBag.Question.MixChoice == true)
-                {
-                    <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" checked>
-                    <label>Mix Choice</label>
-                    <input type="hidden" class="form-check-input" id="cb-option2" name="mixChoice" value="0">
-                }
-                else
-                {
-                    <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1">
-                    <label>Mix Choice</label>
-                    <input type="hidden" class="form-check-input" id="cb-option2" name="mixChoice" value="0">
-                }
-
+                <div class="flex md:mx-16">
+                    <div class="m-6  ">
+                        <span>Time:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+                    </div>
+                    <div class="m-6  ">
+                        <span>Mark:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
+                    </div>
+                </div>
 
             </div>
 
-            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
-                <div class="w-10/12 float-left mt-3">
-                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Question ..."> @ViewBag.Question.Text</textarea>
+            <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div class="w-10/12  float-left mt-3">
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Content ...">@ViewBag.Question.Text</textarea>
                 </div>
 
-                <div class="drag-content float-right">
+                <div class="w-2/12 drag-content float-right">
                     <div class="drag-area">
                         <div><i class="icon fas fa-cloud-upload-alt"></i></div>
                         <div><h3 class="header">Drag and Drop to Upload File</h3></div>
                         <div><h4 class="or">or</h4></div>
-                        <div><button class="btn">Browser Upload File</button></div>
-                        <div><input type="file" name="questionImage" class="file-input" hidden></div>
+                        <div><button type="button" class="btn btn-image">Browser Upload File</button></div>
+                        <div><input type="file" class="file-input" name="questionImage" hidden></div>
                     </div>
                 </div>
             </div>
 
-            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
-                <p>Option 1 required</p>
-                <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 22px">
+            <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div>
+                    <span>Mix Choice: </span>
+                    @if (ViewBag.Question.MixChoice == true)
+                    {
+                        <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" checked>
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1">
+                    }
+
+                </div>
+                <div class="ms-error"></div>
+                <table class="w-full border-spacing-2">
                     @{
                         int countAnswer = 0;
 
                     }
                     @foreach (var answer in ViewBag.Question.QuestionAnswers)
                     {
-
-                        if (countAnswer < 6)
-                        {
-                            if (answer.IsCorrect)
+                        <tr>
+                            @{countAnswer++;}
+                            @if (answer.IsCorrect)
                             {
-                                countAnswer++;
-                                <tr>
-                                    <td class="">
-                                        <input type="checkbox" class="form-check-input" id="cb-option1" name="cb-option1" value="1" checked>
-                                        <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option @countAnswer" value="0" />
-                                        &nbsp;
-                                        @if (countAnswer == 1)
-                                        {<label>A.</label>}
-                                        else if (countAnswer == 2)
-                                        {<label>B.</label>}
-                                        else if (countAnswer == 3)
-                                        {<label>C.</label>}
-                                        else if (countAnswer == 4)
-                                        {<label>D.</label>}
-                                        else if (countAnswer == 5)
-                                        {<label>E.</label>}
-                                        else if (countAnswer == 6)
-                                        {<label>F.</label>}
-                                        &nbsp;
-                                        <input style="width:95%" type="text" class="w-full pl-3" name="option1" placeholder="Option 1" value="@answer.Text">
-                                    </td>
-                                </tr>
+                                <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer" checked></td>
                             }
                             else
                             {
-                                countAnswer++;
-                                <tr>
-                                    <td class="">
-                                        <input type="checkbox" class="form-check-input" id="cb-option1" name="cb-option1" value="1">
-                                        <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option @countAnswer" value="0" />
-                                        &nbsp;
-                                        @if (countAnswer == 1)
-                                        {<label>A.</label>}
-                                        else if (countAnswer == 2)
-                                        {<label>B.</label>}
-                                        else if (countAnswer == 3)
-                                        {<label>C.</label>}
-                                        else if (countAnswer == 4)
-                                        {<label>D.</label>}
-                                        else if (countAnswer == 5)
-                                        {<label>E.</label>}
-                                        else if (countAnswer == 6)
-                                        {<label>F.</label>}
-                                        &nbsp;
-                                        <input style="width:95%" type="text" class="w-full pl-3" name="option1" placeholder="Option 1" value="@answer.Text">
-                                    </td>
-                                </tr>
+                                <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer" ></td>
                             }
-                        }
-
+                        <td>
+                            &nbsp;
+                            @if (countAnswer == 1)
+                            {<label>A.</label>}
+                            else if (countAnswer == 2)
+                            {<label>B.</label>}
+                            else if (countAnswer == 3)
+                            {<label>C.</label>}
+                            else if (countAnswer == 4)
+                            {<label>D.</label>}
+                            else if (countAnswer == 5)
+                            {<label>E.</label>}
+                            else if (countAnswer == 6)
+                            {<label>F.</label>}
+                            &nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option" value="@answer.Text">
+                        </td>
+                        </tr>
                     }
-
                     @while (countAnswer < 6)
                     {
-                        countAnswer++;
                         <tr>
-                            <td class="">
-                                <input type="checkbox" class="form-check-input" id="cb-option1" name="cb-option1" value="1">
-                                <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option @countAnswer" value="0" />
+                            @{countAnswer++;}
+                            <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer" ></td>
+                            <td>
                                 &nbsp;
                                 @if (countAnswer == 1)
                                 {<label>A.</label>}
@@ -142,28 +116,19 @@
                                 {<label>E.</label>}
                                 else if (countAnswer == 6)
                                 {<label>F.</label>}
-                                &nbsp;
-                                <input style="width:95%" type="text" class="w-full pl-3" name="option1" placeholder="Option @countAnswer">
+                                &nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option">
                             </td>
                         </tr>
-
                     }
                 </table>
             </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
-                </div>
+            <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Change">
             </div>
-        </div>
 
+        </div>
     }
 
 </div>
 
 <!-- end wrapper -->
-<script src="~/Scripts/dragdropimage.js"></script>
-
-
-
-

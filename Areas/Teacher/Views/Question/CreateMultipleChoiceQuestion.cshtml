@@ -8,13 +8,12 @@
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     @using (Html.BeginForm("CreateMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "checkbox-form" }))
     {
-
         <div class="grid grid-cols-1 w-full ">
             <div class="w-full items-center bg-gray">
                 <div class="text-center">
                     <h1 class="h6">
                         <span>Question Type:</span>
-                        <span>Multiple Choice</span>
+                        <span>Multiple Choice   </span>
                         <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
                     </h1>
                 </div>
@@ -42,8 +41,8 @@
                         <div><i class="icon fas fa-cloud-upload-alt"></i></div>
                         <div><h3 class="header">Drag and Drop to Upload File</h3></div>
                         <div><h4 class="or">or</h4></div>
-                        <div><button type="button" class="btn">Browser Upload File</button></div>
-                        <div><input type="file" class="file-input" name="questionImage" hidden></div>
+                        <div><button type="button" class="btn btn-image" >Browser Upload File</button></div>
+                        <div><input type="file" class="file-input" name="questionImage" hidden ></div>
                     </div>
                 </div>
             </div>
@@ -52,7 +51,6 @@
                 <div>
                     <span>Mix Choice: </span>
                     <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1">
-                    <input type="hidden" class="form-check-input" id="cb-option2" name="mixChoice" value="0">
                 </div>
                 <div class="ms-error"></div>
                 <table class="w-full border-spacing-2">
@@ -85,11 +83,9 @@
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Submit">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Add New Question">
             </div>
 
         </div>
     }
 </div>
-
-<script src="~/Scripts/dragdropimage.js"></script>

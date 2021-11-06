@@ -1,12 +1,13 @@
 const dragArea = document.querySelector(".drag-area");
 const header = document.querySelector(".header"),
-	  btn = document.querySelector(".btn"),
+	btnBrowse = document.querySelector(".btn-image"),
 	  input = document.querySelector(".file-input");
 
 let file;
 
+console.log(btnBrowse);
 
-btn.onclick = ()=>{
+btnBrowse.onclick = ()=>{
 	input.click();
 };
 

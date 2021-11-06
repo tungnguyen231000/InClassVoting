@@ -29,7 +29,7 @@ else
                 <tr>
                     <th scope="row">@countQuestion</th>
                     <td><input type="checkbox" name="questionId" class="form-check-input" id="cbQuestID" value="@question.QID"></td>
-                    <td><a href="~/Teacher/Question/EditMultipleChoiceQuestion?qid=@question.QID" type="button">@question.Text</a></td>
+                    <td><a href="~/Teacher/Question/EditQuestion?qid=@question.QID" type="button">@question.Text</a></td>
                     <td>@question.QuestionType.Name</td>
                     <td>@question.Mark</td>
                 </tr>
@@ -43,7 +43,7 @@ else
             <tr>
                 <th scope="row">@countQuestion</th>
                 <td><input type="checkbox" name="matchQuestionId" class="form-check-input" id="cbQuestID" value="@match.MID"></td>
-                <td><a href="~Teacher/Question/Edit?qid=@match.MID&&qtype=5" type="button">@match.ColumnA  @match.ColumnB</a></td>
+                <td><a href="~Teacher/Question/EditMatchingQuestion?qid=@match.MID&&qtype=5" type="button">@match.ColumnA  @match.ColumnB</a></td>
                 <td>Matching</td>
                 <td>@match.Mark</td>
             </tr>

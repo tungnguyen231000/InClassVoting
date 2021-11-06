@@ -11,7 +11,7 @@
 			"mark": {
 				required: true
 			},
-			"question": {
+			"questionText": {
 				required: true
 			},
 			"answer": {
@@ -25,7 +25,7 @@
 			"mark": {
 				required: "*Mark is required"
 			},
-			"question": {
+			"questionText": {
 				required: "*Question is required"
 			},
 			"answer": {
@@ -90,7 +90,7 @@
 		onkeyup: false,
 		onclick: false,
 		groups: {
-			nameGroup: "cb-option option"
+			nameGroup: "cbOption option"
 		},
 		rules: {
 			"time": {
@@ -102,10 +102,10 @@
 			"paragraph": {
 				required: true
 			},
-			"question": {
+			"questionText": {
 				required: true
 			},
-			"cb-option": {
+			"cbOption": {
 				required: true
 			},
 			"option": {
@@ -122,10 +122,10 @@
 			"paragraph": {
 				required: "*Paragraph is required"
 			},
-			"question": {
+			"questionText": {
 				required: "*Question is required"
 			},
-			"cb-option": {
+			"cbOption": {
 				required: "*Checkbox is required"
 			},
 			"option": {
@@ -133,7 +133,7 @@
 			}
 		},
 		errorPlacement: function (error, element) {
-			if (element.attr("name") == "cb-option" || element.attr("name") == "option") {
+			if (element.attr("name") == "cbOption" || element.attr("name") == "option") {
 				error.insertAfter(".ms-error");
 			} else {
 				error.insertAfter(element);

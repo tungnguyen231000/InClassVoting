@@ -31,6 +31,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             return View();
         }
 
+        //show question list
         public ActionResult ShowQuestionsList(string chid, string qtype, string searchText)
         {
             int chapID = int.Parse(chid);
@@ -85,6 +86,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             return PartialView("_ShowQuestionsList", dyQuestions);
         }
 
+        //delete question
         public ActionResult DeleteQuestion(string chapterId, FormCollection collection, string searchUrl)
         {
             int chapID = int.Parse(chapterId);
@@ -211,6 +213,36 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
         }
 
+
+        //edit question
+        public ActionResult EditQuestion(string qid)
+        {
+            int questID = int.Parse(qid);
+            var question = db.Questions.Find(questID);
+            if (question.Qtype == 1)
+            {
+                return Redirect("~/Teacher/Question/EditMultipleChoiceQuestion?qid=" + questID);
+            }
+            else if (question.Qtype == 2)
+            {
+                return Redirect("~/Teacher/Question/EditReadingQuestion?qid=" + questID);
+            }
+            else if (question.Qtype == 3)
+            {
+                return Redirect("~/Teacher/Question/EditFillBlankQuestion?qid=" + questID);
+            }
+            else if (question.Qtype == 4)
+            {
+                return Redirect("~/Teacher/Question/EditShortAnswerQuestion?qid=" + questID);
+            }
+            else
+            {
+                return Redirect("~/Teacher/Question/EditIndicateMistakeQuestion?qid=" + questID);
+            }
+
+
+        }
+
         //show page to create multiple choice question
         public ActionResult CreateMultipleChoiceQuestion(string chid)
         {
@@ -250,7 +282,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
                 question.ImageData = new byte[questionImage.ContentLength];
                 questionImage.InputStream.Read(question.ImageData, 0, questionImage.ContentLength);
-                Debug.WriteLine("======"+ question.ImageData);
+                Debug.WriteLine("======" + question.ImageData);
             }
             else
             {
@@ -258,143 +290,51 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
 
 
-            string mixChoice = collection["mixChoice"].Trim().ToString();
+            string mixChoice = collection["mixChoice"];
             //get mix choice check box value if 1 is true, 0 is false
-            if (mixChoice.Equals("1"))
-            {
-                question.MixChoice = true;
-
-            }
-            else
+            if (mixChoice == null)
             {
                 question.MixChoice = false;
 
             }
+            else
+            {
+                question.MixChoice = true;
+
+            }
             db.Questions.Add(question);
-            /*db.SaveChanges();*/
+            db.SaveChanges();
 
             int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Select(q => q.QID).First().ToString());
 
-
-            string cbOption = collection["cbOption"]/*.Split(new char[] { ';' })*/;
-            Debug.WriteLine(cbOption);
-
-            /*//check if there are text in option 1
-            if (collection["option1"] != null && !collection["option1"].Equals(""))
+            string[] options = collection["option"].Split(new char[] { ',' });
+            string cbOption = collection["cbOption"];
+            for (int i = 0; i < options.Length; i++)
             {
-                QuestionAnswer qa1 = new QuestionAnswer();
-                qa1.QuestionID = qid;
-                qa1.Text = collection["option1"].ToString();
-                //get check box value if 1 is correct answer, 0 is wrong answer
-                if (collection["cb-option1"].ToString().Trim().Equals("0"))
+                if (options[i] != null && !options[i].Trim().Equals(""))
                 {
-                    qa1.IsCorrect = false;
+                    QuestionAnswer qa = new QuestionAnswer();
+                    qa.QuestionID = qid;
+                    qa.Text = options[i];
+                    int answerIndex = i + 1;
+                    if (cbOption.Contains(answerIndex.ToString()))
+                    {
+                        Debug.WriteLine(options[i] + "-1--");
+                        qa.IsCorrect = true;
+                    }
+                    else
+                    {
+                        qa.IsCorrect = false;
+                        Debug.WriteLine(options[i] + "-2--");
+                    }
+                    db.QuestionAnswers.Add(qa);
                 }
-                else
-                {
-                    qa1.IsCorrect = true;
-                }
-                db.QuestionAnswers.Add(qa1);
             }
-
-
-            if (collection["option2"] != null && !collection["option2"].Equals(""))
-            {
-                QuestionAnswer qa2 = new QuestionAnswer();
-                qa2.QuestionID = qid;
-                qa2.Text = collection["option2"].ToString();
-                if (collection["cb-option2"].ToString().Trim().Equals("0"))
-                {
-                    qa2.IsCorrect = false;
-                }
-                else
-                {
-                    qa2.IsCorrect = true;
-                }
-                db.QuestionAnswers.Add(qa2);
-            }
-
-
-            if (collection["option3"] != null && !collection["option3"].Equals(""))
-            {
-                QuestionAnswer qa3 = new QuestionAnswer();
-                qa3.QuestionID = qid;
-                qa3.Text = collection["option3"].ToString();
-                if (collection["cb-option3"].ToString().Trim().Equals("0"))
-                {
-                    qa3.IsCorrect = false;
-                }
-                else
-                {
-                    qa3.IsCorrect = true;
-                }
-                db.QuestionAnswers.Add(qa3);
-            }
-
-
-            if (collection["option4"] != null && !collection["option4"].Equals(""))
-            {
-                QuestionAnswer qa4 = new QuestionAnswer();
-                qa4.QuestionID = qid;
-                qa4.Text = collection["option4"].ToString();
-                if (collection["cb-option4"].ToString().Trim().Equals("0"))
-                {
-                    qa4.IsCorrect = false;
-                }
-                else
-                {
-                    qa4.IsCorrect = true;
-                }
-                db.QuestionAnswers.Add(qa4);
-            }
-
-
-            if (collection["option5"] != null && !collection["option5"].Equals(""))
-            {
-                Debug.WriteLine("okokokoko" + collection["option5"]);
-                QuestionAnswer qa5 = new QuestionAnswer();
-                qa5.QuestionID = qid;
-                qa5.Text = collection["option5"].ToString();
-                if (collection["cb-option5"].ToString().Trim().Equals("0"))
-                {
-                    qa5.IsCorrect = false;
-                }
-                else
-                {
-                    qa5.IsCorrect = true;
-                }
-                db.QuestionAnswers.Add(qa5);
-            }
-
-
-            if (collection["option6"] != null && !collection["option6"].Equals(""))
-            {
-                QuestionAnswer qa6 = new QuestionAnswer();
-                qa6.QuestionID = qid;
-                qa6.Text = collection["option6"].ToString();
-                if (collection["cb-option6"].ToString().Trim().Equals("0"))
-                {
-                    qa6.IsCorrect = false;
-                }
-                else
-                {
-                    qa6.IsCorrect = true;
-                }
-                db.QuestionAnswers.Add(qa6);
-            }
-
-            db.SaveChanges();*/
+            db.SaveChanges();
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
 
 
-        }
-
-        public ActionResult CreateReadingQuestion(string chid)
-        {
-            int chapID = int.Parse(chid);
-            ViewBag.ChapterID = chapID;
-            return View();
         }
 
 
@@ -405,6 +345,389 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             ViewBag.ChapterID = question.ChapterID;
             ViewBag.Question = question;
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult EditMultipleChoiceQuestion(string qid, string chid, string questionText, FormCollection collection, string mark, string time,
+            HttpPostedFileBase questionImage)
+        {
+            int questionID = int.Parse(qid);
+            int chapID = int.Parse(chid);
+            Question question = db.Questions.Find(questionID);
+            question.Text = questionText;
+            question.Mark = float.Parse(mark);
+            question.Time = int.Parse(time);
+            string mixChoice = collection["mixChoice"];
+            //get mix choice check box value if 1 is true, 0 is false
+            if (mixChoice == null)
+            {
+                question.MixChoice = false;
+            }
+            else
+            {
+                question.MixChoice = true;
+
+            }
+            db.Entry(question).State = EntityState.Modified;
+
+            var answerList = db.QuestionAnswers.Where(qa => qa.QuestionID == questionID);
+            //delete the old answer
+            foreach (var a in answerList)
+            {
+                db.QuestionAnswers.Remove(a);
+            }
+
+            db.SaveChanges();
+
+            string[] options = collection["option"].Split(new char[] { ',' });
+            string[] cbOption = collection["cbOption"].Split(new char[] { ',' });
+
+            //new answer
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (options[i] != null && !options[i].Trim().Equals(""))
+                {
+                    QuestionAnswer qa = new QuestionAnswer();
+                    qa.QuestionID = questionID;
+                    /*Debug.WriteLine(i + "=-=-=" + options[i]);*/
+                    qa.Text = options[i];
+                    int answerIndex = i + 1;
+                    if (cbOption.Contains(answerIndex.ToString()))
+                    {
+                        /* Debug.WriteLine(options[i] + "-1--");*/
+                        qa.IsCorrect = true;
+                    }
+                    else
+                    {
+                        qa.IsCorrect = false;
+                        /* Debug.WriteLine(options[i] + "-2--");*/
+                    }
+                    db.QuestionAnswers.Add(qa);
+                }
+
+            }
+            db.SaveChanges();
+
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+        }
+
+        public ActionResult CreateReadingQuestion(string chid)
+        {
+            int chapID = int.Parse(chid);
+            ViewBag.ChapterID = chapID;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateReadingQuestion(string chid, string questionText, FormCollection collection, string mark, string time, string paragraph,
+            HttpPostedFileBase questionImage)
+        {
+
+            int chapID = int.Parse(chid);
+            Passage passage = new Passage();
+            passage.Text = paragraph;
+            passage.ChapterID = chapID;
+            db.Passages.Add(passage);
+            db.SaveChanges();
+            int pid = int.Parse(db.Passages.OrderByDescending(p => p.PID).Where(p => p.ChapterID == chapID).Select(p => p.PID).First().ToString());
+
+            Question question = new Question();
+            Chapter chapter = db.Chapters.Find(chapID);
+            question.ChapterID = chapter.ChID;
+            question.PassageID = pid;
+            question.Text = questionText;
+            question.Qtype = 2;
+            //check if mark is null
+            if (!mark.Trim().Equals(""))
+            {
+                question.Mark = float.Parse(mark);
+            }
+            //check if time is null
+            if (!time.Trim().Equals(""))
+            {
+                question.Time = int.Parse(time);
+            }
+
+            if (questionImage != null && questionImage.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(questionImage.FileName);
+                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
+                questionImage.SaveAs(path);
+
+
+                question.ImageData = new byte[questionImage.ContentLength];
+                questionImage.InputStream.Read(question.ImageData, 0, questionImage.ContentLength);
+                Debug.WriteLine("======" + question.ImageData);
+            }
+            else
+            {
+                Debug.WriteLine("none");
+            }
+
+
+            string mixChoice = collection["mixChoice"];
+            //get mix choice check box value if 1 is true, 0 is false
+            if (mixChoice == null)
+            {
+                question.MixChoice = false;
+
+            }
+            else
+            {
+                question.MixChoice = true;
+
+            }
+            db.Questions.Add(question);
+            db.SaveChanges();
+
+            int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Where(q => q.ChapterID == chapID).Select(q => q.QID).First().ToString());
+
+            string[] options = collection["option"].Split(new char[] { ',' });
+            string cbOption = collection["cbOption"];
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (options[i] != null && !options[i].Trim().Equals(""))
+                {
+                    QuestionAnswer qa = new QuestionAnswer();
+                    qa.QuestionID = qid;
+                    qa.Text = options[i];
+                    int answerIndex = i + 1;
+                    if (cbOption.Contains(answerIndex.ToString()))
+                    {
+                        Debug.WriteLine(options[i] + "-1--");
+                        qa.IsCorrect = true;
+                    }
+                    else
+                    {
+                        qa.IsCorrect = false;
+                        Debug.WriteLine(options[i] + "-2--");
+                    }
+                    db.QuestionAnswers.Add(qa);
+                }
+            }
+            db.SaveChanges();
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+
+
+        }
+
+        public ActionResult EditReadingQuestion(string qid)
+        {
+            int questionID = int.Parse(qid);
+            Question question = db.Questions.Find(questionID);
+            ViewBag.ChapterID = question.ChapterID;
+            ViewBag.Question = question;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult EditReadingQuestion(string qid, string chid, string questionText, FormCollection collection, string mark, string time,
+            string paragraph, HttpPostedFileBase questionImage)
+        {
+            int questionID = int.Parse(qid);
+            int chapID = int.Parse(chid);
+            Question question = db.Questions.Find(questionID);
+            //edit passage
+            var passage = question.Passage;
+            passage.Text = paragraph;
+            db.Entry(passage).State = EntityState.Modified;
+
+            question.Text = questionText;
+            question.Mark = float.Parse(mark);
+            question.Time = int.Parse(time);
+            string mixChoice = collection["mixChoice"];
+            //get mix choice check box value if 1 is true, 0 is false
+            if (mixChoice == null)
+            {
+                question.MixChoice = false;
+            }
+            else
+            {
+                question.MixChoice = true;
+
+            }
+            db.Entry(question).State = EntityState.Modified;
+
+            var answerList = db.QuestionAnswers.Where(qa => qa.QuestionID == questionID);
+            //delete the old answer
+            foreach (var a in answerList)
+            {
+                db.QuestionAnswers.Remove(a);
+            }
+
+            db.SaveChanges();
+
+            string[] options = collection["option"].Split(new char[] { ',' });
+            string[] cbOption = collection["cbOption"].Split(new char[] { ',' });
+
+            //new answer
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (options[i] != null && !options[i].Trim().Equals(""))
+                {
+                    QuestionAnswer qa = new QuestionAnswer();
+                    qa.QuestionID = questionID;
+                    Debug.WriteLine(i + "=-=-=" + options[i]);
+                    qa.Text = options[i];
+                    int answerIndex = i + 1;
+                    if (cbOption.Contains(answerIndex.ToString()))
+                    {
+                        Debug.WriteLine(options[i] + "-1--");
+                        qa.IsCorrect = true;
+                    }
+                    else
+                    {
+                        qa.IsCorrect = false;
+                        Debug.WriteLine(options[i] + "-2--");
+                    }
+                    db.QuestionAnswers.Add(qa);
+                }
+
+            }
+            db.SaveChanges();
+
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+        }
+
+        public ActionResult CreateShortAnswerQuestion(string chid)
+        {
+            int chapID = int.Parse(chid);
+            ViewBag.ChapterID = chapID;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateShortAnswerQuestion(string chid, string questionText, FormCollection collection, string mark, string time,
+            HttpPostedFileBase questionImage)
+        {
+            int chapID = int.Parse(chid);
+            Question question = new Question();
+            Chapter chapter = db.Chapters.Find(chapID);
+            question.ChapterID = chapter.ChID;
+            question.Text = questionText;
+            question.Qtype = 4;
+            //check if mark is null
+            if (!mark.Trim().Equals(""))
+            {
+                question.Mark = float.Parse(mark);
+            }
+            //check if time is null
+            if (!time.Trim().Equals(""))
+            {
+                question.Time = int.Parse(time);
+            }
+
+            if (questionImage != null && questionImage.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(questionImage.FileName);
+                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
+                questionImage.SaveAs(path);
+
+
+                question.ImageData = new byte[questionImage.ContentLength];
+                questionImage.InputStream.Read(question.ImageData, 0, questionImage.ContentLength);
+                Debug.WriteLine("======" + question.ImageData);
+            }
+            else
+            {
+                Debug.WriteLine("none");
+            }
+            db.Questions.Add(question);
+            db.SaveChanges();
+
+            int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Where(q => q.ChapterID == chapID).Select(q => q.QID).First().ToString());
+
+            string answer = collection["answer"];
+           
+            if (answer != null && !answer.Trim().Equals(""))
+            {
+                QuestionAnswer qa = new QuestionAnswer();
+                qa.QuestionID = qid;
+                qa.Text = answer;
+                qa.IsCorrect = true;
+                db.QuestionAnswers.Add(qa);
+            }
+           
+            
+            string altAnswer = collection["altAnswer"];
+            
+            if (altAnswer != null && !altAnswer.Trim().Equals(""))
+            {
+                QuestionAnswer altQa = new QuestionAnswer();
+                altQa.QuestionID = qid;
+                altQa.Text = answer;
+                altQa.IsCorrect = true;
+                db.QuestionAnswers.Add(altQa);
+            }
+            
+
+            db.SaveChanges();
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+
+        }
+
+        
+        public ActionResult EditShortAnswerQuestion(string qid)
+        {
+            int questionID = int.Parse(qid);
+            Question question = db.Questions.Find(questionID);
+            ViewBag.ChapterID = question.ChapterID;
+            ViewBag.Question = question;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult EditShortAnswerQuestion(string qid, string chid, string questionText, FormCollection collection, string mark, string time,
+            HttpPostedFileBase questionImage)
+        {
+            int questionID = int.Parse(qid);
+            int chapID = int.Parse(chid);
+            Question question = db.Questions.Find(questionID);
+            question.Text = questionText;
+            question.Mark = float.Parse(mark);
+            question.Time = int.Parse(time);
+            db.Entry(question).State = EntityState.Modified;
+
+            var answerList = db.QuestionAnswers.Where(a => a.QuestionID == questionID);
+            //delete the old answer
+            foreach (var a in answerList)
+            {
+                db.QuestionAnswers.Remove(a);
+            }
+
+            db.SaveChanges();
+
+            //add new answer
+            string answer = collection["answer"];
+            
+            if (answer != null && !answer.Trim().Equals(""))
+            {
+                QuestionAnswer qa = new QuestionAnswer();
+                qa.QuestionID = questionID;
+                qa.Text = answer;
+                qa.IsCorrect = true;
+                db.QuestionAnswers.Add(qa);
+            }
+            
+
+            string altAnswer = collection["altAnswer"];
+           
+            if (altAnswer != null && !altAnswer.Trim().Equals(""))
+            {
+                QuestionAnswer altQa = new QuestionAnswer();
+                altQa.QuestionID = questionID;
+                altQa.Text = altAnswer;
+                altQa.IsCorrect = true;
+                db.QuestionAnswers.Add(altQa);
+            }
+            
+            db.SaveChanges();
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
         }
     }
 }
