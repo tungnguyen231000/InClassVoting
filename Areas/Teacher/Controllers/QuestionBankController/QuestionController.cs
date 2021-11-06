@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -240,20 +241,21 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 question.Time = int.Parse(time);
             }
 
-            /*if (questionImage != null && questionImage.ContentLength>0)
-            {  
-                    var fileName = Path.GetFileName(questionImage.FileName);
-                    var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
+            if (questionImage != null && questionImage.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(questionImage.FileName);
+                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
                 questionImage.SaveAs(path);
-                
+
 
                 question.ImageData = new byte[questionImage.ContentLength];
                 questionImage.InputStream.Read(question.ImageData, 0, questionImage.ContentLength);
+                Debug.WriteLine("======"+ question.ImageData);
             }
             else
             {
                 Debug.WriteLine("none");
-            }*/
+            }
 
 
             string mixChoice = collection["mixChoice"].Trim().ToString();
@@ -269,13 +271,15 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             }
             db.Questions.Add(question);
-            db.SaveChanges();
+            /*db.SaveChanges();*/
 
             int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Select(q => q.QID).First().ToString());
 
 
+            string cbOption = collection["cbOption"]/*.Split(new char[] { ';' })*/;
+            Debug.WriteLine(cbOption);
 
-            //check if there are text in option 1
+            /*//check if there are text in option 1
             if (collection["option1"] != null && !collection["option1"].Equals(""))
             {
                 QuestionAnswer qa1 = new QuestionAnswer();
@@ -379,7 +383,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 db.QuestionAnswers.Add(qa6);
             }
 
-            db.SaveChanges();
+            db.SaveChanges();*/
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
 

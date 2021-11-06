@@ -229,6 +229,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\drag-and-drop.css" />
+    <Content Include="Content\error.css" />
     <Content Include="Content\img\calendar.png" />
     <Content Include="Content\img\congrats.svg" />
     <Content Include="Content\img\editing.png" />
@@ -256,7 +257,10 @@
     <Content Include="Content\img\user3.jpg" />
     <Content Include="Content\Layout.css" />
     <Content Include="Content\Login.css" />
+    <Content Include="Content\Poll.css" />
+    <Content Include="Content\Slide.css" />
     <Content Include="Content\Style.css" />
+    <Content Include="Content\Test.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -315,7 +319,7 @@
     <Content Include="Areas\Teacher\Views\Question\_ShowQuestionsList.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\_ShowQuizList.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
-    <Content Include="Scripts\dragdropimage.js" />
+    <Content Include="Scripts\countdown.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
@@ -327,6 +331,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\Layout.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\more-option.js" />
+    <Content Include="Scripts\SlideQ.js" />
     <Content Include="Scripts\teacher.course.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -346,7 +352,7 @@
     <Content Include="Views\HomeTotal\Home.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\images\" />
     <Folder Include="Areas\Student\Data\" />
     <Folder Include="Areas\Student\Views\Default\" />
     <Folder Include="Areas\Teacher\Data\" />
