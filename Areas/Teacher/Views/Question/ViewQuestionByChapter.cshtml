@@ -1,6 +1,6 @@
 ﻿
 @{ ViewBag.Title = "ViewQuestionByChapter";
-                Layout = "~/Areas/teacher/Views/Shared/_QuestionBankLayout.cshtml"; }
+    Layout = "~/Areas/teacher/Views/Shared/_QuestionBankLayout.cshtml"; }
 
 
 <!-- Modal Edit Chapter Name -->
@@ -70,20 +70,20 @@
         @if (questionType.QTypeID == 1)
         {
 <a href="~/Teacher/Question/CreateMultipleChoiceQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-                else if (questionType.QTypeID == 2)
-                {
+else if (questionType.QTypeID == 2)
+{
 <a href="~Teacher/Question/CreateReadingQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-                else if (questionType.QTypeID == 3)
-                {
+else if (questionType.QTypeID == 3)
+{
 <a href="~Teacher/Question/CreateFillBlankQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-                else if (questionType.QTypeID == 4)
-                {
+else if (questionType.QTypeID == 4)
+{
 <a href="~Teacher/Question/CreateShortAnswerQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-                else if (questionType.QTypeID == 5)
-                {
+else if (questionType.QTypeID == 5)
+{
 <a href="~Teacher/Question/CreateMatchingQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-                else if (questionType.QTypeID == 6)
-                {
+else if (questionType.QTypeID == 6)
+{
 <a href="~Teacher/Question/CreateIndicateMistakeQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a>}
 
 
@@ -128,39 +128,42 @@
     </button>
 
 </div>
-                <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Chapter</p> }
-                            else
-                            {
-                <div class="block-search-dropdown">
-                    <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+                <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Chapter</p> 
+     }
+     else
+     {
+        <div class="block-search-dropdown">
+            <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
 
-                        <div class="mr-2 transition duration-500 px-3 border-b">
-                            <input type="hidden" id="chapterId" value="@ViewBag.Chapter.ChID" />
-                            <input style="width: 90% " class="search-box flex-1" type="text" id="searchText" placeholder="search">
-                            <button type="button" onclick="reloadModalQuestionList()" class="search-box"> <i class="fad fa-search"></i> </button>
-                        </div>
-                    </div>
-                    <div style="width:33%" class="btn-group mg-left">
-                        <h1 style="margin:auto">Question Type: </h1>
-                        <select onchange="reloadModalQuestionList()" id="qType" class="btn-indigo mg-left ">
-                            <option value="-1">All Type </option>
-                            @foreach (var questionType in ViewBag.QuestionType)
-                            {
-            <option value="@questionType.QTypeID">@questionType.Name </option>}
-                        </select>
-                    </div>
+                <div class="mr-2 transition duration-500 px-3 border-b">
+                    <input type="hidden" id="chapterId" value="@ViewBag.Chapter.ChID" />
+                    <input style="width: 90% " class="search-box flex-1" type="text" id="searchText" placeholder="search">
+                    <button type="button" onclick="reloadModalQuestionList()" class="search-box"> <i class="fad fa-search"></i> </button>
                 </div>
-                                <div class="tb-mg-top">
-                                    @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
-                                    {
+            </div>
+            <div style="width:33%" class="btn-group mg-left">
+                <h1 style="margin:auto">Question Type: </h1>
+                <select onchange="reloadModalQuestionList()" id="qType" class="btn-indigo mg-left ">
+                    <option value="-1">All Type </option>
+                    @foreach (var questionType in ViewBag.QuestionType)
+                    {
+                    <option value="@questionType.QTypeID">@questionType.Name </option>
+                    }
+                    </select>
+                </div>
+            </div>
+        <div class="tb-mg-top">
+             @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
+                  {
                     <input type="hidden" name="chapterId" value="@ViewBag.Chapter.ChID" />
-                                        <div id="divShowQuestions">
-                                            @{ Html.RenderAction("ShowQuestionsList", "Question", new { chid = ViewBag.Chapter.ChID, qtype = "-1", searchText = "" }); }
-                                        </div>}
-
-                                </div>}
+                        <div id="divShowQuestions">
+                            @{ Html.RenderAction("ShowQuestionsList", "Question", new { chid = ViewBag.Chapter.ChID, qtype = "-1", searchText = "" }); }
+                        </div>
+                        }
+                </div>}
 </div>
 <!-- End General Report -->
+
 <script type="text/javascript">
 
     function reloadModalQuestionList() {

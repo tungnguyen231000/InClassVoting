@@ -1,0 +1,81 @@
+﻿@model IEnumerable<InClassVoting.Models.Quiz>
+
+@if (Model.Count() == 0)
+{
+    <p style="text-align: center; margin-top: 10%; font-size: larger;">0 Quiz Found...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">No</th>
+                <th style="width: 30%;" scope="col">Quiz Name</th>
+                <th scope="col">Total Mark</th>
+                <th scope="col">Time</th>
+                <th scope="col">Status</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int no = 0;
+            }
+            @foreach (var quiz in Model)
+            {
+                no++;
+                <tr>
+                    <th scope="row">@no</th>
+                    <td><a href="~/Teacher/Quiz/QuizDetail?qzId=@quiz.QuizID" type="button">@quiz.QuizName ( @quiz.NumOfQuestion Questions)</a></td>
+                    <td>@quiz.Mark</td>
+                    @{
+                        string time = "";
+                        if (quiz.Time != null)
+                        {
+                            int quizTime = quiz.Time ?? 0;
+                            if (quiz.Time >= 60)
+                            {
+
+                                int minute = quizTime / 60;
+                                if (minute >= 10)
+                                {
+                                    time = time + minute.ToString() + ":";
+                                }
+                                else
+                                {
+                                    time = time + "0" + minute.ToString() + ":";
+                                }
+                                if (quiz.Time - minute * 60 < 10)
+                                {
+                                    time = time + "0" + (quiz.Time - minute * 60).ToString();
+                                }
+                                else
+                                {
+                                    time = time + (quiz.Time - minute * 60).ToString();
+                                }
+
+
+                            }
+                            else
+                            {
+                                if (quiz.Time < 10)
+                                {
+                                    time = time + "00:" + "0" + quiz.Time.ToString();
+                                }
+                                else
+                                {
+                                    time = time + "00:" + quiz.Time.ToString();
+                                }
+
+                            }
+                        }
+
+                    }
+                    <td>@time</td>
+                    <td>@quiz.Status</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

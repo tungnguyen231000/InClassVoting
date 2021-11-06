@@ -1,14 +1,11 @@
-﻿.shadow {
+﻿
+
+.shadow {
   
     /*background-color: #ccc;*/
     -moz-box-shadow: 3px 3px #666;
     -webkit-box-shadow: 3px 3px #666;
     box-shadow: 3px 3px #666;
-}
-.home{
-	margin-left:auto;
-	margin-right:auto;
-	
 }
 .text_color_button_start {
     color: currentColor;
@@ -211,6 +208,7 @@ details {
 		pointer-events: none;
 	}
 }
+
 *, *:before, *:after {
 	margin: 0;
 	padding: 0;

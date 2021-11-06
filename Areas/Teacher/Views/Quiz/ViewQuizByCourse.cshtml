@@ -1,5 +1,4 @@
-﻿@model IEnumerable<InClassVoting.Models.Quiz>
-
+﻿
 @{
     ViewBag.Title = "ViewQuizByCourse";
     Layout = "~/Areas/teacher/Views/Shared/_QuizLibraryLayout.cshtml";
@@ -18,7 +17,7 @@
                 @using (Html.BeginForm("CreateNewQuiz", "Quiz", FormMethod.Get))
                 {
                     <input type="hidden" name="tempName" value="">
-                    <input type="hidden" name="cid" value="@ViewBag.Course.CID" />
+                    <input type="hidden" id="cid" name="cid" value="@ViewBag.Course.CID" />
                     <input type="hidden" name="questions" />
                     <button type="submit" class="btn-indigo mg_btn">
                         New Quiz
@@ -29,7 +28,7 @@
     </div>
     <!-- end navbar -->
     <!-- General Report -->
-    @if (Model.Count() == 0)
+    @if (ViewBag.CoutnQuiz == 0)
     {
         <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Quiz In This Course</p>
     }
@@ -37,18 +36,20 @@
     {
         <div class="block-search-dropdown">
             <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
-
                 <div class="mr-2 transition duration-500 px-3 border-b">
-                    <input class="search-box flex-1" type="text" placeholder="search">
-                    <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
+                    <input class="search-box flex-1" style="width: 90%" type="text" placeholder="search" id="searchText">
+                    <button type="button" class="search-box" onclick="reloadQuizList()"> <i class="fad fa-search"></i> </button>
                 </div>
             </div>
 
         </div>
 
 
-        <div class="tb-mg-top">
-            <table class="table">
+        <div class="tb-mg-top" id="divShowQuizList">
+         
+                @{ Html.RenderAction("ShowQuizList", "Quiz", new { cid = ViewBag.Course.CID, searchText = "" }); }
+          
+            @*<table class="table">
                 <thead>
                     <tr>
                         <th scope="col">No</th>
@@ -119,15 +120,23 @@
                     }
 
                 </tbody>
-            </table>
+            </table>*@
         </div>
 
 
     }
-
-    @*<p style="text-align: center; margin-top: 10%; font-size: larger;">There is no Question...</p>*@
-
-
-
 </div>
+
+<script type="text/javascript">
+
+    function reloadQuizList() {
+        console.log("ayoo");
+        var cid = document.getElementById("cid").value;
+        var searchText = document.getElementById("searchText").value;
+        console.log(searchText+"------"+cid);
+        $("#divShowQuizList").load('@Url.Action("ShowQuizList", "Quiz")' +
+            '?cid=' + cid + '&searchText=' + searchText);
+    }
+
+</script>
 

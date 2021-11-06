@@ -1,8 +1,10 @@
 ﻿@*@model IEnumerable<InClassVoting.Models.Question>*@
 @model dynamic
+
 @if (ViewBag.CountQuest == 0)
 {
-<p style="text-align: center; margin-top: 10%; font-size: larger;">0 Question Found...</p> }
+<p style="text-align: center; margin-top: 10%; font-size: larger;">0 Question Found...</p>
+}
 else
 {
 <table class="table">
@@ -24,29 +26,29 @@ else
             foreach (var question in Model.Questions)
             {
                 countQuestion++;
-<tr>
-    <th scope="row">@countQuestion</th>
-    <td><input type="checkbox" name="questionId" class="form-check-input" id="cbQuestID" value="@question.QID"></td>
-    <td><a href="~/Teacher/Question/EditMultipleChoiceQuestion?qid=@question.QID" type="button">@question.Text</a></td>
-    <td>@question.QuestionType.Name</td>
-    <td>@question.Mark</td>
-</tr>
-}
-}
+                <tr>
+                    <th scope="row">@countQuestion</th>
+                    <td><input type="checkbox" name="questionId" class="form-check-input" id="cbQuestID" value="@question.QID"></td>
+                    <td><a href="~/Teacher/Question/EditMultipleChoiceQuestion?qid=@question.QID" type="button">@question.Text</a></td>
+                    <td>@question.QuestionType.Name</td>
+                    <td>@question.Mark</td>
+                </tr>
+            }
+         }
         @if (Model.Matchings != null)
         {
             foreach (var match in Model.Matchings)
             {
                 countQuestion++;
-<tr>
-    <th scope="row">@countQuestion</th>
-    <td><input type="checkbox" name="matchQuestionId" class="form-check-input" id="cbQuestID" value="@match.MID"></td>
-    <td><a href="~Teacher/Question/Edit?qid=@match.MID&&qtype=5" type="button">@match.ColumnA  @match.ColumnB</a></td>
-    <td>Matching</td>
-    <td>@match.Mark</td>
-</tr>
-}
-}
+            <tr>
+                <th scope="row">@countQuestion</th>
+                <td><input type="checkbox" name="matchQuestionId" class="form-check-input" id="cbQuestID" value="@match.MID"></td>
+                <td><a href="~Teacher/Question/Edit?qid=@match.MID&&qtype=5" type="button">@match.ColumnA  @match.ColumnB</a></td>
+                <td>Matching</td>
+                <td>@match.Mark</td>
+            </tr>
+            }
+         }
 
     </tbody>
 </table>
@@ -56,5 +58,6 @@ else
                     </button>
 
                     <button type="submit" style="margin-left:6px" class="btn-indigo">Delete Question</button>
-                </div>}
+                </div>
+}
 

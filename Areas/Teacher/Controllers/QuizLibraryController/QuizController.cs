@@ -19,12 +19,34 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             return View();
         }
 
+        //view quiz inside course page
         public ActionResult ViewQuizByCourse(string cid)
         {
             int courseID = int.Parse(cid);
             ViewBag.Course = db.Courses.Find(courseID);
-            var quizList = db.Quizs.Where(q => q.CourseID == courseID);
-            return View(quizList);
+            ViewBag.CoutnQuiz= db.Quizs.Where(q => q.CourseID == courseID).Count();
+            return View();
+        }
+
+        public ActionResult ShowQuizList(string cid, string searchText)
+        {
+            Debug.WriteLine("=====" + searchText);
+            int courseID = int.Parse(cid);
+            var qzList = db.Quizs.Where(qz => qz.CourseID == courseID).ToList();
+            List<Quiz> quizzes = new List<Quiz>();
+            if (searchText != null && !searchText.Trim().Equals(""))
+            {
+                quizzes = qzList.Where(qz => qz.QuizName.Trim().ToLower().Contains(searchText.Trim().ToLower())).ToList();
+                Debug.WriteLine("hjhihi" + searchText);
+
+            }
+            else
+            {
+                quizzes = qzList;
+                Debug.WriteLine("hjhihi" + searchText);
+            }
+
+            return PartialView("_ShowQuizList",quizzes);
         }
 
         //View Quiz Detail
@@ -627,6 +649,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             int latestQuizID = int.Parse(db.Quizs.OrderByDescending(q => q.QuizID).Select(q => q.QuizID).First().ToString());
             return Redirect("~/Teacher/Quiz/QuizDetail?qzid=" + latestQuizID);
         }
+
         //Show question list for new quiz
         public PartialViewResult ShowQuestionForNewQuiz(string chid, string cid, string qtype, string searchText, string questions)
         {
