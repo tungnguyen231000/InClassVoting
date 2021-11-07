@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "EditIndicateMistakeQuestion";
+    Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+@using (Html.BeginForm("EditIndicateMistakeQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "fillblank-form" }))
+{
+    <div class="grid grid-cols-1 w-full ">
+
+        <div class="w-full items-center bg-gray ">
+            <div class="text-center">
+                <h1 class="h6">
+                    <span>Question Type:</span>
+                    <span>Indicate Mistake</span>
+                    <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
+                    <input type="hidden" name="qid" value="@ViewBag.Question.QID" />
+                </h1>
+            </div>
+
+            <div class="flex md:mx-16">
+                <div class="m-6  ">
+                    <span>Time:</span>
+                    <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+                </div>
+                <div class="m-6  ">
+                    <span>Mark:</span>
+                    <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full items-center bg-gray p-6 border border-black-400">
+            <div class="w-10/12  float-left mt-3">
+                <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Content ...">@ViewBag.Question.Text</textarea>
+            </div>
+
+            @*<div class="w-2/12 drag-content float-right">
+                    <div class="drag-area">
+                        <div><i class="icon fas fa-cloud-upload-alt"></i></div>
+                        <div><h3 class="header">Drag and Drop to Upload File</h3></div>
+                        <div><h4 class="or">or</h4></div>
+                        <div><button type="button" class="btn btn-image">Browser Upload File</button></div>
+                        <div><input type="file" class="file-input" hidden></div>
+                    </div>
+                </div>*@
+        </div>
+
+        <div class="w-full items-center bg-gray p-6 border border-black-400">
+            <div class="ms-error"></div>
+            <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 22px">
+                @foreach (var answer in ViewBag.Question.QuestionAnswers)
+                {
+                    if (answer.IsCorrect)
+                    {
+                        <tr>
+                            <td><input type="text" class="w-full pl-3" name="answer" placeholder="Correct Answer" value="@answer.Text"></td>
+                        </tr>
+                    }
+                }
+
+            </table>
+        </div>
+
+        <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+            <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
+        </div>
+
+    </div>
+}
+</div>
+

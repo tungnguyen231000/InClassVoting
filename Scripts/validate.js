@@ -147,7 +147,7 @@
 		onkeyup: false,
 		onclick: false,
 		groups: {
-			nameGroup: "txt-left txt-right"
+			nameGroup: "answerLeft answerRight"
 		},
 		rules: {
 			"time": {
@@ -156,16 +156,16 @@
 			"mark": {
 				required: true
 			},
-			"matching-left": {
+			"matchingLeft": {
 				required: true
 			},
-			"matching-right": {
+			"matchingRight": {
 				required: true
 			},
-			"txt-left": {
+			"answerLeft": {
 				required: true
 			},
-			"txt-right": {
+			"answerRight": {
 				required: true
 			}
 		},
@@ -176,21 +176,21 @@
 			"mark": {
 				required: "*Mark is required"
 			},
-			"matching-left": {
+			"matchingLeft": {
 				required: "*Matching question is required"
 			},
-			"matching-right": {
+			"matchingRight": {
 				required: "*Matching question is required"
 			},
-			"txt-left": {
+			"answerLeft": {
 				required: "*Option left is required"
 			},
-			"txt-right": {
+			"answerRight": {
 				required: "*Option right is required"
 			},
 		},
 		errorPlacement: function (error, element) {
-			if (element.attr("name") == "txt-left" || element.attr("name") == "txt-right") {
+			if (element.attr("name") == "answerLeft" || element.attr("name") == "answerRight") {
 				error.insertAfter(".ms-error");
 			} else {
 				error.insertAfter(element);
@@ -198,4 +198,5 @@
 		}
 	});
 
+	
 });

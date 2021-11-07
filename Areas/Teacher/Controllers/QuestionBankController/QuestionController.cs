@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -234,6 +235,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             else if (question.Qtype == 4)
             {
                 return Redirect("~/Teacher/Question/EditShortAnswerQuestion?qid=" + questID);
+            }
+            else if (question.Qtype == 5)
+            {
+                return Redirect("~/Teacher/Question/EditMatchingQuestion?qid=" + questID);
             }
             else
             {
@@ -641,7 +646,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Where(q => q.ChapterID == chapID).Select(q => q.QID).First().ToString());
 
             string answer = collection["answer"];
-           
+
             if (answer != null && !answer.Trim().Equals(""))
             {
                 QuestionAnswer qa = new QuestionAnswer();
@@ -650,10 +655,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 qa.IsCorrect = true;
                 db.QuestionAnswers.Add(qa);
             }
-           
-            
+
+
             string altAnswer = collection["altAnswer"];
-            
+
             if (altAnswer != null && !altAnswer.Trim().Equals(""))
             {
                 QuestionAnswer altQa = new QuestionAnswer();
@@ -662,7 +667,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 altQa.IsCorrect = true;
                 db.QuestionAnswers.Add(altQa);
             }
-            
+
 
             db.SaveChanges();
 
@@ -670,7 +675,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
         }
 
-        
+
         public ActionResult EditShortAnswerQuestion(string qid)
         {
             int questionID = int.Parse(qid);
@@ -703,7 +708,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             //add new answer
             string answer = collection["answer"];
-            
+
             if (answer != null && !answer.Trim().Equals(""))
             {
                 QuestionAnswer qa = new QuestionAnswer();
@@ -712,10 +717,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 qa.IsCorrect = true;
                 db.QuestionAnswers.Add(qa);
             }
-            
+
 
             string altAnswer = collection["altAnswer"];
-           
+
             if (altAnswer != null && !altAnswer.Trim().Equals(""))
             {
                 QuestionAnswer altQa = new QuestionAnswer();
@@ -724,10 +729,300 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 altQa.IsCorrect = true;
                 db.QuestionAnswers.Add(altQa);
             }
-            
+
             db.SaveChanges();
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
         }
+
+        public ActionResult CreateMatchingQuestion(string chid)
+        {
+            int chapID = int.Parse(chid);
+            ViewBag.ChapterID = chapID;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateMatchingQuestion(string chid, FormCollection collection, string mark, string time)
+        {
+            int chapID = int.Parse(chid);
+            MatchQuestion matching = new MatchQuestion();
+            Chapter chapter = db.Chapters.Find(chapID);
+            matching.ChapterId = chapter.ChID;
+
+            //check if mark is null
+            if (!mark.Trim().Equals(""))
+            {
+                matching.Mark = float.Parse(mark);
+            }
+            //check if time is null
+            if (!time.Trim().Equals(""))
+            {
+                matching.Time = int.Parse(time);
+            }
+
+            string columnA = "";
+            string columnB = "";
+            string solution = "";
+            string[] rightAnswer = collection["answerLeft"].Split(new char[] { ',' });
+            string[] leftAnswer = collection["answerRight"].Split(new char[] { ',' });
+
+            //add right column to string
+            foreach(string right in rightAnswer)
+            {
+                if (right != null && !right.Trim().Equals(""))
+                {
+                    columnA = columnA + right +";";
+                }
+                
+            }
+
+            //add left column to string
+            foreach (string left in leftAnswer)
+            {
+                if (left != null && !left.Trim().Equals(""))
+                {
+                    columnB = columnB + left + ";";
+                }
+
+            }
+
+            //add solution
+            for(int i = 0; i < rightAnswer.Length; i++)
+            {
+                if(rightAnswer[i]!=null&& !rightAnswer[i].Trim().Equals(""))
+                {
+                    solution = solution + rightAnswer[i] + "-" + leftAnswer[i] + ";";
+                }
+            }
+
+            matching.ColumnA = columnA.Substring(0, columnA.Length - 1);
+            matching.ColumnB = columnB.Substring(0, columnB.Length - 1);
+            matching.Solution = solution.Substring(0, solution.Length - 1);
+
+            db.MatchQuestions.Add(matching);
+            db.SaveChanges();
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+
+        }
+
+        public ActionResult EditMatchingQuestion(string qid)
+        {
+            int matchingID = int.Parse(qid);
+            MatchQuestion matching = db.MatchQuestions.Find(matchingID);
+            ViewBag.ChapterID = matching.ChapterId;
+            ViewBag.Question = matching;
+            ViewBag.ColumnA = matching.ColumnA.Split(new char[] { ';' });
+            ViewBag.ColumnB = matching.ColumnB.Split(new char[] { ';' });
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult EditMatchingQuestion(string chid, string qid, FormCollection collection, string mark, string time) {
+            int matchingID = int.Parse(qid);
+            int chapID = int.Parse(chid);
+            MatchQuestion matching = db.MatchQuestions.Find(matchingID);
+            matching.Mark = float.Parse(mark);
+            matching.Time = int.Parse(time);
+
+            string columnA = "";
+            string columnB = "";
+            string solution = "";
+            string[] rightAnswer = collection["answerLeft"].Split(new char[] { ',' });
+            string[] leftAnswer = collection["answerRight"].Split(new char[] { ',' });
+
+            //edit right column
+            foreach (string right in rightAnswer)
+            {
+                if (right != null && !right.Trim().Equals(""))
+                {
+                    columnA = columnA + right + ";";
+                }
+
+            }
+
+            //edit left column
+            foreach (string left in leftAnswer)
+            {
+                if (left != null && !left.Trim().Equals(""))
+                {
+                    columnB = columnB + left + ";";
+                }
+
+            }
+
+            //edit solution
+            for (int i = 0; i < rightAnswer.Length; i++)
+            {
+                if (rightAnswer[i] != null && !rightAnswer[i].Trim().Equals(""))
+                {
+                    solution = solution + rightAnswer[i] + "-" + leftAnswer[i] + ";";
+                }
+            }
+
+            matching.ColumnA = columnA.Substring(0, columnA.Length - 1);
+            matching.ColumnB = columnB.Substring(0, columnB.Length - 1);
+            matching.Solution = solution.Substring(0, solution.Length - 1);
+            db.Entry(matching).State = EntityState.Modified;
+            db.SaveChanges();
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+        }
+
+        public ActionResult CreateIndicateMistakeQuestion(string chid)
+        {
+            int chapID = int.Parse(chid);
+            ViewBag.ChapterID = chapID;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult CreateIndicateMistakeQuestion(string chid, string questionText, FormCollection collection, string mark, string time,
+           HttpPostedFileBase questionImage)
+        {
+            int chapID = int.Parse(chid);
+            Question question = new Question();
+            Chapter chapter = db.Chapters.Find(chapID);
+            question.ChapterID = chapter.ChID;
+            question.Text = questionText;
+            question.Qtype = 6;
+            //check if mark is null
+            if (!mark.Trim().Equals(""))
+            {
+                question.Mark = float.Parse(mark);
+            }
+            //check if time is null
+            if (!time.Trim().Equals(""))
+            {
+                question.Time = int.Parse(time);
+            }
+
+            db.Questions.Add(question);
+            db.SaveChanges();
+
+            int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Where(q => q.ChapterID == chapID).Select(q => q.QID).First().ToString());
+
+            //add correct answer
+            string correctAnswer = collection["answer"];
+            QuestionAnswer answer = new QuestionAnswer();
+            answer.QuestionID = qid;
+            answer.Text = correctAnswer.Trim();
+            answer.IsCorrect = true;
+            db.QuestionAnswers.Add(answer);
+
+            //get incorrect inside round bracket
+            List<string> answerList = new List<string>();
+            Regex regex = new Regex(@"\(([^()]+)\)*");
+            foreach (Match match in regex.Matches(questionText))
+            {
+                string ans = match.Value;
+                answerList.Add(ans);
+            }
+
+            //add incorrect answer to db
+            if (answerList != null)
+            {
+                foreach (string ans in answerList)
+                {
+                    string trimBracketAns = ans.Trim().Substring(1, ans.Length - 2);
+                    QuestionAnswer qa = new QuestionAnswer();
+                    qa.QuestionID = qid;
+                    qa.Text = trimBracketAns;
+                    /*Debug.WriteLine(trimBracketAns + "===" + correctAnswer);*/
+                    if (!trimBracketAns.Trim().ToLower().Equals(correctAnswer.Trim().ToLower()))
+                    {
+                        qa.IsCorrect = false;
+                        db.QuestionAnswers.Add(qa);
+                        /*Debug.WriteLine(trimBracketAns + "=11==" + correctAnswer);*/
+                    }
+                    
+                }
+                db.SaveChanges();
+
+            }
+            ////////////////////////////////////////////
+
+           /* string[] splitResults = Regex.Split(questionText, @"\(.*?\)");
+
+            foreach (var str in splitResults)
+            {
+                Debug.WriteLine(str);
+            }*/
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+
+        }
+
+        public ActionResult EditIndicateMistakeQuestion(string qid)
+        {
+            int questionID = int.Parse(qid);
+            Question question = db.Questions.Find(questionID);
+            ViewBag.ChapterID = question.ChapterID;
+            ViewBag.Question = question;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult EditIndicateMistakeQuestion(string qid, string chid, string questionText, FormCollection collection, string mark, string time)
+        {
+            int questionID = int.Parse(qid);
+            int chapID = int.Parse(chid);
+            Question question = db.Questions.Find(questionID);
+            question.Text = questionText;
+            question.Mark = float.Parse(mark);
+            question.Time = int.Parse(time);
+            db.Entry(question).State = EntityState.Modified;
+
+            var answerList = db.QuestionAnswers.Where(a => a.QuestionID == questionID);
+            //delete the old answer
+            foreach (var a in answerList)
+            {
+                db.QuestionAnswers.Remove(a);
+            }
+
+            db.SaveChanges();
+
+            //add new correct answers
+            string correctAnswer = collection["answer"];
+            QuestionAnswer answer = new QuestionAnswer();
+            answer.QuestionID = questionID;
+            answer.Text = correctAnswer.Trim();
+            answer.IsCorrect = true;
+            db.QuestionAnswers.Add(answer);
+
+            List<string> answers = new List<string>();
+            //get list of answer inside round bracket "()"
+            Regex regex = new Regex(@"\(([^()]+)\)*");
+            foreach (Match match in regex.Matches(questionText))
+            {
+                string ans = match.Value;
+                answers.Add(ans);
+            }
+
+            //add new incorrect answers
+            if (answers != null)
+            {
+                foreach (string ans in answers)
+                {
+                    string trimBracketAns = ans.Trim().Substring(1, ans.Length - 2);
+                    QuestionAnswer qa = new QuestionAnswer();
+                    qa.QuestionID = questionID;
+                    qa.Text = trimBracketAns;
+                    Debug.WriteLine(trimBracketAns + "===" + correctAnswer);
+                    if (!trimBracketAns.Trim().ToLower().Equals(correctAnswer.Trim().ToLower()))
+                    {
+                        qa.IsCorrect = false;
+                        db.QuestionAnswers.Add(qa);
+                        Debug.WriteLine(trimBracketAns + "=11==" + correctAnswer);
+                    }
+
+                }
+                db.SaveChanges();
+
+            }
+
+            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+        }
+
+
     }
 }

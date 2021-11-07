@@ -321,6 +321,10 @@
     <Content Include="Areas\Teacher\Views\Question\EditReadingQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateShortAnswerQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditShortAnswerQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\CreateMatchingQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\CreateIndicateMistakeQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\EditIndicateMistakeQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Question\EditMatchingQuestion.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\countdown.js" />
     <Content Include="Scripts\dragdropimage.js" />
