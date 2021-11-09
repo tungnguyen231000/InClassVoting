@@ -66,27 +66,27 @@
                 <p class="h5">Choose type of question</p>
                 @foreach (var questionType in ViewBag.QuestionType)
                 {
-    <div style="display:flex; margin-bottom:25px">
-        @if (questionType.QTypeID == 1)
-        {
-            <a href="~/Teacher/Question/CreateMultipleChoiceQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-            else if (questionType.QTypeID == 2)
-            {
-            <a href="~/Teacher/Question/CreateReadingQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-            else if (questionType.QTypeID == 3)
-            {
-            <a href="~/Teacher/Question/CreateFillBlankQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-            else if (questionType.QTypeID == 4)
-            {
-            <a href="~/Teacher/Question/CreateShortAnswerQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-            else if (questionType.QTypeID == 5)
-            {
-            <a href="~/Teacher/Question/CreateMatchingQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
-            else if (questionType.QTypeID == 6)
-            {
-            <a href="~/Teacher/Question/CreateIndicateMistakeQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a>}
-    </div>
-        }
+                    <div style="display:flex; margin-bottom:25px">
+                       @if (questionType.QTypeID == 1)
+                       {
+                         <a href="~/Teacher/Question/CreateMultipleChoiceQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
+                         else if (questionType.QTypeID == 2)
+                         {
+                         <a href="~/Teacher/Question/CreateReadingQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
+                         else if (questionType.QTypeID == 3)
+                         {
+                         <a href="~/Teacher/Question/CreateFillBlankQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
+                         else if (questionType.QTypeID == 4)
+                         {
+                         <a href="~/Teacher/Question/CreateShortAnswerQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
+                         else if (questionType.QTypeID == 5)
+                         {
+                         <a href="~/Teacher/Question/CreateMatchingQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a> }
+                         else if (questionType.QTypeID == 6)
+                         {
+                         <a href="~/Teacher/Question/CreateIndicateMistakeQuestion?chid=@ViewBag.Chapter.ChID">@questionType.Name</a>}
+                    </div>
+                  }
 
             </div>
             <div class="modal-footer">
@@ -121,42 +121,47 @@
     @if (ViewBag.CountQuest == 0)
     {
 
-<div style="display:flex">
-    <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        New Question
-    </button>
+        <div style="display:flex">
+            <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                New Question
+            </button>
 
-</div>
-                <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Chapter</p> }
-                            else
-                            {
-                <div class="block-search-dropdown">
-                    <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+        </div>
+                <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Chapter</p>
+     }
+     else
+     {
+            <div class="block-search-dropdown">
+                <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
 
-                        <div class="mr-2 transition duration-500 px-3 border-b">
-                            <input type="hidden" id="chapterId" value="@ViewBag.Chapter.ChID" />
-                            <input style="width: 90% " class="search-box flex-1" type="text" id="searchText" placeholder="search">
-                            <button type="button" onclick="reloadModalQuestionList()" class="search-box"> <i class="fad fa-search"></i> </button>
-                        </div>
-                    </div>
-                    <div style="width:33%" class="btn-group mg-left">
-                        <h1 style="margin:auto">Question Type: </h1>
-                        <select onchange="reloadModalQuestionList()" id="qType" class="btn-indigo mg-left ">
-                            <option value="-1">All Type </option>
-                            @foreach (var questionType in ViewBag.QuestionType)
-                            {
-            <option value="@questionType.QTypeID">@questionType.Name </option>}
-                        </select>
+                    <div class="mr-2 transition duration-500 px-3 border-b">
+                        <input type="hidden" id="chapterId" value="@ViewBag.Chapter.ChID" />
+                            <input class="search-box flex-1" style="width: 90%" type="text" placeholder="search" id="searchText" value="@ViewBag.Search">
+                      
+                        <button type="button" onclick="reloadModalQuestionList()" class="search-box"> <i class="fad fa-search"></i> </button>
                     </div>
                 </div>
-                                <div class="tb-mg-top">
-                                    @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
-                                    {
-                    <input type="hidden" name="chapterId" value="@ViewBag.Chapter.ChID" />
-                                        <div id="divShowQuestions">
-                                            @{ Html.RenderAction("ShowQuestionsList", "Question", new { chid = ViewBag.Chapter.ChID, qtype = "-1", searchText = "" }); }
-                                        </div>}
-                                </div>}
+                <div style="width:33%" class="btn-group mg-left">
+                    <h1 style="margin:auto">Question Type: </h1>
+                    <select onchange="reloadModalQuestionList()" id="qType" class="btn-indigo mg-left ">
+                        <option value="-1">All Type </option>
+                        @foreach (var questionType in ViewBag.QuestionType)
+                        {
+                         <option value="@questionType.QTypeID">@questionType.Name </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="tb-mg-top">
+                @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
+                {
+                    <input type="hidden" id="chapterId" name="chapterId" value="@ViewBag.Chapter.ChID" />
+                    <div id="divShowQuestions">
+                        @{ Html.RenderAction("ShowQuestionsList", "Question", new { chid = ViewBag.Chapter.ChID, qtype = ViewBag.QType, searchText = ViewBag.Search, i = ViewBag.Page, questCount = ViewBag.QuestCount }); }
+                    </div>
+                 }
+            </div>
+     }
 </div>
 <!-- End General Report -->
 
@@ -167,7 +172,7 @@
         var qtype = document.getElementById("qType").value;
         var searchText = document.getElementById("searchText").value;
         $("#divShowQuestions").load('@Url.Action("ShowQuestionsList", "Question")' +
-            '?chid=' + chid + '&qtype='+ qtype + '&searchText=' + searchText);
+            '?chid=' + chid + '&qtype=' + qtype + '&searchText=' + searchText  + '&questCount=0');
     }
 
 </script>

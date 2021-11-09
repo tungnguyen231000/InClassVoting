@@ -1,4 +1,7 @@
-﻿@model IEnumerable<InClassVoting.Models.Quiz>
+﻿@model IPagedList<InClassVoting.Models.Quiz>
+@using PagedList.Mvc;
+@using PagedList;
+<link rel="stylesheet" type="text/css" href="~/Content/PagedList.css">
 
 @if (Model.Count() == 0)
 {
@@ -6,6 +9,7 @@
 }
 else
 {
+
     <table class="table">
         <thead>
             <tr>
@@ -18,14 +22,11 @@ else
             </tr>
         </thead>
         <tbody>
-            @{
-                int no = 0;
-            }
             @foreach (var quiz in Model)
             {
-                no++;
+                ViewBag.QuizCount = ViewBag.QuizCount + 1;
                 <tr>
-                    <th scope="row">@no</th>
+                    <th scope="row">@ViewBag.QuizCount</th>
                     <td><a href="~/Teacher/Quiz/QuizDetail?qzId=@quiz.QuizID" type="button">@quiz.QuizName ( @quiz.NumOfQuestion Questions)</a></td>
                     <td>@quiz.Mark</td>
                     @{
@@ -78,4 +79,13 @@ else
 
         </tbody>
     </table>
+
+    <div class="paging">
+        @Html.PagedListPager(Model, i => Url.Action("ViewQuizByCourse", "Quiz",
+    new { i, cid = Request.QueryString["cid"], searchText = Request.QueryString["searchText"], quizCount = ViewBag.QuizCount }),
+   PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "divShowQuizList" }))
+
+    </div>
+    
+
 }

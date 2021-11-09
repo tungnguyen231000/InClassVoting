@@ -16,26 +16,65 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
         {
             int quizId = int.Parse(qzid);
             var getQuiz = db.Quizs.Find(quizId);
-            if(getQuiz.Status.Equals("Not Done")|| getQuiz.Status.Equals("Done"))
+            if (getQuiz.Status.Equals("Not Done") || getQuiz.Status.Equals("Done"))
             {
                 return View("QuizNotStartYet");
             }
             else
             {
-                var quiz_quizDone = db.Quiz_QuizDone.OrderByDescending(qz => qz.Q_qDoneID).Where(qz=>qz.QuizID==quizId).FirstOrDefault();
-                
+                //get quiz saved in database
+                var quiz_quizDone = db.Quiz_QuizDone.OrderByDescending(qz => qz.Q_qDoneID).Where(qz => qz.QuizID == quizId).FirstOrDefault();
                 var quiz = db.QuizDones.Find(quiz_quizDone.QuizDoneID);
+
                 List<QuestionDone> mulChoiceList = new List<QuestionDone>();
                 /*List<MatchQuestion> mList = new List<MatchQuestion>();*/
                 if (quiz.Questions != null && !quiz.Questions.Equals(""))
                 {
+                    //////////////////////////////////////
                     string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
+                    List<string> questionList = new List<string>();
+                    //get random question in quiz
+                    if (quiz.MixQuestionNumber != null)
+                    {
+                        List<int> addedQuestion = new List<int>();
+                        Random rd = new Random();
+                        for (int i = 0; i < quiz.MixQuestionNumber; i++)
+                        {
+                            int q = rd.Next(quizQuestions.Length);
+                            /*Debug.WriteLine("q1:=" + q);*/
+                            while (addedQuestion.Contains(q))
+                            {
+                                q = rd.Next(quizQuestions.Length);
+                                /*Debug.WriteLine("q2:=" + q);*/
+                            }
+                            /*Debug.WriteLine("q3:=" + q);*/
+                            questionList.Add(quizQuestions[q]);
+                            addedQuestion.Add(q);
+
+
+                        }
+                        Debug.WriteLine("===1=1==");
+                        foreach (string qq in questionList)
+                        {
+
+                            Debug.WriteLine(qq);
+                        }
+
+                    }
+                    else
+                    {
+                        questionList = quizQuestions.ToList();
+                    }
+
+                    //////////////////////////////////////
+
                     Dictionary<int, string> questionSet = new Dictionary<int, string>();
                     Dictionary<int, string> matchingSet = new Dictionary<int, string>();
-                    foreach (string questions in quizQuestions)
+                    foreach (string questions in questionList)
                     {
-                        bool isMatching = questions.Contains("Matching");
-                        if (isMatching)
+                        string[] questAndType = questions.Split(new char[] { '-' });
+                        int qType = int.Parse(questAndType[1]);
+                        if (qType == 5)
                         {
                             /*
                             string[] questAndType = questions.Split(new char[] { '-' });
@@ -44,7 +83,6 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                         }
                         else
                         {
-                            string[] questAndType = questions.Split(new char[] { '-' });
                             int qID = int.Parse(questAndType[0]);
                             questionSet.Add(qID, questAndType[1]);
                         }
@@ -53,7 +91,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
                     foreach (KeyValuePair<int, string> keyValuePair in questionSet)
                     {
-                        if (keyValuePair.Value.Equals("Multiple Choice"))
+                        if (keyValuePair.Value.Equals("1"))
                         {
                             var quest = db.QuestionDones.Find(keyValuePair.Key);
                             mulChoiceList.Add(quest);
@@ -73,7 +111,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 ViewBag.QuizMultipleChoiceQuestions = mulChoiceList;
                 return View();
             }
-           
+
         }
 
         public ActionResult ShowAssignedQuiz()
@@ -81,29 +119,31 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             return View(db.Quizs.ToList());
         }
 
+        //student press submit quiz
         [HttpPost]
-        public ActionResult SubmitQuiz(FormCollection form, string studentID,string qDoneID)
+        public ActionResult SubmitQuiz(FormCollection form, string studentID, string qDoneID)
         {
             int sID = int.Parse(studentID);
             int qtID = 1;
             int qzDoneID = int.Parse(qDoneID);
-            double? totalMark=0;
+            double? totalMark = 0;
             string qListStr = "";
             string check1 = form["cbOption"];
             string check2 = form["qid"];
+
             string[] cbAnswer = form["cbOption"].Split(new char[] { ',' });
-            string[] questionList = form["qid"].Split(new char[] { ','});
-            Debug.WriteLine("////"+ check1 + "//" + studentID + "//=" + check2 + "//?");
+            string[] questionList = form["qid"].Split(new char[] { ',' });
+            Debug.WriteLine("////" + check1 + "//" + studentID + "//=" + check2 + "//?");
             /* Dictionary<int, int> optionChoice = new Dictionary<int, int>();*/
             //==================================================
-         /*   foreach (string st in cbAnswer)
-            {
-                Debug.WriteLine("cbbvlue:" + st);
-            }
-            foreach (string st in answer)
-            {
-                Debug.WriteLine("answer:" + st);
-            }*/
+            /*   foreach (string st in cbAnswer)
+               {
+                   Debug.WriteLine("cbbvlue:" + st);
+               }
+               foreach (string st in answer)
+               {
+                   Debug.WriteLine("answer:" + st);
+               }*/
 
             //=============================
             /*for (int i = 0; i < answer.Length; i++)
@@ -111,6 +151,8 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 Debug.WriteLine(cbAnswer[i].ToString() + "-=-=-=-=" + cbAnswer.Length + "///" + answer.Length);
                 optionChoice.Add(int.Parse(answer[i]), int.Parse(cbAnswer[i]));
             }*/
+
+            //get student question 
             foreach (var q in questionList)
             {
                 var mulQuest = db.QuestionDones.Find(int.Parse(q));
@@ -119,13 +161,12 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 Student_Answer studentChoice = new Student_Answer();
                 studentChoice.QuizDoneID = qzDoneID;
                 studentChoice.StudentID = sID;
-                studentChoice.Question = q + "-MultipleChoice";
+                studentChoice.Question = q + "-1";
+                //get student answer
                 foreach (var a in cbAnswer)
                 {
                     int ansID = int.Parse(a);
                     choosenAns = db.QuestionAnswerDones.Where(qa => qa.QuestionID == mulQuest.Q_DoneID && qa.QA_DoneID == ansID).FirstOrDefault();
-                    
-                    
                     if (choosenAns == null)
                     {
                         Debug.WriteLine("non");
@@ -149,7 +190,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     }
                 }
                 db.Student_Answer.Add(studentChoice);
-                qListStr = qListStr + q + "-MultipleChoice;";
+                qListStr = qListStr + q + "-1;";
                 /*foreach(KeyValuePair<int,int> keyValue in optionChoice)
                 {
                     Debug.WriteLine(keyValue.Value);
@@ -180,7 +221,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                      db.Student_Answer.Add(studentChoice);
                 }*/
             }
-            
+
             Student_QuizDone report = new Student_QuizDone();
             report.StudentID = sID;
             report.QuizDoneID = qzDoneID;
@@ -192,5 +233,5 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
             return RedirectToAction("ShowAssignedQuiz");
         }
-        }
+    }
 }

@@ -1,4 +1,7 @@
-﻿@model dynamic
+﻿@*@model dynamic*@
+@model IPagedList<InClassVoting.Models.Question>
+@using PagedList.Mvc;
+@using PagedList;
 
 @{
     ViewBag.Title = "QuizDetail";
@@ -172,15 +175,13 @@
             <div style="display:flex">
                 <h1 style="margin: auto " class="h5">Link quiz: </h1>
                 @{
-                    string quizLink = "https://localhost:44350/Student/Quiz/DoQuizPaperTest?qzID=";
-                    quizLink = quizLink + ViewBag.Quiz.QuizID;
-
-
+                    string quizLink = "https://localhost:44350/Student/Quiz/DoQuizPaperTest?qzID=" + ViewBag.Quiz.QuizID;
                 }
                 <p class="h5" style="margin: auto; margin-left: 10px;">@quizLink</p>
             </div>
             <a style="background-color:aquamarine;margin-left:20px" class="btn ">Copy</a>
-        </div><div class="tb-mg-top">
+        </div>
+        <div class="tb-mg-top">
             <table class="table">
                 <thead>
                     <tr>
@@ -194,37 +195,61 @@
                 </thead>
                 <tbody>
                     @{ int countQuestion = 0;}
-                    @if (Model.Questions != null)
-                    {
-                        foreach (var question in Model.Questions)
+                    @*@if (Model.Questions != null)
                         {
-                            countQuestion++;
-                            <tr>
-                                <th scope="row">@countQuestion</th>
-                                <td><a href="#" type="button">@question.Text </a></td>
-                                <td>@question.QuestionType.Name</td>
-                                <td>@question.Mark</td>
-                                <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.QuestionType.QTypeID" class="fas fa-trash-alt"></a></td>
-                            </tr>
+                            foreach (var question in Model.Questions)
+                            {
+                                countQuestion++;
+                                <tr>
+                                    <th scope="row">@countQuestion</th>
+                                    <td><a href="#" type="button">@question.Text </a></td>
+                                    <td>@question.QuestionType.Name</td>
+                                    <td>@question.Mark</td>
+                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.QuestionType.QTypeID" class="fas fa-trash-alt"></a></td>
+                                </tr>
+                            }
                         }
-                    }
-                    @if (Model.Matchings != null)
-                    {
-                        foreach (var match in Model.Matchings)
+                        @if (Model.Matchings != null)
                         {
-                            countQuestion++;
-                            <tr>
-                                <th scope="row">@countQuestion</th>
-                                <td><a href="#" type="button">@match.ColumnA  @match.ColumnB </a></td>
-                                <td>Matching</td>
-                                <td>@match.Mark</td>
-                                <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@match.MID&&qtype=5" class="fas fa-trash-alt"></a></td>
-                            </tr>
-                        }
-                    }
+                            foreach (var match in Model.Matchings)
+                            {
+                                countQuestion++;
+                                <tr>
+                                    <th scope="row">@countQuestion</th>
+                                    <td><a href="#" type="button">@match.ColumnA  @match.ColumnB </a></td>
+                                    <td>Matching</td>
+                                    <td>@match.Mark</td>
+                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@match.MID&&qtype=5" class="fas fa-trash-alt"></a></td>
+                                </tr>
+                            }
+                        }*@
+                    @if (Model.Count() != 0)
+                    {
 
+                        foreach (var question in Model)
+                        {
+                            @*ViewBag.QuestCount = ViewBag.QuestCount + 1;*@
+                            countQuestion++;
+                            <tr>
+                                <th scope="row">@*@ViewBag.QuestCount*@ @countQuestion</th>
+                                <td><a href="#" type="button">@question.Text </a></td>
+                                <td>
+                                    @if (question.Qtype == 5)
+                                    {
+                                        <span>Matching</span> }
+                                    else
+                                    {
+                                        @question.QuestionType.Name}
+                                </td>
+                                <td>@question.Mark</td>
+                            </tr>
+                        }
+                    }
                 </tbody>
             </table>
+            <div class="paging">
+                @Html.PagedListPager(Model, i => Url.Action("QuizDetail", "Quiz",new{i,qzID = ViewBag.Quiz.QuizID@*, questCount = ViewBag.QuestCount*@}))
+            </div>
         </div>
         <div style="display: flex; margin-left: auto;">
             <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#addQuestionModal">

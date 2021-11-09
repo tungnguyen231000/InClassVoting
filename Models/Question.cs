@@ -27,6 +27,7 @@ namespace InClassVoting.Models
         public Nullable<double> Mark { get; set; }
         public int Qtype { get; set; }
         public Nullable<bool> MixChoice { get; set; }
+        public Nullable<bool> GivenWord { get; set; }
         public Nullable<int> Time { get; set; }
         public byte[] ImageData { get; set; }
     

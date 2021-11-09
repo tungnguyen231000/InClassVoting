@@ -28,11 +28,9 @@ namespace InClassVoting.Models
         public virtual DbSet<Chapter> Chapters { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<Passage> Passages { get; set; }
-        public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<QuestionType> QuestionTypes { get; set; }
         public virtual DbSet<QuestionAnswer> QuestionAnswers { get; set; }
         public virtual DbSet<Passage_Done> Passage_Done { get; set; }
-        public virtual DbSet<QuestionDone> QuestionDones { get; set; }
         public virtual DbSet<Student> Students { get; set; }
         public virtual DbSet<QuestionAnswerDone> QuestionAnswerDones { get; set; }
         public virtual DbSet<MatchQuestion> MatchQuestions { get; set; }
@@ -42,5 +40,7 @@ namespace InClassVoting.Models
         public virtual DbSet<Student_Answer> Student_Answer { get; set; }
         public virtual DbSet<Student_QuizDone> Student_QuizDone { get; set; }
         public virtual DbSet<QuizDone> QuizDones { get; set; }
+        public virtual DbSet<Question> Questions { get; set; }
+        public virtual DbSet<QuestionDone> QuestionDones { get; set; }
     }
 }

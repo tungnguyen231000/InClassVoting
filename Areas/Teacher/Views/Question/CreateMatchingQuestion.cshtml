@@ -15,6 +15,7 @@
                     <h1 class="h6">
                         <span>Question Type:</span>
                         <span>Matching</span>
+                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
                         <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
                     </h1>
                 </div>
@@ -78,7 +79,7 @@
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Add New Question">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
             </div>
 
         </div>

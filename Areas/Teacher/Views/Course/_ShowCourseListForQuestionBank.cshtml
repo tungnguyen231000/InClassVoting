@@ -15,9 +15,10 @@
         <!-- button -->
         <a href="#" style="background-color:aquamarine" class="btn" data-bs-toggle="modal" data-bs-target="#newCourceModal"> Create new Course</a>
         <!-- end button -->
-        <!-- Modal new Cource -->
+
         @using (Html.BeginForm("CreateCourse", "Course", FormMethod.Post))
         {
+            <!-- Modal new Cource -->
             <div class="modal fade" id="newCourceModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -179,12 +180,12 @@
                                         }
                                         if (countQuest < 2)
                                         {
-                                            <a class=" text_overflow" href="~/Teacher/Question/ViewQuestionByChapter?chid=@chapter.ChID"> @chapter.Name <br /> </a>
+                                            <a class=" text_overflow" href="~/Teacher/Question/ViewQuestionByChapter?chid=@chapter.ChID&qtype=-1&searchText="> @chapter.Name <br /> </a>
                                             <p style="color: cornflowerblue; width: max-content;">(@countQuest Question)</p>
                                         }
                                         else
                                         {
-                                            <a class=" text_overflow" href="~/Teacher/Question/ViewQuestionByChapter?chid=@chapter.ChID"> @chapter.Name <br />  </a>
+                                            <a class=" text_overflow" href="~/Teacher/Question/ViewQuestionByChapter?chid=@chapter.ChID&qtype=-1&searchText="> @chapter.Name <br />  </a>
                                             <p style="color: cornflowerblue; width: max-content;"> (@countQuest Questions)</p>
                                         }
                                     }

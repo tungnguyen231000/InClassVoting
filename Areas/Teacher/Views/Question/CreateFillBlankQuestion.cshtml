@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "CreateFillBlankQuestion";
+    Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    @using (Html.BeginForm("CreateFillBlankQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "fillblank-form" }))
+    {
+        <div class="grid grid-cols-1 w-full ">
+
+            <div class="w-full items-center bg-gray">
+                <div class="text-center">
+                    <h1 class="h6">
+                        <span>Question Type:</span>
+                        <span>Fill Blank</span>
+                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
+                        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
+                    </h1>
+                </div>
+
+                <div class="flex md:mx-16">
+                    <div class="m-6  ">
+                        <span>Time:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time">
+                    </div>
+                    <div class="m-6  ">
+                        <span>Mark:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark">
+                    </div>
+                    <div class="m-6">
+                        <input type="checkbox" name="givenword" value="true">
+                        <label for="givenword">Given Word</label>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div class="w-10/12  float-left mt-3">
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="questionText" placeholder="Paragraph ..."></textarea>
+                </div>
+            </div>
+
+            <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
+            </div>
+
+        </div>
+    }
+
+    <br />
+    <br />
+    <div class="w-full items-center bg-gray p-6 border border-black-400">
+        <h1 class="h6">Example: Fill Blank With Given Words</h1>
+        <div class="flex md:mx-16">
+            <div class="m-6">
+                <input type="checkbox" name="givenword" value="true" checked disabled>
+                <label for="givenword">Given Word</label>
+            </div>
+        </div>
+
+        <p style="color:blue">
+            Put the given words inside the round bracket, and place the "~" character in front of each question.
+            The right answer should have the "=" character stand in front of it.
+        </p>
+
+        A single waterproof hat with a brim will do the <span style="background-color:lemonchiffon">(~job~task</span> <span style="background-color:lightgreen">~=role</span> <span style="background-color:lemonchiffon">~duty)</span>
+        adequately in most conditions
+
+    </div>
+
+    
+    <br />
+    <br />
+    <div class="w-full items-center bg-gray p-6 border border-black-400">
+        <h1 class="h6">Example: Fill Blank Without Given Words</h1>
+        <div class="flex md:mx-16">
+            <div class="m-6">
+                <input type="checkbox" name="givenword" value="true" disabled>
+                <label for="givenword">Given Word</label>
+            </div>
+        </div>
+
+        <p style="color:blue">
+            Put the answer inside the round bracket.
+        </p>
+
+        A single waterproof hat with a brim will do the <span style="background-color:lightgreen">(role)</span> adequately in most conditions
+
+    </div>
+</div>
+
+

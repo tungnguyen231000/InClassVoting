@@ -14,6 +14,7 @@
                     <h1 class="h6">
                         <span>Question Type:</span>
                         <span>Multiple Choice   </span>
+                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
                         <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
                     </h1>
                 </div>
@@ -35,16 +36,19 @@
                 <div class="w-10/12  float-left mt-3">
                     <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Content ..."></textarea>
                 </div>
-
                 <div class="w-2/12 drag-content float-right">
                     <div class="drag-area">
                         <div><i class="icon fas fa-cloud-upload-alt"></i></div>
                         <div><h3 class="header">Drag and Drop to Upload File</h3></div>
                         <div><h4 class="or">or</h4></div>
-                        <div><button type="button" class="btn btn-image" >Browser Upload File</button></div>
-                        <div><input type="file" class="file-input" name="questionImage" hidden ></div>
+                    </div>
+                    <div>
+                        <div>
+                            <input type="file" class="file-input btn-image" name="imgfile" accept="image/*">
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="w-full items-center bg-gray p-6 border border-black-400">
@@ -83,7 +87,7 @@
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Add New Question">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
             </div>
 
         </div>

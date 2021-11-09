@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-	console.log('validate');
+	/*console.log('validate');*/
 	$("#fillblank-form").validate({
 		onfocusout: false,
 		onkeyup: false,
@@ -156,12 +156,6 @@
 			"mark": {
 				required: true
 			},
-			"matchingLeft": {
-				required: true
-			},
-			"matchingRight": {
-				required: true
-			},
 			"answerLeft": {
 				required: true
 			},
@@ -175,12 +169,6 @@
 			},
 			"mark": {
 				required: "*Mark is required"
-			},
-			"matchingLeft": {
-				required: "*Matching question is required"
-			},
-			"matchingRight": {
-				required: "*Matching question is required"
 			},
 			"answerLeft": {
 				required: "*Option left is required"
