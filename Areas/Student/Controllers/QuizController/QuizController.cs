@@ -161,6 +161,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
         [HttpPost]
         public ActionResult SubmitQuiz(FormCollection form, string studentID, string qDoneID)
         {
+            //tung 123
             int sID = int.Parse(studentID);
             int qtID = 1;
             int qzDoneID = int.Parse(qDoneID);
