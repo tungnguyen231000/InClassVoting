@@ -36,7 +36,7 @@
     {
 
 
-<div class="block-search-dropdown">
+        <div class="block-search-dropdown">
             <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
                 <div class="mr-2 transition duration-500 px-3 border-b">
                     @if (ViewBag.Search != null && !ViewBag.Search.Equals(""))
@@ -45,11 +45,10 @@
                     }
                     else
                     {
-                        <input class="search-box flex-1" style="width: 90%" type="text" placeholder="search" id="searchText" >
+                        <input class="search-box flex-1" style="width: 90%" type="text" placeholder="search" id="searchText">
                     }
                     <button type="button" class="search-box" onclick="reloadQuizList()"> <i class="fad fa-search"></i> </button>
                     <input type="hidden" id="pageCount" value="@ViewBag.Page">
-                    <input type="hidden" id="quizCount" value="@ViewBag.QuizCount">
                 </div>
             </div>
 
@@ -57,8 +56,9 @@
 
 
         <div class="tb-mg-top" id="divShowQuizList">
-            @{Html.RenderAction("ShowQuizList", "Quiz", new { cid = ViewBag.Course.CID, searchText = ViewBag.Search ,i=ViewBag.Page, quizCount=ViewBag.QuizCount }); }
+            @{Html.RenderAction("ShowQuizList", "Quiz", new { cid = ViewBag.Course.CID, searchText = ViewBag.Search, i = ViewBag.Page, quizCount = ViewBag.QuizCount }); }
 
+            
         </div>
     }
 </div>

@@ -38,9 +38,9 @@ namespace InClassVoting.Models
         public virtual DbSet<Quiz> Quizs { get; set; }
         public virtual DbSet<Quiz_QuizDone> Quiz_QuizDone { get; set; }
         public virtual DbSet<Student_Answer> Student_Answer { get; set; }
-        public virtual DbSet<Student_QuizDone> Student_QuizDone { get; set; }
         public virtual DbSet<QuizDone> QuizDones { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<QuestionDone> QuestionDones { get; set; }
+        public virtual DbSet<Student_QuizDone> Student_QuizDone { get; set; }
     }
 }

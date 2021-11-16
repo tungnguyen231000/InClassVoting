@@ -24,13 +24,10 @@
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizI__160F4887" />
         <EntityTypeShape EntityType="QuestionBank_Demo4Model.Student_Answer" Width="1.5" PointX="13.125" PointY="11.75" />
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__Student_A__Stude__5DCAEF64" />
-        <EntityTypeShape EntityType="QuestionBank_Demo4Model.Student_QuizDone" Width="1.5" PointX="12.875" PointY="9.125" />
-        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Student_Q__Stude__60A75C0F" />
         <EntityTypeShape EntityType="QuestionBank_Demo4Model.QuizDone" Width="1.5" PointX="9.125" PointY="9.625" />
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__QuizDone__Course__66603565" />
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__Quiz_Quiz__QuizD__6A30C649" />
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__Student_A__QuizD__70DDC3D8" />
-        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Student_Q__QuizD__6E01572D" />
         <EntityTypeShape EntityType="QuestionBank_Demo4Model.Question" Width="1.5" PointX="7.5" PointY="5.625" />
         <EntityTypeShape EntityType="QuestionBank_Demo4Model.QuestionDone" Width="1.5" PointX="12.5" PointY="5.125" />
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__Question__Chapte__22AA2996" />
@@ -40,6 +37,9 @@
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__QuestionA__Quest__276EDEB3" />
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__QuestionA__Quest__3E52440B" />
         <AssociationConnector Association="QuestionBank_Demo4Model.FK__QuestionD__Qtype__398D8EEE" />
+        <EntityTypeShape EntityType="QuestionBank_Demo4Model.Student_QuizDone" Width="1.5" PointX="12.75" PointY="9" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Student_Q__QuizD__4222D4EF" />
+        <AssociationConnector Association="QuestionBank_Demo4Model.FK__Student_Q__Stude__412EB0B6" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

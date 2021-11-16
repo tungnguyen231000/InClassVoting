@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using PagedList.Mvc;
 using PagedList;
+using System.Text;
 
 namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 {
@@ -22,22 +23,19 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //view quiz inside course page
-        public ActionResult ViewQuizByCourse(string cid, string searchText, int? i, int? quizCount)
+        public ActionResult ViewQuizByCourse(string cid, string searchText, int? i)
         {
             int courseID = int.Parse(cid);
             ViewBag.Course = db.Courses.Find(courseID);
             ViewBag.CoutnQuiz = db.Quizs.Where(q => q.CourseID == courseID).Count();
-            ViewBag.Page = i;
+            if (i == null)
+            {
+                i = 1;
+            }
 
+            ViewBag.Page = i;
             //fix quiz number (quiz no)
-            if (quizCount == null||i==1)
-            {
-                ViewBag.QuizCount = 0;
-            }
-            else 
-            {
                 ViewBag.QuizCount = (i-1)*3;
-            }
 
             //get search text
             if (searchText == null)
@@ -116,7 +114,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     //get question from DB
                     foreach (KeyValuePair<int, string> keyValuePair in questionSet)
                     {
-
                         var quest = db.Questions.Find(keyValuePair.Key);
                         qList.Add(quest);
 
@@ -131,17 +128,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         matchQuest.Text = mQuest.ColumnA + "//" + mQuest.ColumnB;
                         matchQuest.Qtype = 5;
                         matchQuest.Mark = mQuest.Mark;
-
+                        qList.Add(matchQuest);
                     }
                 }
-                /*dynamic dyQuestions = new ExpandoObject();
-                dyQuestions.Questions = qList;
-                dyQuestions.Matchings = mList;*/
                 ViewBag.Quiz = quiz;
                 ViewBag.Course = course;
                 ViewBag.QuestionType = db.QuestionTypes.ToList();
                 ViewBag.ChapterList = db.Chapters.Where(ch => ch.CourseID == course.CID);
-                ViewBag.CountQuest = qList.Count() /*+ mList.Count()*/;
+                ViewBag.CountQuest = qList.Count();
+                if (i == null)
+                {
+                    i = 1;
+                }
+                ViewBag.QuestionNo = (i - 1) * 3;
+                string domain = "https://localhost:44350/Student/Quiz/DoQuizPaperTest?qzID=";
+                string parameterPart = ViewBag.Quiz.QuizID.ToString();
+                /*string encodePart = Uri.EscapeDataString(parameterPart);*/
+                ViewBag.QuizLink = domain + parameterPart;
                 return View(qList.ToPagedList(i ?? 1, 3));
             }
 
@@ -157,7 +160,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             quiz.QuizName = newQuizName;
             db.Entry(quiz).State = EntityState.Modified;
             db.SaveChanges();
-            return Redirect("~/Teacher/Quiz/QuizDetail?qzID=" + quiz.QuizID);
+            /*return Redirect("~/Teacher/Quiz/QuizDetail?qzID=" + quiz.QuizID);*/
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
         //Delete Quiz
@@ -178,7 +182,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Show question to add to quiz
-        public PartialViewResult ShowQuestionForEditQuiz(string chid, string cid, string qzid, string qtype, string searchText)
+        public PartialViewResult ShowQuestionForEditQuiz(string chid, string cid, string qzid, string qtype, string searchText, int? i)
         {
             int chapID = int.Parse(chid);
             int courseID = int.Parse(cid);
@@ -192,6 +196,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
             int quizID = int.Parse(qzid);
             var quiz = db.Quizs.Find(quizID);
+            //check if there are question inside quiz
             if (quiz.Questions != null)
             {
                 string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
@@ -263,6 +268,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
             List<Question> questList = new List<Question>();
             List<MatchQuestion> matchList = new List<MatchQuestion>();
+
             //check if question already in quiz
             if (questionSet.Count() == 0)
             {
@@ -296,6 +302,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     }
                 }
             }
+
             //check if match question already in quiz
             if (matchingSet.Count() == 0)
             {
@@ -324,7 +331,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         }
                         if (mDiff != null)
                         {
+                            Question q = new Question();
+                            q.ChapterID = mDiff.ChapterId;
+                            q.Qtype = 5;
+                            q.Text = mDiff.ColumnA + "//" + mDiff.ColumnB;
+                            q.Mark = mDiff.Mark;
                             matchList.Add(mDiff);
+                            /*questList.Add(q);*/
                         }
                     }
                 }
@@ -332,7 +345,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
             ViewBag.Questions = questList;
             ViewBag.Matchings = matchList;
-            return PartialView("_ShowQuestionForEditQuiz");
+            return PartialView("_ShowQuestionForEditQuiz"/*, questList.ToPagedList(i ?? 1, 3)*/);
         }
 
         [HttpPost]
@@ -478,6 +491,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             string questSet = qid + "-" + typeID;
             string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
             string newQuestionSet = null;
+            //get question list
             foreach (string set in quizQuestions)
             {
 
@@ -486,6 +500,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     newQuestionSet = newQuestionSet + set + ";";
                 }
             }
+
+            //if question is matching
             if (typeID == 5)
             {
                 var m = db.MatchQuestions.Find(int.Parse(qid));
@@ -510,6 +526,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     quiz.Time = quiz.Time - q.Time;
                 }
             }
+            //if all question in quest is deleted
             if (newQuestionSet == null)
             {
                 quiz.Questions = null;
@@ -1036,6 +1053,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                             qSave.ChapterName = quest.Chapter.Name;
                             qSave.Time = quest.Time;
                             qSave.MixChoice = quest.MixChoice;
+                            qSave.GivenWord = quest.GivenWord;
                             db.QuestionDones.Add(qSave);
                             db.SaveChanges();
 

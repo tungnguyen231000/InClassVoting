@@ -39,11 +39,24 @@
 
                 <div class="w-2/12 drag-content float-right">
                     <div class="drag-area">
-                        <div><i class="icon fas fa-cloud-upload-alt"></i></div>
-                        <div><h3 class="header">Drag and Drop to Upload File</h3></div>
-                        <div><h4 class="or">or</h4></div>
-                        <div><button type="button" class="btn btn-image">Browser Upload File</button></div>
-                        <div><input type="file" class="file-input" hidden></div>
+                        @if (ViewBag.Question.ImageData != null)
+                        {
+                            var base64 = Convert.ToBase64String(ViewBag.Question.ImageData);
+                            var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                            <img src="@imgSrc" alt="pic" />
+                        }
+                        else
+                        {
+                            <div><i class="icon fas fa-cloud-upload-alt"></i></div>
+                            <div><h3 class="header">Drag and Drop to Upload File</h3></div>
+                            <div><h4 class="or">or</h4></div>
+                        }
+
+                    </div>
+                    <div>
+                        <div>
+                            <input type="file" class="file-input btn-image" name="imgfile" accept="image/*">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -69,9 +82,9 @@
                     }
                     @if (countAnswer < 2)
                     {
-                    <tr>
-                        <td><input type="text" class="w-full pl-3" name="altAnswer" placeholder="Alternative Answer"></td>
-                    </tr>
+                        <tr>
+                            <td><input type="text" class="w-full pl-3" name="altAnswer" placeholder="Alternative Answer"></td>
+                        </tr>
                     }
                 </table>
             </div>

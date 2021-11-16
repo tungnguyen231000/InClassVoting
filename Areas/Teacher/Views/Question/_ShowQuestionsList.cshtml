@@ -2,6 +2,8 @@
 @*@model dynamic*@
 @using PagedList.Mvc;
 @using PagedList;
+
+
 <link rel="stylesheet" type="text/css" href="~/Content/PagedList.css">
 
 
@@ -44,7 +46,7 @@ else
                   }
                  </td>
                 <td>@question.Mark</td>
-                      </tr>
+             </tr>
              }
          }
 
@@ -52,10 +54,13 @@ else
 </table>
 
 <div class="paging">
-    @Html.PagedListPager(Model, i => Url.Action("ViewQuestionByChapter", "Question",
-                    new { i, chid = ViewBag.Chapter.ChID, searchText = Request.QueryString["searchText"], qtype = Request.QueryString["qType"], questCount = ViewBag.QuestCount }),
-                   PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "divShowQuestions" }))
+    @Html.PagedListPager(Model, i => Url.Action("ShowQuestionsList", "Question",
+         new { i, chid = ViewBag.Chapter.ChID, searchText = Request.QueryString["searchText"], qtype = Request.QueryString["qType"] }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "divShowQuestions" }))
+
+   
 </div>
+
 <div style="display:flex">
     <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
         New Question
@@ -63,4 +68,22 @@ else
     <button type="submit" style="margin-left:6px" class="btn-indigo">Delete Question</button>
 </div>
 }
+
+
+@*<script>
+    $(function () {
+        $('#divQuestionListInsideQuiz').on('click', 'a', function () {
+            console.log()
+            $.ajax({
+                url: this.href,
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+                    $('#divQuestionListInsideQuiz').html(result);
+                }
+            });
+            return false;
+        });
+    });
+</script>*@
 

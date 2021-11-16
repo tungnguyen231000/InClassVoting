@@ -14,13 +14,14 @@ namespace InClassVoting.Models
     
     public partial class Student_QuizDone
     {
-        public int StudentID { get; set; }
-        public int QuizDoneID { get; set; }
+        public int SQID { get; set; }
+        public Nullable<int> StudentID { get; set; }
+        public Nullable<int> QuizDoneID { get; set; }
         public string ReceivedQuestions { get; set; }
         public string Status { get; set; }
         public Nullable<double> TotalMark { get; set; }
     
-        public virtual Student Student { get; set; }
         public virtual QuizDone QuizDone { get; set; }
+        public virtual Student Student { get; set; }
     }
 }

@@ -89,7 +89,6 @@
                     <div id="divShowQuestions">
                         @{
                             Html.RenderAction("ShowQuestionForEditQuiz", "Quiz", new { chid = "-1", cid = ViewBag.Course.CID, qzid = ViewBag.Quiz.QuizID, qtype = "-1", searchText = "" });
-
                         }
                     </div>
                     <div class="modal-footer">
@@ -174,12 +173,11 @@
         <div style="display:flex;margin-top:20px">
             <div style="display:flex">
                 <h1 style="margin: auto " class="h5">Link quiz: </h1>
-                @{
-                    string quizLink = "https://localhost:44350/Student/Quiz/DoQuizPaperTest?qzID=" + ViewBag.Quiz.QuizID;
-                }
-                <p class="h5" style="margin: auto; margin-left: 10px;">@quizLink</p>
+                
+                <p class="h5"  style="margin: auto; margin-left: 10px;" >@ViewBag.QuizLink</p>
+                <input type="hidden" id="quizLink" value="@ViewBag.QuizLink"/>
             </div>
-            <a style="background-color:aquamarine;margin-left:20px" class="btn ">Copy</a>
+            <a style="background-color:aquamarine;margin-left:20px" class="btn " onclick="copyLink()">Copy</a>
         </div>
         <div class="tb-mg-top">
             <table class="table">
@@ -194,44 +192,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @{ int countQuestion = 0;}
-                    @*@if (Model.Questions != null)
-                        {
-                            foreach (var question in Model.Questions)
-                            {
-                                countQuestion++;
-                                <tr>
-                                    <th scope="row">@countQuestion</th>
-                                    <td><a href="#" type="button">@question.Text </a></td>
-                                    <td>@question.QuestionType.Name</td>
-                                    <td>@question.Mark</td>
-                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.QuestionType.QTypeID" class="fas fa-trash-alt"></a></td>
-                                </tr>
-                            }
-                        }
-                        @if (Model.Matchings != null)
-                        {
-                            foreach (var match in Model.Matchings)
-                            {
-                                countQuestion++;
-                                <tr>
-                                    <th scope="row">@countQuestion</th>
-                                    <td><a href="#" type="button">@match.ColumnA  @match.ColumnB </a></td>
-                                    <td>Matching</td>
-                                    <td>@match.Mark</td>
-                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@match.MID&&qtype=5" class="fas fa-trash-alt"></a></td>
-                                </tr>
-                            }
-                        }*@
+                   
                     @if (Model.Count() != 0)
                     {
 
                         foreach (var question in Model)
                         {
-                            @*ViewBag.QuestCount = ViewBag.QuestCount + 1;*@
-                            countQuestion++;
+                            ViewBag.QuestionNo = ViewBag.QuestionNo + 1;
                             <tr>
-                                <th scope="row">@*@ViewBag.QuestCount*@ @countQuestion</th>
+                                <th scope="row"> @ViewBag.QuestionNo</th>
                                 <td><a href="#" type="button">@question.Text </a></td>
                                 <td>
                                     @if (question.Qtype == 5)
@@ -242,13 +211,16 @@
                                         @question.QuestionType.Name}
                                 </td>
                                 <td>@question.Mark</td>
+                                <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.Qtype" class="fas fa-trash-alt"></a></td>
                             </tr>
                         }
                     }
                 </tbody>
             </table>
             <div class="paging">
-                @Html.PagedListPager(Model, i => Url.Action("QuizDetail", "Quiz",new{i,qzID = ViewBag.Quiz.QuizID@*, questCount = ViewBag.QuestCount*@}))
+                @Html.PagedListPager(Model, i => Url.Action("QuizDetail", "Quiz", new
+           {i,
+               qzID = ViewBag.Quiz.QuizID}))
             </div>
         </div>
         <div style="display: flex; margin-left: auto;">
@@ -274,6 +246,21 @@
         var searchText = document.getElementById("searchString").value;
         $("#divShowQuestions").load('@Url.Action("ShowQuestionForEditQuiz", "Quiz")' +
             '?chid=' + chid + '&cid=' + cid + '&qzid=' + qzid + '&qtype=' + qtype + '&searchText=' + searchText);
+    }
+
+    function copyLink() {
+        /* Get the text field */
+        var copyText = document.getElementById("quizLink");
+
+        /* Select the text field */
+        copyText.select();
+
+
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText.value);
+
+        /* Alert the copied text */
+       @* alert("Copied the text: " + copyText.value);*@
     }
 
 </script>

@@ -1,4 +1,6 @@
-﻿
+﻿@model IPagedList<InClassVoting.Models.Question>
+@using PagedList.Mvc;
+@using PagedList;
 <table class="table">
     <thead>
         <tr>
@@ -12,38 +14,39 @@
 
         </tr>
     </thead>
-    <tbody>
-        @{
-            int countQuestion = 0;
-        }
+     <tbody>
+            @{
+                int countQuestion = 0;
+            }
 
-        @if (ViewBag.Questions != null)
-        {
-            foreach (var questions in ViewBag.Questions)
+            @if (ViewBag.Questions != null)
             {
-                countQuestion++;
-                <tr>
-                    <th scope="row">@countQuestion</th>
-                    <td><input type="checkbox" class="form-check-input" id="exampleCheck1" name="qID" value="@questions.QID"></td>
-                    <td><a href="#" type="button">@questions.Text</a></td>
-                    <td>@questions.QuestionType.Name</td>
-                    <td>@questions.Mark</td>
-                </tr>
+                foreach (var questions in ViewBag.Questions)
+                {
+                    countQuestion++;
+                    <tr>
+                        <th scope="row">@countQuestion</th>
+                        <td><input type="checkbox" class="form-check-input" id="exampleCheck1" name="qID" value="@questions.QID"></td>
+                        <td><a href="#" type="button">@questions.Text</a></td>
+                        <td>@questions.QuestionType.Name</td>
+                        <td>@questions.Mark</td>
+                    </tr>
+                }
             }
-        }
-        @if (ViewBag.Matchings != null)
-        {
-            foreach (var matching in ViewBag.Matchings)
+            @if (ViewBag.Matchings != null)
             {
-                countQuestion++;
-                <tr>
-                    <th scope="row">@countQuestion</th>
-                    <td><input type="checkbox" class="form-check-input" id="exampleCheck1" name="mID" value="@matching.MID"></td>
-                    <td><a href="#" type="button">@matching.ColumnA @matching.ColumnB</a></td>
-                    <td>Matching</td>
-                    <td>@matching.Mark</td>
-                </tr>
+                foreach (var matching in ViewBag.Matchings)
+                {
+                    countQuestion++;
+                    <tr>
+                        <th scope="row">@countQuestion</th>
+                        <td><input type="checkbox" class="form-check-input" id="exampleCheck1" name="mID" value="@matching.MID"></td>
+                        <td><a href="#" type="button">@matching.ColumnA @matching.ColumnB</a></td>
+                        <td>Matching</td>
+                        <td>@matching.Mark</td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+     

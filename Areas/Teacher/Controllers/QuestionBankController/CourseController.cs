@@ -47,15 +47,15 @@ namespace InClassVoting.Areas.teacher.Controllers
             db.Courses.Add(course);
             db.SaveChanges();
             int chapID = int.Parse(chid);
-            if (chapID == -1)
-            {
-                return Redirect("~/Teacher/Question/QuestionBank");
-            }
-            else
-            {
-                return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
-            }
-
+            /* if (chapID == -1)
+             {
+                 return Redirect("~/Teacher/Question/QuestionBank");
+             }
+             else
+             {
+                 return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+             }*/
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
         //Edit CourseName
@@ -68,14 +68,15 @@ namespace InClassVoting.Areas.teacher.Controllers
             db.Entry(updateCourse).State = EntityState.Modified;
             db.SaveChanges();
             int chapID = int.Parse(chid);
-            if (chapID == -1)
-            {
-                return Redirect("~/Teacher/Question/QuestionBank");
-            }
-            else
-            {
-                return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
-            }
+            /* if (chapID == -1)
+             {
+                 return Redirect("~/Teacher/Question/QuestionBank");
+             }
+             else
+             {
+                 return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+             }*/
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
         //delete course
@@ -108,14 +109,15 @@ namespace InClassVoting.Areas.teacher.Controllers
             int chapID = int.Parse(chid);
 
             //return questionbank page
-            if (chapID == -1)
-            {
-                return Redirect("~/Teacher/Question/QuestionBank");
-            }
-            else
-            {
-                return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
-            }
+            /* if (chapID == -1)
+             {
+                 return Redirect("~/Teacher/Question/QuestionBank");
+             }
+             else
+             {
+                 return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
+             }*/
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
     }
