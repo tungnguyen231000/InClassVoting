@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "EditMatchingQuestion";
+    Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+
+    @using (Html.BeginForm("EditMatchingQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "matching-form" }))
+    {
+        <div class="grid grid-cols-1 w-full ">
+
+            <div class="w-full items-center bg-gray ">
+                <div class="text-center">
+                    <h1 class="h6">
+                        <span>Question Type:</span>
+                        <span>Matching</span>
+                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
+                        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
+                        <input type="hidden" name="qid" value="@ViewBag.Question.MID" />
+                    </h1>
+                </div>
+                <div class="flex md:mx-16">
+                    <div class="m-6  ">
+                        <span>Time:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+                    </div>
+                    <div class="m-6  ">
+                        <span>Mark:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
+                    </div>
+                </div>
+            </div>
+            <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block border border-black-400">
+
+                <div>
+                    <table class="w-2/12 border-spacing-2">
+                        <tr>
+                            <td colspan="3"><div class="ms-error"></div></td>
+                        </tr>
+                        @{int countQuestion = 0;
+                            var columnA = ViewBag.ColumnA;
+                            var columnB = ViewBag.ColumnB;
+                        }
+                        @for (int i = 0; i < columnB.Length; i++)
+                        {
+                            countQuestion++;
+                            <tr>
+                                <td> &nbsp;@countQuestion.&nbsp;</td>
+                                @if (countQuestion<=columnA.Length)
+                                {
+                                    <td><input type="text" class="text-center" name="answerLeft" placeholder="left" value="@columnA[i]" /></td>
+
+                                }
+                                else
+                                {
+                                    <td><input type="text" class="text-center" name="answerLeft" placeholder="left" /></td>
+                                }
+
+                                <td>-</td>
+                                <td><input type="text" class="text-center" name="answerRight" placeholder="right" value="@columnB[i]" /></td>
+                            </tr>
+                        }
+                        @while (countQuestion < 6)
+                        {
+                            countQuestion++;
+                            <tr>
+                                <td> &nbsp;@countQuestion.&nbsp;</td>
+                                <td><input type="text" class="text-center" name="answerLeft" placeholder="left" /></td>
+                                <td>-</td>
+                                <td><input type="text" class="text-center" name="answerRight" placeholder="right" /></td>
+                            </tr>
+                        }
+
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
+            </div>
+
+        </div>
+
+    }
+</div>

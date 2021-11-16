@@ -1,14 +1,16 @@
-﻿const dragArea = document.querySelector(".drag-area");
+const dragArea = document.querySelector(".drag-area");
 const header = document.querySelector(".header"),
-	btn = document.querySelector(".btn"),
+	btnBrowser = document.querySelector(".btn-image"),
 	input = document.querySelector(".file-input");
 
 let file;
 
 
+/*
 btn.onclick = () => {
 	input.click();
 };
+*/
 
 input.addEventListener("change", function () {
 	file = this.files[0];
@@ -33,6 +35,9 @@ dragArea.addEventListener("dragleave", () => {
 dragArea.addEventListener("drop", (event) => {
 	event.preventDefault();
 	file = event.dataTransfer.files[0];
+
+	input.files = event.dataTransfer.files;
+
 	show(file);
 });
 

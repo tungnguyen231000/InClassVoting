@@ -4,103 +4,91 @@
     Layout = "~/Areas/teacher/Views/Shared/_Layout.cshtml";
 }
 
+
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-    @using (Html.BeginForm("CreateMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("CreateMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "checkbox-form" }))
     {
-
-        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
-        <div class="grid xl:grid-cols-1 xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full">
-
-            <div class="topcontent xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center border bg-gray p-6  border-black-400">
-                <div>
-                    <input class="border border-black-400 pl-1 float-right ml-5" size="3" type="text" name="mark" placeholder="Mark">
-                    <input class="border border-black-400 pl-1 float-right" size="3" type="text" name="time" placeholder="Time">
-                </div>
-            </div>
-
-            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
-                <h1 class="h6">
-                    <span>Question Type:</span>
-                    <span>Multiple Choice</span>
-                </h1>
-                <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1"> Mix Choice
-                <input type="hidden" class="form-check-input" id="cb-option2" name="mixChoice" value="0">
-            </div>
-
-            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
-                <div class="w-10/12 float-left mt-3">
-                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Question ..."></textarea>
+        <div class="grid grid-cols-1 w-full ">
+            <div class="w-full items-center bg-gray">
+                <div class="text-center">
+                    <h1 class="h6">
+                        <span>Question Type:</span>
+                        <span>Multiple Choice   </span>
+                        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
+                    </h1>
                 </div>
 
-                <div class="drag-content float-right">
+                <div class="flex md:mx-16">
+                    <div class="m-6  ">
+                        <span>Time:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time">
+                    </div>
+                    <div class="m-6  ">
+                        <span>Mark:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div class="w-10/12  float-left mt-3">
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Content ..."></textarea>
+                </div>
+                <div class="w-2/12 drag-content float-right">
                     <div class="drag-area">
                         <div><i class="icon fas fa-cloud-upload-alt"></i></div>
                         <div><h3 class="header">Drag and Drop to Upload File</h3></div>
                         <div><h4 class="or">or</h4></div>
-                        <div><button type="button" class="btn">Browser Upload File</button></div>
-                        <div><input type="file" name="questionImage" id="questionImage" class="file-input" hidden></div>
+                    </div>
+                    <div>
+                        <div>
+                            <input type="file" class="file-input btn-image" name="imgfile" accept="image/*">
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
-                <p>Option 1 required</p>
-                <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 22px">
+            <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div>
+                    <span>Mix Choice: </span>
+                    <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1">
+                </div>
+                <div class="ms-error"></div>
+                <table class="w-full border-spacing-2">
                     <tr>
-                        <td class="">
-                            <input type="checkbox" class="form-check-input" id="cb-option1" name="cb-option1" value="1">
-                            <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option1" value="0" />
-                            &nbsp;A.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option1" placeholder="Option 1">
-                        </td>
+                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="1"></td>
+                        <td> &nbsp;A.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
                     </tr>
                     <tr>
-                        <td class="">
-                            <input type="checkbox" class="form-check-input" id="cb-option2" name="cb-option2" value="1">
-                            <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option2" value="0">
-                            &nbsp;B.<input type="text" style="width:95%" class="w-full pl-3" name="option2" placeholder="Option 2">
-                        </td>
+                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="2"></td>
+                        <td> &nbsp;B.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
                     </tr>
                     <tr>
-                        <td class="">
-                            <input type="checkbox" class="form-check-input" id="cb-option3" name="cb-option3" value="1">
-                            <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option3" value="0">
-                            &nbsp;C.<input type="text" style="width:95%" class="w-full pl-3" name="option3" placeholder="Option 3">
-                        </td>
+                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="3"></td>
+                        <td>&nbsp;C.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
                     </tr>
                     <tr>
-                        <td class="">
-                            <input type="checkbox" class="form-check-input" id="cb-option2" name="cb-option4" value="1">
-                            <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option4" value="0">
-                            &nbsp;D.&nbsp;<input type="text" style="width:95%" class="w-full pl-3" name="option4" placeholder="Option 4">
-                        </td>
+                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="4"></td>
+                        <td> &nbsp;D.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option" ></td>
                     </tr>
                     <tr>
-                        <td class="">
-                            <input type="checkbox" class="form-check-input" id="cb-option2" name="cb-option5" value="1">
-                            <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option5" value="0">
-                            &nbsp;E.&nbsp;<input type="text" style="width:95%" class="w-full pl-3" name="option5" placeholder="Option 5">
-                        </td>
+                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="5"></td>
+                        <td> &nbsp;E.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
                     </tr>
                     <tr>
-                        <td class="">
-                            <input type="checkbox" class="form-check-input" id="cb-option2" name="cb-option6" value="1">
-                            <input type="hidden" class="form-check-input" id="cb-option1" name="cb-option6" value="0">
-                            &nbsp;F.&nbsp;<input type="text" style="width:95%" class="w-full pl-3" name="option6" placeholder="Option 6">
-                        </td>
+                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="6"></td>
+                        <td> &nbsp;F.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
                     </tr>
                 </table>
+
             </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
-                </div>
+
+            <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
             </div>
+
         </div>
-
-
     }
-
 </div>
-
-<!-- end wrapper -->
-<script src="~/Scripts/dragdropimage.js"></script>

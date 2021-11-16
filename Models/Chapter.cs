@@ -18,8 +18,8 @@ namespace InClassVoting.Models
         public Chapter()
         {
             this.Passages = new HashSet<Passage>();
-            this.Questions = new HashSet<Question>();
             this.MatchQuestions = new HashSet<MatchQuestion>();
+            this.Questions = new HashSet<Question>();
         }
     
         public int ChID { get; set; }
@@ -30,8 +30,8 @@ namespace InClassVoting.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Passage> Passages { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Question> Questions { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatchQuestion> MatchQuestions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Question> Questions { get; set; }
     }
 }

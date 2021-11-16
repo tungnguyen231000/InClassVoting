@@ -1,66 +1,22 @@
-﻿
+﻿@*
+    @using System.Web.Mvc;*@
+@using System.Text.RegularExpressions;
 @{
     ViewBag.Title = "DoQuizPaperTest";
     Layout = "~/Areas/Student/Views/Shared/_Layout.cshtml";
 }
 
-
-
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-    <div class="grid xl:grid-cols-1 xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full">
-        <div class="topcontent xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
-
+    <div class="grid grid-cols-1 w-full ">
+        <div class="topcontent w-full items-center bg-gray p-6 ">
             <h1 class="h4 text-center">@ViewBag.Quiz.Quiz_Name</h1>
         </div>
         <!--Time CountDown-->
-        <div class="topcontent xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6">
+        <div class="topcontent w-full items-center bg-gray p-6 ">
 
             <div>
-                @{
-                    string time = "";
-                    var quiz = ViewBag.Quiz;
-                    if (quiz.Time != null)
-                    {
-                        int quizTime = quiz.Time ?? 0;
-                        if (quiz.Time >= 60)
-                        {
-
-                            int minute = quizTime / 60;
-                            if (minute >= 10)
-                            {
-                                time = time + minute.ToString() + ":";
-                            }
-                            else
-                            {
-                                time = time + "0" + minute.ToString() + ":";
-                            }
-                            if (quiz.Time - minute * 60 < 10)
-                            {
-                                time = time + "0" + (quiz.Time - minute * 60).ToString();
-                            }
-                            else
-                            {
-                                time = time + (quiz.Time - minute * 60).ToString();
-                            }
-
-
-                        }
-                        else
-                        {
-                            if (quiz.Time < 10)
-                            {
-                                time = time + "00:" + "0" + quiz.Time.ToString();
-                            }
-                            else
-                            {
-                                time = time + "00:" + quiz.Time.ToString();
-                            }
-
-                        }
-                    }
-
-                }
-                <input class="bg-gray-100 h4 pl-3 float-right" size="3" type="text" name="create-question-time" placeholder="Time" value="@time">
+                <!--Vất thời gian vào "data-time"-->
+                <span class="bg-gray-100 h4 pl-3 float-right w-auto count-time" size="3" type="text" id="time" name="create-question-time" placeholder="Time" data-time="@ViewBag.Time">00:00</span>
             </div>
 
             <div>
@@ -69,107 +25,161 @@
 
         </div>
         <!--End Time CountDown-->
-        @* <div class="text-center flex flex-wrap column-gap inline-block mt-4">
-                <a href="https://localhost:44320/StudentViews/MultipleQuiz" class=" lg:mb-6 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Multiple Choice</a>
-                <a href="https://localhost:44320/StudentViews/ReadingQuiz" class=" lg:mb-6 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Reading</a>
-                <a href="https://localhost:44320/StudentViews/MatchingQuiz" class=" lg:mb-6 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Matching</a>
-                <a href="https://localhost:44320/StudentViews/IndicateMistakeQuiz" class=" lg:mb-6 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Indicate Mistake</a>
-                <a href="https://localhost:44320/StudentViews/FillBlankQuiz" class=" lg:mb-6 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Fill Blank</a>
-                <a href="https://localhost:44320/StudentViews/ShortAnswerQuiz" class=" lg:mb-6 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Short Answer</a>
-            </div>*@
-
-
+        @*<div class="text-center flex flex-wrap column-gap inline-block">
+                <a href="https://localhost:44320/StudentViews/MultipleQuiz" class=" flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Multiple Choice</a>
+                <a href="https://localhost:44320/StudentViews/ReadingQuiz" class="flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Reading</a>
+                <a href="https://localhost:44320/StudentViews/MatchingQuiz" class="flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Matching</a>
+                <a href="https://localhost:44320/StudentViews/IndicateMistakeQuiz" class="flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Indicate Mistake</a>
+                <a href="https://localhost:44320/StudentViews/FillBlankQuiz" class="flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Fill Blank</a>
+                <a href="https://localhost:44320/StudentViews/ShortAnswerQuiz" class="flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Short Answer</a>
+            </div>
+        *@
 
         <!--Form Test-->
-        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
-            <div>
-                <h1 class="h6">
-                    <span>Question Type:</span>
-                    <span>Muliple Choice</span>
-                </h1>
-            </div>
-        </div>
+        @using (Html.BeginForm("SubmitQuiz", "Quiz", FormMethod.Post))
+        {
+            <p>  Student ID: </p>
+            <input type="text" style="width:95%" class="w-full pl-3" name="studentID" />
+            <input type="hidden" style="width:95%" class="w-full pl-3" name="qDoneID" value="@ViewBag.Quiz.QuizDoneID" />
 
-        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 bg-gray border border-black-400">
-
-            <div>
-                @using (Html.BeginForm("SubmitQuiz", "Quiz", FormMethod.Post))
+            <div class="w-full bg-gray p-6 border border-black-400">
+                @{ int countQuestion = 0;
+                }
+                @foreach (var question in ViewBag.Questions)
                 {
-                    if (ViewBag.QuizMultipleChoiceQuestions != null)
+                    countQuestion++;
+                <div>
+                    <div class="w-full items-center bg-gray p-6 ">
+                        <span>Question @countQuestion:  <span />
+                    </div>
+                    @if (question.Qtype == 1)
                     {
-                        <p>  Student ID: </p>
-                        <input type="text" style="width:95%" class="w-full pl-3" name="studentID" />
-                        <input type="hidden" style="width:95%" class="w-full pl-3" name="qDoneID" value="@ViewBag.Quiz.QuizDoneID" />
-                        int countQuestion = 0;
-
-                        foreach (var question in ViewBag.QuizMultipleChoiceQuestions)
-                        {
-                            countQuestion++;
-                            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
-
-                                <span> Question @countQuestion:  <span />
-                            </div>
-                            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
-                                <div>
-                                    <textarea class="p-2 w-full" name="create-question-question" rows="4" id="question" placeholder="Question ..." readonly> @question.Text </textarea>
+                        <div class="w-full items-center bg-gray  ">
+                            <div>
+                                <div contenteditable="false" class="w-full bg-gray p-2 ">
+                                    @question.Text
                                 </div>
-
-                            </div>
-
-                            <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
-
-
                                 <input type="hidden" name="qid" value="@question.Q_DoneID" />
                                 <input type="hidden" name="qtype" value="1" />
-                                <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 20px">
-                                    @{
-                                        int countAnswer = 0;
-                                    }
-                                    @foreach (var answers in question.QuestionAnswerDones)
-                                    {
-                                        countAnswer++;
-                                        <tr>
-                                            <td class="td-option">
-                                                <input type="hidden" name="numberOfAnswer" value="@countAnswer">
-                                                <input type="checkbox" id="cbOption" name="cbOption" value="@answers.QA_DoneID">
-                                                
-                                            </td>
-                                            <td>
-                                                @if (countAnswer == 1)
-                                                {<label>A.</label>}
-                                                else if (countAnswer == 2)
-                                                {<label>B.</label>}
-                                                else if (countAnswer == 3)
-                                                {<label>C.</label>}
-                                                else if (countAnswer == 4)
-                                                {<label>D.</label>}
-                                                else if (countAnswer == 5)
-                                                {<label>E.</label>}
-                                                else if (countAnswer == 6)
-                                                {<label>F.</label>}
-                                                &nbsp;
-                                                <input type="hidden" style="width:95%" class="w-full pl-3" name="optionID" value="@answers.QA_DoneID" readonly>
-                                                <input type="text" style="width:95%" class="w-full pl-3" name="option" value="@answers.Text" readonly>
-                                            </td>
-                                        </tr>
-                                    }
-                                </table>
-
-
                             </div>
-                            <hr />
+
+                        </div>
+
+                        <div class="w-full items-center bg-gray ">
+
+                            <table class="w-full border-spacing-2">
+                                @{
+                                    int countAnswer = 0;
+                                }
+                                @foreach (var answers in question.QuestionAnswerDones)
+                                {
+                                    countAnswer++;
+                                    <tr>
+                                        <td class="w-2">
+                                            @*<input type="hidden" name="numberOfAnswer" value="@countAnswer">*@
+                                            <input type="checkbox" id="cb-option1" name="cbOption" value="@answers.QA_DoneID">
+                                        </td>
+                                        <td>
+                                            @if (countAnswer == 1)
+                                            {<label>A.</label>}
+                                            else if (countAnswer == 2)
+                                            {<label>B.</label>}
+                                            else if (countAnswer == 3)
+                                            {<label>C.</label>}
+                                            else if (countAnswer == 4)
+                                            {<label>D.</label>}
+                                            else if (countAnswer == 5)
+                                            {<label>E.</label>}
+                                            else if (countAnswer == 6)
+                                            {<label>F.</label>}
+                                            &nbsp;
+                                            <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="option" value="@answers.Text" readonly>
+                                        </td>
+                                    </tr>
+                                }
+
+                            </table>
+                        </div>
+                    }
+                    else if (question.Qtype == 3)
+                    {
+                        <input type="hidden" name="qid" value="@question.Q_DoneID" />
+                        <input type="hidden" name="qtype" value="3" />
+                        if (question.GivenWord == false)
+                        {
+
+                            string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
+                            <div class="w-full bg-gray p-6 border border-black-400">
+                                <div contenteditable="false" class="w-full items-center bg-gray p-6 ">
+                                    @for (int i = 0; i < questionSplit.Length; i++)
+                                    {
+                                        <span>@questionSplit[i]</span>
+                                        if (i < questionSplit.Length - 1)
+                                        {
+                                            <input type="text" style="width:15%;color:blue" name="fillBankNotGivenAnswer">
+                                        }
+
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            List<string> answerList = new List<string>();
+                            Regex regex = new Regex(@"\(([^()]+)\)*");
+                            foreach (Match match in regex.Matches(question.Text))
+                            {
+                                string ansList = match.Value;
+                                string choices = ansList.Trim().Substring(2, ansList.Length - 3);
+                                answerList.Add(choices);
+                            }
+                            string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
+                            <div class="w-full bg-gray p-6 border border-black-400">
+                                <div contenteditable="false" class="w-full items-center bg-gray p-6 ">
+                                    @for (int i = 0; i < questionSplit.Length; i++)
+                                    {
+                                        <span>@questionSplit[i]</span>
+                                        if (i < questionSplit.Length - 1)
+                                        {
+                                            <select style="width:15%;color:blue" name="fillBankGivenAnswer">
+                                                <option value="-1" style="color:gray" selected disabled>Select one answer </option>
+                                                @{
+                                                    string[] options = answerList[i].Split(new char[] { '~' });
+                                                }
+                                                @foreach (string option in options)
+                                                {
+                                                    if (option.Contains("="))
+                                                    {
+                                                        string newOpt = option.Substring(1, option.Length - 1);
+                                                        <option value="@newOpt">@newOpt</option>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@option">@option</option>
+                                                    }
+
+                                                }
+
+                                            </select>
+                                        }
+
+                                    }
+                                </div>
+                            </div>
                         }
                     }
 
-                    <div class=" inline-block mt-4">
-                        <input type="submit" class="float-right btn btn-bs-primary" value="Finish Quiz" />
-                    </div>
+                    <hr />
+                </div>
                 }
             </div>
-            <!--End Form Test-->
 
-        </div>
-
+            <div class=" inline-block mt-4">
+                <input type="submit" class="float-right btn btn-bs-primary" name="name" value="Finish Quiz" />
+            </div>
+        }
+        <!--End Form Test-->
 
 
 
@@ -178,7 +188,10 @@
     </div>
 
 </div>
-<script type="text/javascript">
-  
-   
-</script>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/countdown.js"></script>
+
+
+

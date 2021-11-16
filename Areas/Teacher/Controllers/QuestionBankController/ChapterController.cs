@@ -23,14 +23,15 @@ namespace InClassVoting.Areas.teacher.Controllers
             db.Chapters.Add(chapter);
             db.SaveChanges();
             int chapID = int.Parse(chid);
-            if (chapID == -1)
+            /*if (chapID == -1)
             {
                 return Redirect("~/Teacher/Question/QuestionBank");
             }
             else
             {
                 return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
-            }
+            }*/
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
         //Edit Chapter Name
@@ -43,7 +44,8 @@ namespace InClassVoting.Areas.teacher.Controllers
             updateChapter.Name = newChapterName.Trim();
             db.Entry(updateChapter).State = EntityState.Modified;
             db.SaveChanges();
-            return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapterID);
+            /*return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapterID);*/
+            return Redirect(Request.UrlReferrer.ToString());
         }
 
 
