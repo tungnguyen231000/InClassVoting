@@ -96,10 +96,12 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
                     foreach (KeyValuePair<int, string> keyValuePair in questionSet)
                     {
+
                         var quest = db.QuestionDones.Find(keyValuePair.Key);
 
                         List<QuestionAnswerDone> qAnswer = quest.QuestionAnswerDones.ToList();
                         foreach (var ans in quest.QuestionAnswerDones)
+
                         {
                             Debug.WriteLine("i=-" + ans.Text);
                         }
@@ -169,6 +171,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             ////////////////////////////////////////////////
             string check1 = form["cbOption"];
             string check2 = form["qid"];
+
             Debug.WriteLine("////" + check1 + "//" + studentID + "//=" + check2 + "//?");
 
             ////////////////////////////////////////////////
@@ -197,6 +200,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             }
 
             //get student question 
+
             foreach (var q in questionList)
             {
                 var question = db.QuestionDones.Find(int.Parse(q));
@@ -264,6 +268,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     qListStr = qListStr + q + "-1;";
                     db.SaveChanges();
                 }
+
                 else if (question.Qtype == 3)
                 {
                     //if this quesion doesn't have given word
@@ -340,6 +345,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     qListStr = qListStr + q + "-3;";
                     db.SaveChanges();
                 }
+
 
             }
 

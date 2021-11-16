@@ -170,7 +170,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         {
             int quizID = int.Parse(qzID);
             var quiz_quizDoneList = db.Quiz_QuizDone.Where(qq => qq.QuizID == quizID).ToList();
+
             foreach (var qqd in quiz_quizDoneList)
+
             {
                 db.Quiz_QuizDone.Remove(qqd);
                 db.SaveChanges();
@@ -582,7 +584,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     else
                     {
                         int qID = int.Parse(questAndType[0]);
-                        questionSet.Add(qID, questAndType[1]);
+                        if(questAndType[1].Contains("+"))
+                        {
+                            string[] qTypeSplit= questAndType[1].Split(new char[] { '+' });
+                            string qtypeFixed = qTypeSplit[0] + " " + qTypeSplit[1];
+                            questionSet.Add(qID, questAndType[1]);
+                        }
+                        else
+                        {
+                            questionSet.Add(qID, questAndType[1]);
+                        }
+                        
                     }
 
 
@@ -879,8 +891,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         int questID = int.Parse(id);
                         var q = db.Questions.Find(questID);
-                        questSet = questSet + ";" + q.QID.ToString() + "-" + q.Qtype.ToString();
 
+                        questSet = questSet + ";" + q.QID.ToString() + "-" + q.Qtype.ToString();
 
                         /*Debug.WriteLine("========2==");
                         Debug.WriteLine(questSet);*/
@@ -896,7 +908,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         int matchID = int.Parse(id);
                         var m = db.MatchQuestions.Find(matchID);
+
                         questSet = questSet + ";" + m.MID.ToString() + "-" + "5";
+
                         /*Debug.WriteLine("====3======");
                         Debug.WriteLine(questSet);
                         Debug.WriteLine(questSet);
@@ -907,6 +921,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             else
             {
                 Debug.WriteLine("nahhhh");
+
                 //check if questions list is null
                 if (questions != null)
                 {
@@ -916,7 +931,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         int questID = int.Parse(id);
                         var q = db.Questions.Find(questID);
+
                         questSet = questSet + q.QID.ToString() + "-" + q.Qtype.ToString() + ";";
+
 
                         /*Debug.WriteLine("==========4");
                         Debug.WriteLine(questSet);*/
@@ -933,7 +950,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         int matchID = int.Parse(id);
                         var m = db.MatchQuestions.Find(matchID);
+
                         questSet = questSet + m.MID.ToString() + "-5;";
+
                         /*Debug.WriteLine("==========5");
                         Debug.WriteLine(questSet);*/
 

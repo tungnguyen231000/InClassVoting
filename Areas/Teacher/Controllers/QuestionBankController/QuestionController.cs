@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
+
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -26,6 +27,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         public ActionResult ViewQuestionByChapter(string chid, string qtype, string searchText, int? i)
         {
             int chapID = int.Parse(chid);
+
             var chapter = db.Chapters.Find(chapID); 
             var questions = db.Questions.Where(q => q.ChapterID == chapID).ToList();
             var matchings = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
@@ -130,10 +132,24 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         {
             int chapID = int.Parse(chid);
             var chapter = db.Chapters.Find(chapID);
+
+            var chapter = db.Chapters.Find(chapID);
+            ViewBag.CourseName = chapter.Course.Name;
+            ViewBag.Chapter = chapter;
+            ViewBag.QuestionType = db.QuestionTypes.ToList();
+            ViewBag.CountQuest = db.Questions.Where(q => q.ChapterID == chapID).Count() + db.MatchQuestions.Where(m => m.ChapterId == chapID).Count();
+            return View();
+        }
+
+        public ActionResult ShowQuestionsList(string chid, string qtype, string searchText)
+        {
+            int chapID = int.Parse(chid);
+
             var questions = db.Questions.Where(q => q.ChapterID == chapID).ToList();
             var matchings = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
             List<Question> qList = new List<Question>();
             List<MatchQuestion> mList = new List<MatchQuestion>();
+
 
             if (qtype == null || qtype.Trim().Equals(""))
             {
@@ -155,9 +171,46 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 else
                 {
                     qList = questions.Where(q => q.Qtype == qTypeID).ToList();
+
+
+            if (qtype != null)
+            {
+                int qTypeID = int.Parse(qtype);
+                if (qTypeID == -1)
+                {
+                    mList = matchings;
+                    qList = questions;
+                }
+                else
+                {
+                    if (qTypeID == 5)
+                    {
+                        mList = matchings;
+                    }
+                    else
+                    {
+                        qList = questions.Where(q => q.Qtype == qTypeID).ToList();
+                    }
+
                 }
 
             }
+
+            if (searchText != null && !searchText.Equals(""))
+            {
+                if (mList != null)
+                {
+                    mList = mList.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
+                                    m.ColumnB.ToLower().Contains(searchText.ToLower().Trim())).ToList();
+                }
+                if (qList != null)
+                {
+                    qList = qList.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim())).ToList();
+
+                }
+
+            }
+
 
 
             // check if user search by question text
@@ -197,6 +250,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         public ActionResult DeleteQuestion(string chapterId, FormCollection collection)
         {
             int chapID = int.Parse(chapterId);
+
             var questions = collection["questionIdAndType"];
 
             //check if question id and matching question id list is null
@@ -221,6 +275,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                         //if it is matching question
                         if (qtypeCheck.Equals("5"))
                         {
+
                             int mid = int.Parse(set.Substring(0, set.Length - 2));
                             var matchQuest = db.MatchQuestions.Find(mid);
                             minusMark = minusMark + matchQuest.Mark;
@@ -271,6 +326,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     }
 
                     db.SaveChanges();
+
                 }
             }
 

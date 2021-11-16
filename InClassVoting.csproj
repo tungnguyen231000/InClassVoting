@@ -155,7 +155,6 @@
     <Compile Include="Areas\Teacher\Controllers\QuestionBankController\QuestionController.cs" />
     <Compile Include="Areas\Teacher\Controllers\QuizLibraryController\QuizController.cs" />
     <Compile Include="Areas\Teacher\Controllers\ReportController\ReportController.cs" />
-    <Compile Include="Areas\Teacher\Controllers\SearchController\SearchController.cs" />
     <Compile Include="Areas\Teacher\teacherAreaRegistration.cs" />
     <Compile Include="Controllers\HomeTotalController.cs" />
     <Compile Include="Global.asax.cs">
@@ -302,7 +301,6 @@
     <Content Include="Areas\Teacher\Views\Question\QuestionBank.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\QuizLibrary.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\ViewQuestionByChapter.cshtml" />
-    <Content Include="Areas\Teacher\Views\Search\QuestionBankSearch.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateMultipleChoiceQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateReadingQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditMultipleChoiceQuestion.cshtml" />
@@ -324,6 +322,7 @@
     <Content Include="Areas\Teacher\Views\Report\ViewReportListByCourse.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportDetail.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\_ShowQuestionsList.cshtml" />
+
     <Content Include="Areas\Teacher\Views\Quiz\_ShowQuizList.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditReadingQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateShortAnswerQuestion.cshtml" />
@@ -334,6 +333,7 @@
     <Content Include="Areas\Teacher\Views\Question\EditMatchingQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateFillBlankQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditFillBlankQuestion.cshtml" />
+
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\countdown.js" />
     <Content Include="Scripts\dragdropimage.js" />

@@ -1,6 +1,13 @@
+
 ﻿@model IPagedList<InClassVoting.Models.Question>
 @using PagedList;
 @using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "ViewQuestionByChapter";
+    Layout = "~/Areas/teacher/Views/Shared/_QuestionBankLayout.cshtml";
+}
+
 
 @{ ViewBag.Title = "ViewQuestionByChapter";
     Layout = "~/Areas/teacher/Views/Shared/_QuestionBankLayout.cshtml"; }
@@ -131,6 +138,7 @@
             </button>
 
         </div>
+
                 <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Chapter</p>
      }
      else
@@ -167,6 +175,7 @@
                     </select>
                  </div>
             </div>
+
             }
             <div class="tb-mg-top">
                 @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
@@ -242,6 +251,7 @@
         var searchText = document.getElementById("searchText").value;
         $("#divShowQuestions").load('@Url.Action("ShowQuestionsList", "Question")' +
             '?chid=' + chid + '&qtype=' + qtype + '&searchText=' + searchText  + '&questCount=0');
+
     }
 
 </script>
