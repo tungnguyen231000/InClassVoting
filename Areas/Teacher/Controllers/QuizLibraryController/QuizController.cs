@@ -35,7 +35,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
             ViewBag.Page = i;
             //fix quiz number (quiz no)
-                ViewBag.QuizCount = (i-1)*3;
+            ViewBag.QuizCount = (i - 1) * 3;
 
             //get search text
             if (searchText == null)
@@ -46,8 +46,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             {
                 ViewBag.Search = searchText;
             }
-            
-            
+
+
             return View();
         }
 
@@ -70,7 +70,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
             ViewBag.QuizCount = quizCount;
             /*Debug.WriteLine("hjhihi" + quizCount); */
-            return PartialView("_ShowQuizList", quizzes.ToPagedList(i?? 1,3));
+            return PartialView("_ShowQuizList", quizzes.ToPagedList(i ?? 1, 3));
         }
 
         //View Quiz Detail
@@ -98,7 +98,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         string[] questAndType = questions.Split(new char[] { '-' });
                         int qtypeID = int.Parse(questAndType[1]);
-                        if (qtypeID==5)
+                        if (qtypeID == 5)
                         {
                             int mID = int.Parse(questAndType[0]);
                             matchingSet.Add(mID, "5");
@@ -393,7 +393,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     {
                         int matchID = int.Parse(id);
                         var m = db.MatchQuestions.Find(matchID);
-                        questSet = questSet + ";" + m.MID.ToString() + "-" +"5";
+                        questSet = questSet + ";" + m.MID.ToString() + "-" + "5";
                         /*Debug.WriteLine("====8=====" + questSet);*/
                         quiz.NumOfQuestion = quiz.NumOfQuestion + 1;
                         if (m.Mark != null)
@@ -652,7 +652,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     quiz.NumOfQuestion = quiz.NumOfQuestion + 1;
                     string[] questAndType = q.Split(new char[] { '-' });
                     int qtypeID = int.Parse(questAndType[1]);
-                    if(qtypeID==5)
+                    if (qtypeID == 5)
                     {
                         int mID = int.Parse(questAndType[0]);
                         /*Debug.WriteLine("=====1===" + q);*/
@@ -864,12 +864,14 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         public ActionResult AddQuestionToTemporaryQuiz(FormCollection collection, string cid, string questSet, string tempName)
         {
 
+
+            /*Debug.WriteLine("oklaaa-" + questSet);*/
             var questions = collection["qID"];
             var matchings = collection["mID"];
-            /*Debug.WriteLine("ok========" + questSet);*/
+            
 
             //if temparory question list have question inside
-            if (!questSet.Equals(""))
+            if (!questSet.Equals("") && questSet != null)
             {
                 if (questions != null)
                 {
@@ -906,7 +908,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
             else
             {
-                Debug.WriteLine("nahhhh");
+                /*Debug.WriteLine("nahhhh");*/
                 //check if questions list is null
                 if (questions != null)
                 {
@@ -939,19 +941,25 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
                     }
                 }
-                questSet = questSet.Substring(0, questSet.Length - 1);
+                if (questSet != null && !questSet.Trim().Equals(""))
+                {
+                    questSet = questSet.Substring(0, questSet.Length - 1);
+                }
+
                 /*Debug.WriteLine(questSet);*/
             }
 
-
             int courseId = int.Parse(cid);
-            if (questSet == null)
+
+            if (questSet == null || questSet.Trim().Equals(""))
             {
-                /*Debug.WriteLine("oklaaa");*/
+                Debug.WriteLine("oklaaa-" + questSet);
                 return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId + "&questions=" + "&tempName=" + tempName);
+                /*return Redirect(Request.UrlReferrer.ToString());*/
             }
             else
             {
+
                 /*Debug.WriteLine("okj");*/
                 return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId + "&questions=" + questSet + "&tempName=" + tempName);
 

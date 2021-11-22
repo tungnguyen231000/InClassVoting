@@ -24,13 +24,35 @@
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         // Display the result in the element with id="demo"
-        time.innerHTML = minutes + ":" + seconds;
+        time.innerHTML = format(minutes) + ":" + format(seconds);
 
         // If the count down is finished, write some text
         if (distance <= 0) {
             clearInterval(x);
             document.getElementById("time").innerHTML = "EXPIRED";
-            // window.location.href = 'https://localhost:44320/Report/PollResult';
+            document.getElementById("btnSubmit").disabled = true;
+            document.getElementById("formPaperQuiz").submit();
         }
     }, 1000);
+
+   
+
+
+
+    function format(x) {
+        if (x < 10) {
+            return '0' + x;
+        } else {
+            return x
+        }
+    }
 };
+
+function submitPaper() {
+    console.log("bye");
+    var time = document.getElementById("time");
+    time.setAttribute('data-time', 0);
+    document.getElementById("time").innerHTML = "EXPIRED";
+    document.getElementById("btnSubmit").disabled = true;
+    document.getElementById("formPaperQuiz").submit();
+}

@@ -29,8 +29,12 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 var quiz = db.QuizDones.Find(quiz_quizDone.QuizDoneID);
 
 
-                /*List<MatchQuestion> mList = new List<MatchQuestion>();*/
-                List<QuestionDone> questionsList = new List<QuestionDone>();
+                List<QuestionDone> multipleQuestionsList = new List<QuestionDone>();
+                List<QuestionDone> readingQuestionsList = new List<QuestionDone>();
+                List<QuestionDone> fillBlankQuestionsList = new List<QuestionDone>();
+                List<QuestionDone> shortAnswerQuestionsList = new List<QuestionDone>();
+                List<QuestionDone> indicateMistakeQuestionsList = new List<QuestionDone>();
+                List<MatchQuestionDone> matchQuestionsList = new List<MatchQuestionDone>();
                 int? quizTime = 0;
                 //check if questions list is null
                 if (quiz.Questions != null && !quiz.Questions.Equals(""))
@@ -80,10 +84,8 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                         int qType = int.Parse(questAndType[1]);
                         if (qType == 5)
                         {
-                            /*
-                            string[] questAndType = questions.Split(new char[] { '-' });
                             int mID = int.Parse(questAndType[0]);
-                            matchingSet.Add(mID, "Matching");*/
+                            matchingSet.Add(mID, questAndType[1]);
                         }
                         else
                         {
@@ -99,11 +101,11 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                         var quest = db.QuestionDones.Find(keyValuePair.Key);
 
                         List<QuestionAnswerDone> qAnswer = quest.QuestionAnswerDones.ToList();
-                        foreach (var ans in quest.QuestionAnswerDones)
+                        /*foreach (var ans in quest.QuestionAnswerDones)
                         {
                             Debug.WriteLine("i=-" + ans.Text);
-                        }
-                        if (quest.Qtype == 1 || quest.Qtype == 2)
+                        }*/
+                        if (quest.Qtype == 1)
                         {
                             //if question mix choice
                             if (quest.MixChoice == true)
@@ -119,33 +121,65 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                                     qAnswer[numOfAnswer] = qaTemp;
                                 }
                                 quest.QuestionAnswerDones = qAnswer;
-                                foreach (var ans in quest.QuestionAnswerDones)
-                                {
-                                    Debug.WriteLine("i=-" + ans.Text);
-                                }
                             }
-
+                            multipleQuestionsList.Add(quest);
+                            quizTime = quizTime + quest.Time;
+                            Debug.WriteLine("///" + quizTime);
                         }
-                        /*else
+                        else if (quest.Qtype == 2)
                         {
-
-                        }*/
-                        questionsList.Add(quest);
-                        quizTime = quizTime + quest.Time;
-                        Debug.WriteLine("///" + quizTime);
+                            //if question mix choice
+                            if (quest.MixChoice == true)
+                            {
+                                Random rd = new Random();
+                                int numOfAnswer = qAnswer.Count;
+                                while (numOfAnswer > 1)
+                                {
+                                    numOfAnswer--;
+                                    int k = rd.Next(numOfAnswer + 1);
+                                    var qaTemp = qAnswer[k];
+                                    qAnswer[k] = qAnswer[numOfAnswer];
+                                    qAnswer[numOfAnswer] = qaTemp;
+                                }
+                                quest.QuestionAnswerDones = qAnswer;
+                            }
+                            readingQuestionsList.Add(quest);
+                            quizTime = quizTime + quest.Time;
+                            Debug.WriteLine("///" + quizTime);
+                        }
+                        else if (quest.Qtype == 3)
+                        {
+                            fillBlankQuestionsList.Add(quest);
+                            quizTime = quizTime + quest.Time;
+                        }
+                        else if (quest.Qtype == 4)
+                        {
+                            shortAnswerQuestionsList.Add(quest);
+                            quizTime = quizTime + quest.Time;
+                        }
+                        else if (quest.Qtype == 6)
+                        {
+                            indicateMistakeQuestionsList.Add(quest);
+                            quizTime = quizTime + quest.Time;
+                        }
                     }
 
-                    /*  foreach (KeyValuePair<int, string> keyValuePair in matchingSet)
-                      {
-                          var mQuest = db.MatchQuestions.Find(keyValuePair.Key);
-                          mList.Add(mQuest);
+                    foreach (KeyValuePair<int, string> keyValuePair in matchingSet)
+                    {
+                        var matchQuest = db.MatchQuestionDones.Find(keyValuePair.Key);
+                        matchQuestionsList.Add(matchQuest);
+                        quizTime = quizTime + matchQuest.Time;
 
-                      }*/
+                    }
                 }
 
                 ViewBag.Quiz = quiz;
-                /*ViewBag.QuizMultipleChoiceQuestions = mulChoiceList;*/
-                ViewBag.Questions = questionsList;
+                ViewBag.MultipleQuestion = multipleQuestionsList;
+                ViewBag.FillBlankQuestion = fillBlankQuestionsList;
+                ViewBag.ShortAnswerQuestion = shortAnswerQuestionsList;
+                ViewBag.IndicateMistakeQuestion = indicateMistakeQuestionsList;
+                ViewBag.ReadingQuestion = readingQuestionsList;
+                ViewBag.MatchingQuestion = matchQuestionsList;
                 ViewBag.Time = quizTime;
                 return View();
             }
@@ -161,14 +195,13 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
         [HttpPost]
         public ActionResult SubmitQuiz(FormCollection form, string studentID, string qDoneID)
         {
-            //tung 123
             int sID = int.Parse(studentID);
-            int qtID = 1;
+            /*int qtID = 1;*/
             int qzDoneID = int.Parse(qDoneID);
             double? totalMark = 0;
             string qListStr = "";
             ////////////////////////////////////////////////
-            string check1 = form["cbOption"];
+            string check1 = form["cbMultipleOption"];
             string check2 = form["qid"];
             Debug.WriteLine("////" + check1 + "//" + studentID + "//=" + check2 + "//?");
 
@@ -206,9 +239,9 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 {
                     string[] cbAnswer = null;
                     //get mutiple choice answer
-                    if (form["cbOption"] != null && !form["cbOption"].Trim().Equals(""))
+                    if (form["cbMultipleOption"] != null && !form["cbMultipleOption"].Trim().Equals(""))
                     {
-                        cbAnswer = form["cbOption"].Split(new char[] { ',' });
+                        cbAnswer = form["cbMultipleOption"].Split(new char[] { ',' });
                     }
 
                     List<QuestionAnswerDone> correctAnswerList = db.QuestionAnswerDones.Where(qd => qd.QuestionID == question.Q_DoneID && qd.IsCorrect == true).ToList();
@@ -265,6 +298,69 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     qListStr = qListStr + q + "-1;";
                     db.SaveChanges();
                 }
+                else if (question.Qtype == 2)
+                {
+                    string[] cbAnswer = null;
+                    //get mutiple choice answer
+                    if (form["cbReadingOption"] != null && !form["cbReadingOption"].Trim().Equals(""))
+                    {
+                        cbAnswer = form["cbReadingOption"].Split(new char[] { ',' });
+                    }
+
+                    List<QuestionAnswerDone> correctAnswerList = db.QuestionAnswerDones.Where(qd => qd.QuestionID == question.Q_DoneID && qd.IsCorrect == true).ToList();
+                    List<QuestionAnswerDone> choosenAnsList = new List<QuestionAnswerDone>();
+
+                    //if student answer not null
+                    if (cbAnswer != null)
+                    {
+                        //get student answer
+                        foreach (var a in cbAnswer)
+                        {
+                            int ansID = int.Parse(a);
+                            /*Debug.WriteLine(question.Q_DoneID + "cbbvlue2:" + ansID);*/
+                            var answer = db.QuestionAnswerDones.Where(qa => qa.QuestionID == question.Q_DoneID && qa.QA_DoneID == ansID).FirstOrDefault();
+                            if (answer != null)
+                            {
+                                choosenAnsList.Add(answer);
+                                Debug.WriteLine(answer.Text + "--0-" + question.Q_DoneID);
+
+                            }
+
+                        }
+
+                        int countCorrectAns = 0;
+                        //if number of chosen option is different from correct answers
+                        foreach (var choosenAns in choosenAnsList)
+                        {
+                            /*Debug.WriteLine(choosenAns.Text);*/
+                            Student_Answer studentChoice = new Student_Answer();
+                            studentChoice.QuizDoneID = qzDoneID;
+                            studentChoice.StudentID = sID;
+                            studentChoice.Question = q + "-2";
+                            studentChoice.Answer = choosenAns.Text;
+
+                            //if answer is correct
+                            if (choosenAns.IsCorrect == true)
+                            {
+                                studentChoice.IsCorrect = true;
+                                countCorrectAns++;
+                                Debug.WriteLine("chooo:" + choosenAns.QA_DoneID + "//" + countCorrectAns);
+                            }
+                            else
+                            {
+                                studentChoice.IsCorrect = false;
+                            }
+                            db.Student_Answer.Add(studentChoice);
+                        }
+                        //check if number of correct answer is equal as correct choosen answer
+                        if (countCorrectAns == correctAnswerList.Count && correctAnswerList.Count == choosenAnsList.Count)
+                        {
+                            totalMark = totalMark + question.Mark;
+                        }
+                    }
+                    qListStr = qListStr + q + "-2;";
+                    db.SaveChanges();
+                }
                 else if (question.Qtype == 3)
                 {
                     //if this quesion doesn't have given word
@@ -290,15 +386,15 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                             {
                                 studentChoice.IsCorrect = false;
                             }
-                            
+
                             db.Student_Answer.Add(studentChoice);
                         }
                         for (int i = 0; i < correctAnswers.Count; i++)
                         {
                             studentAnswerFillBlankNotGiven.RemoveAt(0);
                         }
-                            //if the number of correct answer that student chose equal to number of correct answer of question
-                            if (countCorrectAns == numOfCorrectAns)
+                        //if the number of correct answer that student chose equal to number of correct answer of question
+                        if (countCorrectAns == numOfCorrectAns)
                         {
                             totalMark = totalMark + question.Mark;
                         }

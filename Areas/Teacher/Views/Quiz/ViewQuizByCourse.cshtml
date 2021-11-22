@@ -11,20 +11,18 @@
         <div style="display: flex; height: 40px;">
             <h1 class="h5 mg-top">@ViewBag.Course.Name</h1>
             <!-- Example single danger button -->
-
-            <p>&nbsp;</p>
-            <div style="display: flex; margin-left: auto;">
-                @using (Html.BeginForm("CreateNewQuiz", "Quiz", FormMethod.Get))
-                {
-                    <input type="hidden" name="tempName" value="">
-                    <input type="hidden" id="cid" name="cid" value="@ViewBag.Course.CID" />
-                    <input type="hidden" name="questions" />
-                    <button type="submit" class="btn-indigo mg_btn">
-                        New Quiz
-                    </button>
-                }
-            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            @using (Html.BeginForm("CreateNewQuiz", "Quiz", FormMethod.Get))
+            {
+                <input type="hidden" name="tempName" value="">
+                <input type="hidden" id="cid" name="cid" value="@ViewBag.Course.CID" />
+                <input type="hidden" name="questions" />
+                <button type="submit" class="btn-indigo mg_btn">
+                    New Quiz
+                </button>
+            }
         </div>
+        
     </div>
     <!-- end navbar -->
     <!-- General Report -->
@@ -58,7 +56,7 @@
         <div class="tb-mg-top" id="divShowQuizList">
             @{Html.RenderAction("ShowQuizList", "Quiz", new { cid = ViewBag.Course.CID, searchText = ViewBag.Search, i = ViewBag.Page, quizCount = ViewBag.QuizCount }); }
 
-            
+
         </div>
     }
 </div>

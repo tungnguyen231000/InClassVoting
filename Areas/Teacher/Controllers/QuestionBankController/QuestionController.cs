@@ -1045,13 +1045,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             //add correct answer
             string correctAnswer = collection["answer"];
-            QuestionAnswer answer = new QuestionAnswer();
+           /* QuestionAnswer answer = new QuestionAnswer();
             answer.QuestionID = qid;
             answer.Text = correctAnswer.Trim();
             answer.IsCorrect = true;
-            db.QuestionAnswers.Add(answer);
+            db.QuestionAnswers.Add(answer);*/
 
-            //get incorrect inside round bracket
+            //get choice inside round bracket
             List<string> answerList = new List<string>();
             Regex regex = new Regex(@"\(([^()]+)\)*");
             foreach (Match match in regex.Matches(questionText))
@@ -1060,7 +1060,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 answerList.Add(ans);
             }
 
-            //add incorrect answer to db
+            //add answer to db
             if (answerList != null)
             {
                 foreach (string ans in answerList)
@@ -1069,13 +1069,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     QuestionAnswer qa = new QuestionAnswer();
                     qa.QuestionID = qid;
                     qa.Text = trimBracketAns;
-                    /*Debug.WriteLine(trimBracketAns + "===" + correctAnswer);*/
+                    //if answer is wrong
                     if (!trimBracketAns.Trim().ToLower().Equals(correctAnswer.Trim().ToLower()))
                     {
                         qa.IsCorrect = false;
-                        db.QuestionAnswers.Add(qa);
-                        /*Debug.WriteLine(trimBracketAns + "=11==" + correctAnswer);*/
+                        
                     }
+                    else
+                    {
+                        qa.IsCorrect = true;
+                    }
+                    db.QuestionAnswers.Add(qa);
 
                 }
 
@@ -1137,13 +1141,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             db.SaveChanges();
 
-            //add new correct answers
+            //get correct answer
             string correctAnswer = collection["answer"];
-            QuestionAnswer answer = new QuestionAnswer();
-            answer.QuestionID = questionID;
-            answer.Text = correctAnswer.Trim();
-            answer.IsCorrect = true;
-            db.QuestionAnswers.Add(answer);
 
             List<string> answers = new List<string>();
             //get list of answer inside round bracket "()"
@@ -1164,12 +1163,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     qa.QuestionID = questionID;
                     qa.Text = trimBracketAns;
                     Debug.WriteLine(trimBracketAns + "===" + correctAnswer);
+                    //if answer is wrong
                     if (!trimBracketAns.Trim().ToLower().Equals(correctAnswer.Trim().ToLower()))
                     {
                         qa.IsCorrect = false;
                         db.QuestionAnswers.Add(qa);
-                        Debug.WriteLine(trimBracketAns + "=11==" + correctAnswer);
                     }
+                    else
+                    {
+                        qa.IsCorrect = true;
+                    }
+                    db.QuestionAnswers.Add(qa);
 
                 }
                 db.SaveChanges();

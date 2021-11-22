@@ -4,6 +4,7 @@
     Layout = "~/Areas/teacher/Views/Shared/_Layout.cshtml";
 }
 
+
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     @using (Html.BeginForm("CreateReadingQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "reading-form" }))
     {
@@ -98,3 +99,4 @@
         </div>
     }
 </div>
+<script src="~/Scripts/dragdropimage.js"></script>

@@ -4,7 +4,6 @@
     Layout = "~/Areas/teacher/Views/Shared/_Layout.cshtml";
 }
 
-
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     @using (Html.BeginForm("EditMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "checkbox-form" }))
     {
@@ -56,8 +55,7 @@
                     </div>
                     <div>
                         <div>
-                            
-                            <input type="file" class="file-input btn-image" name="imgfile" accept="image/*" >
+                            <input type="file" class="file-input btn-image" name="imgfile" id="questionImg" accept="image/*" >
                         </div>
                     </div>
                 </div>
@@ -65,7 +63,7 @@
 
             <div class="w-full items-center bg-gray p-6 border border-black-400">
                 <div>
-                    <span>Mix Choice: </span>
+                    <span>Shuffle Answer: </span>
                     @if (ViewBag.Question.MixChoice == true)
                     {
                         <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" checked>
@@ -138,6 +136,7 @@
                 </table>
             </div>
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <a href="#" style="background-color:aquamarine" class="btn" data-bs-toggle="modal" data-bs-target="#preiewQuestion" onclick="loadPreview()"> Preview</a> &nbsp;
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
             </div>
 
@@ -145,5 +144,5 @@
     }
 
 </div>
+<script src="~/Scripts/dragdropimage.js"></script>
 
-<!-- end wrapper -->
