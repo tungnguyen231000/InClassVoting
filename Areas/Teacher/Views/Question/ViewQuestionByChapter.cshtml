@@ -145,12 +145,12 @@
                             <input type="hidden" name="questCount" value="0" />
                             Search: <input class="search-box flex-1" style="width: 85%" type="text" placeholder="search" id="searchText" name="searchText"value="@ViewBag.Search">
                       
-                        <button type="submit"@* onclick="reloadModalQuestionList()"*@ class="search-box"> <i class="fad fa-search"></i> </button>
+                        <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
                         </div>
                     </div>
                     <div style="width:33%" class="btn-group mg-left">
                     <h1 style="margin:auto">Question Type: </h1>
-                    <select @*onchange="reloadModalQuestionList()"*@ onchange="this.form.submit()" id="qType" name="qtype" class="btn-indigo mg-left ">
+                    <select onchange="this.form.submit()" id="qType" name="qtype" class="btn-indigo mg-left ">
                         <option value="-1">All Type </option>
                         @foreach (var questionType in ViewBag.QuestionType)
                         {
@@ -215,8 +215,7 @@
 
                             <div class="paging">
                                 @Html.PagedListPager(Model, i => Url.Action("ViewQuestionByChapter", "Question",
-                                                new { i, chid = ViewBag.Chapter.ChID, searchText = Request.QueryString["searchText"], qtype = Request.QueryString["qType"] })@*,
-                            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "divShowQuestions" })*@)
+                                                new { i, chid = ViewBag.Chapter.ChID, searchText = Request.QueryString["searchText"], qtype = Request.QueryString["qType"] }))
                             </div>
                             <div style="display:flex">
                                 <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -224,8 +223,7 @@
                                 </button>
                                 <button type="submit" style="margin-left:6px" class="btn-indigo">Delete Question</button>
 
-                              @*  @{ Html.RenderAction("ShowQuestionsList", "Question", new { chid = ViewBag.Chapter.ChID, qtype = ViewBag.QType, searchText = ViewBag.Search, i= ViewBag.Page, questCount= ViewBag.CountQuest }) ; }*@
-                            </div>
+                              </div>
                         }
                  </div>
                  }

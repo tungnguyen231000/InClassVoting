@@ -18,25 +18,28 @@
                         <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
                     </h1>
                 </div>
-
+               
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span>Time:</span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time">
+                        <span><b>Time:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="...">
                     </div>
                     <div class="m-6  ">
-                        <span>Mark:</span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark">
+                        <span><b>Mark:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="...">
                     </div>
                     <div class="m-6">
                         <input type="checkbox" name="givenword" value="true">
-                        <label for="givenword">Given Word</label>
+                        <label for="givenword"><b>Given Word:</b></label>
                     </div>
                 </div>
             </div>
             <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div>
+                    <span><b>Question:</b> </span>
+                </div>
                 <div class="w-10/12  float-left mt-3">
-                    <textarea class="p-2 w-full" name="questionText" rows="4" id="questionText" placeholder="Paragraph ..."></textarea>
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="questionText" placeholder="..."></textarea>
                 </div>
             </div>
 

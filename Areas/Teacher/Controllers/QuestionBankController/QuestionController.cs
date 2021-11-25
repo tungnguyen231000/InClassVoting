@@ -89,7 +89,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             ViewBag.Page = i;
             //fix question number (question no)
-            ViewBag.QuestCount = (i - 1) * 3;
+            ViewBag.QuestCount = (i - 1) * 10;
             /*else
             {
                 ViewBag.questCount = questCount;
@@ -122,7 +122,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             ViewBag.Chapter = chapter;
             ViewBag.QuestionType = db.QuestionTypes.ToList();
            
-            return View(qList.ToPagedList(i ?? 1, 3));
+            return View(qList.ToPagedList(i ?? 1, 10));
         }
 
         //show question list
@@ -404,13 +404,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
             db.SaveChanges();
             int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 3 == 0)
+            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
             }
             else
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3 + 1);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
             }
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
@@ -435,6 +435,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
+            double? oldMark = question.Mark;
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
@@ -469,6 +470,16 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 db.QuestionAnswers.Remove(a);
             }
 
+            string questAndType = question.QID + "-" + question.Qtype;
+            var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
+
+            foreach (var quiz in quizContainQuestions)
+            {
+                quiz.Mark = quiz.Mark - oldMark + question.Mark;
+                db.Entry(quiz).State = EntityState.Modified;
+            }
+
+            
             db.SaveChanges();
 
             string[] options = collection["option"].Split(new char[] { ',' });
@@ -600,13 +611,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
             db.SaveChanges();
             int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 3 == 0)
+            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
             }
             else
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3 + 1);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
             }
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
@@ -636,7 +647,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             var passage = question.Passage;
             passage.Text = paragraph;
             db.Entry(passage).State = EntityState.Modified;
-
+            double? oldMark = question.Mark;
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
@@ -668,6 +679,15 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             foreach (var a in answerList)
             {
                 db.QuestionAnswers.Remove(a);
+            }
+
+            string questAndType = question.QID + "-" + question.Qtype;
+            var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
+
+            foreach (var quiz in quizContainQuestions)
+            {
+                quiz.Mark = quiz.Mark - oldMark + question.Mark;
+                db.Entry(quiz).State = EntityState.Modified;
             }
 
             db.SaveChanges();
@@ -767,27 +787,15 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
 
 
-            string altAnswer = collection["altAnswer"];
-
-            if (altAnswer != null && !altAnswer.Trim().Equals(""))
-            {
-                QuestionAnswer altQa = new QuestionAnswer();
-                altQa.QuestionID = qid;
-                altQa.Text = answer;
-                altQa.IsCorrect = true;
-                db.QuestionAnswers.Add(altQa);
-            }
-
-
             db.SaveChanges();
             int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 3 == 0)
+            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
             }
             else
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3 + 1);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
             }
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
@@ -813,6 +821,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
+            double? oldMark = question.Mark;
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
@@ -835,6 +844,15 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 db.QuestionAnswers.Remove(a);
             }
 
+            string questAndType = question.QID + "-" + question.Qtype;
+            var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
+            //update mark for quiz
+            foreach (var quiz in quizContainQuestions)
+            {
+                quiz.Mark = quiz.Mark - oldMark + question.Mark;
+                db.Entry(quiz).State = EntityState.Modified;
+            }
+
             db.SaveChanges();
 
             //add new answer
@@ -849,17 +867,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 db.QuestionAnswers.Add(qa);
             }
 
-
-            string altAnswer = collection["altAnswer"];
-
-            if (altAnswer != null && !altAnswer.Trim().Equals(""))
-            {
-                QuestionAnswer altQa = new QuestionAnswer();
-                altQa.QuestionID = questionID;
-                altQa.Text = altAnswer;
-                altQa.IsCorrect = true;
-                db.QuestionAnswers.Add(altQa);
-            }
 
             db.SaveChanges();
 
@@ -937,7 +944,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             db.MatchQuestions.Add(matching);
             db.SaveChanges();
 
-            int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 3 + 1);
+            int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
 
         }
@@ -962,6 +969,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int matchingID = int.Parse(qid);
             int chapID = int.Parse(chid);
             MatchQuestion matching = db.MatchQuestions.Find(matchingID);
+            double? oldMark = matching.Mark;
             matching.Mark = float.Parse(mark);
             matching.Time = int.Parse(time);
 
@@ -1004,6 +1012,16 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             matching.ColumnB = columnB.Substring(0, columnB.Length - 1);
             matching.Solution = solution.Substring(0, solution.Length - 1);
             db.Entry(matching).State = EntityState.Modified;
+
+            string questAndType = matching.MID + "-5";
+            var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
+            //update mark for quiz
+            foreach (var quiz in quizContainQuestions)
+            {
+                quiz.Mark = quiz.Mark - oldMark + matching.Mark;
+                db.Entry(quiz).State = EntityState.Modified;
+            }
+
             db.SaveChanges();
             return Redirect(previousUrl);
         }
@@ -1027,6 +1045,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             question.ChapterID = chapter.ChID;
             question.Text = questionText;
             question.Qtype = 6;
+            double? oldMark = question.Mark;
             //check if mark is null
             if (!mark.Trim().Equals(""))
             {
@@ -1039,17 +1058,22 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
 
             db.Questions.Add(question);
+
+            string questAndType = question.QID + "-" + question.Qtype;
+            var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
+            //update mark for quiz
+            foreach (var quiz in quizContainQuestions)
+            {
+                quiz.Mark = quiz.Mark - oldMark + question.Mark;
+                db.Entry(quiz).State = EntityState.Modified;
+            }
+
             db.SaveChanges();
 
             int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Where(q => q.ChapterID == chapID).Select(q => q.QID).First().ToString());
 
-            //add correct answer
+            //get correct answer
             string correctAnswer = collection["answer"];
-           /* QuestionAnswer answer = new QuestionAnswer();
-            answer.QuestionID = qid;
-            answer.Text = correctAnswer.Trim();
-            answer.IsCorrect = true;
-            db.QuestionAnswers.Add(answer);*/
 
             //get choice inside round bracket
             List<string> answerList = new List<string>();
@@ -1065,15 +1089,15 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             {
                 foreach (string ans in answerList)
                 {
-                    string trimBracketAns = ans.Trim().Substring(1, ans.Length - 2);
+                    string trimBracketAns = ans.Trim().Substring(1, ans.Length - 2).Trim();
+                    char letter = trimBracketAns[0];
                     QuestionAnswer qa = new QuestionAnswer();
                     qa.QuestionID = qid;
-                    qa.Text = trimBracketAns;
+                    qa.Text = letter.ToString();
                     //if answer is wrong
-                    if (!trimBracketAns.Trim().ToLower().Equals(correctAnswer.Trim().ToLower()))
+                    if (!letter.ToString().ToLower().Equals(correctAnswer.Trim().ToLower()))
                     {
                         qa.IsCorrect = false;
-                        
                     }
                     else
                     {
@@ -1082,27 +1106,18 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     db.QuestionAnswers.Add(qa);
 
                 }
-
-
             }
+
             db.SaveChanges();
-            ////////////////////////////////////////////
-
-            /* string[] splitResults = Regex.Split(questionText, @"\(.*?\)");
-
-             foreach (var str in splitResults)
-             {
-                 Debug.WriteLine(str);
-             }*/
 
             int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 3 == 0)
+            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
             }
             else
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3 + 1);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
             }
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
@@ -1127,47 +1142,57 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
+            double? oldMark = question.Mark;
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
             db.Entry(question).State = EntityState.Modified;
 
-            var answerList = db.QuestionAnswers.Where(a => a.QuestionID == questionID);
+            var oldAnswerList = db.QuestionAnswers.Where(a => a.QuestionID == questionID);
             //delete the old answer
-            foreach (var a in answerList)
+            foreach (var a in oldAnswerList)
             {
                 db.QuestionAnswers.Remove(a);
             }
 
+            string questAndType = question.QID + "-" + question.Qtype;
+            var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
+            //update mark for quiz
+            foreach (var quiz in quizContainQuestions)
+            {
+                quiz.Mark = quiz.Mark - oldMark + question.Mark;
+                db.Entry(quiz).State = EntityState.Modified;
+            }
+
             db.SaveChanges();
+
 
             //get correct answer
             string correctAnswer = collection["answer"];
 
-            List<string> answers = new List<string>();
-            //get list of answer inside round bracket "()"
+            //get choice inside round bracket
+            List<string> answerList = new List<string>();
             Regex regex = new Regex(@"\(([^()]+)\)*");
             foreach (Match match in regex.Matches(questionText))
             {
                 string ans = match.Value;
-                answers.Add(ans);
+                answerList.Add(ans);
             }
 
-            //add new incorrect answers
-            if (answers != null)
+            //add answer to db
+            if (answerList != null)
             {
-                foreach (string ans in answers)
+                foreach (string ans in answerList)
                 {
-                    string trimBracketAns = ans.Trim().Substring(1, ans.Length - 2);
+                    string trimBracketAns = ans.Trim().Substring(1, ans.Length - 2).Trim();
+                    char letter = trimBracketAns[0];
                     QuestionAnswer qa = new QuestionAnswer();
                     qa.QuestionID = questionID;
-                    qa.Text = trimBracketAns;
-                    Debug.WriteLine(trimBracketAns + "===" + correctAnswer);
+                    qa.Text = letter.ToString();
                     //if answer is wrong
-                    if (!trimBracketAns.Trim().ToLower().Equals(correctAnswer.Trim().ToLower()))
+                    if (!letter.ToString().ToLower().Equals(correctAnswer.Trim().ToLower()))
                     {
                         qa.IsCorrect = false;
-                        db.QuestionAnswers.Add(qa);
                     }
                     else
                     {
@@ -1176,9 +1201,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     db.QuestionAnswers.Add(qa);
 
                 }
-                db.SaveChanges();
-
             }
+            db.SaveChanges();
+
+            
 
             return Redirect(previousUrl);
         }
@@ -1297,13 +1323,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             db.SaveChanges();
 
             int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 3 == 0)
+            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
             }
             else
             {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 3 + 1);
+                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
             }
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
@@ -1328,6 +1354,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
+            double? oldMark = question.Mark;
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
@@ -1344,6 +1371,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
 
             db.Entry(question).State = EntityState.Modified;
+
+            string questAndType = question.QID + "-" + question.Qtype;
+            var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
+            //update mark for quiz
+            foreach (var quiz in quizContainQuestions)
+            {
+                quiz.Mark = quiz.Mark - oldMark + question.Mark;
+                db.Entry(quiz).State = EntityState.Modified;
+            }
+
+            db.SaveChanges();
 
             db.SaveChanges();
 

@@ -19,6 +19,9 @@ namespace InClassVoting.Models
         {
             this.Questions = new HashSet<Question>();
             this.QuestionDones = new HashSet<QuestionDone>();
+            this.QuestionDoneLOes = new HashSet<QuestionDoneLO>();
+            this.QuestionLOes = new HashSet<QuestionLO>();
+            this.Student_Answer = new HashSet<Student_Answer>();
         }
     
         public int QTypeID { get; set; }
@@ -28,5 +31,11 @@ namespace InClassVoting.Models
         public virtual ICollection<Question> Questions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<QuestionDone> QuestionDones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<QuestionDoneLO> QuestionDoneLOes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<QuestionLO> QuestionLOes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Student_Answer> Student_Answer { get; set; }
     }
 }

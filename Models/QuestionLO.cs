@@ -12,17 +12,14 @@ namespace InClassVoting.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Student_QuizDone
+    public partial class QuestionLO
     {
-        public int SQID { get; set; }
-        public Nullable<int> StudentID { get; set; }
-        public Nullable<int> QuizDoneID { get; set; }
-        public string ReceivedQuestions { get; set; }
-        public string Status { get; set; }
-        public Nullable<double> StudentMark { get; set; }
-        public Nullable<double> TotalMark { get; set; }
+        public int QuestionLOID { get; set; }
+        public Nullable<int> QuestionID { get; set; }
+        public int Qtype { get; set; }
+        public int LessonOutcomeID { get; set; }
     
-        public virtual QuizDone QuizDone { get; set; }
-        public virtual Student Student { get; set; }
+        public virtual LessonOutcome LessonOutcome { get; set; }
+        public virtual QuestionType QuestionType { get; set; }
     }
 }

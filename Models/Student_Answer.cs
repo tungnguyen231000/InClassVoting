@@ -17,11 +17,13 @@ namespace InClassVoting.Models
         public int SAID { get; set; }
         public int QuizDoneID { get; set; }
         public int StudentID { get; set; }
-        public string Question { get; set; }
+        public Nullable<int> QuestionDoneID { get; set; }
+        public int Qtype { get; set; }
         public string Answer { get; set; }
         public Nullable<bool> IsCorrect { get; set; }
     
-        public virtual Student Student { get; set; }
+        public virtual QuestionType QuestionType { get; set; }
         public virtual QuizDone QuizDone { get; set; }
+        public virtual Student Student { get; set; }
     }
 }

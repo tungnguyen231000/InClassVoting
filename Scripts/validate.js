@@ -1,5 +1,23 @@
-﻿$(document).ready(function () {
+﻿var arraytxt = [];
+
+$(document).ready(function () {
 	/*console.log('validate');*/
+
+	$('.data-row').each(function (index) {
+		arraytxt.push($(this).text());
+		if ($(this).text().length > 100) {
+			$(this).text($(this).text().substring(0, 100) + '...');
+
+			$(this).mouseover(function () {
+				$(this).text(arraytxt[index]);
+			});
+			$(this).mouseout(function () {
+				$(this).text($(this).text().substring(0, 100) + '...');
+			});
+		}
+	});
+
+
 	$("#fillblank-form").validate({
 		onfocusout: false,
 		onkeyup: false,

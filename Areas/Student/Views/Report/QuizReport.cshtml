@@ -1,0 +1,584 @@
+﻿
+@{
+    ViewBag.Title = "QuizReport";
+    Layout = "~/Areas/Student/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/error.css">
+<link rel="stylesheet" type="text/css" href="~/Content/persent-circle.css">
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <div class="grid grid-cols-1 w-full ">
+        <div class="topcontent w-auto flex flex-row justify-center bg-gray p-6">
+            <div class=" w-full py-6 w-9/12 flex flex-row">
+                <h1 class="h3 pt-5 w-5/12 text-center">@ViewBag.Quiz.Quiz_Name</h1>
+                <div class="box bg-gray-100">
+                    <div class="percent">
+                        <svg>
+                            <circle cx="70" cy="70" r="70"></circle>
+                            <circle cx="70" cy="70" r="70" class="numb"></circle>
+                        </svg>
+
+                        <div data-persent="@ViewBag.Percentage" id="number">
+                            @ViewBag.Percentage%
+                        </div>
+                    </div>
+                    <div class="loding-text">
+                        <p></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-6 w-3/12">
+                <div class="pt-5">
+                    <span class="">Done Date: @ViewBag.Quiz.CreatedDate.ToString("dd-MM-yyyy")   </span>
+                </div>
+                <div>
+                    <span class="">Create by: Teacher</span>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="p-6">
+
+
+            <!--Report-->
+            <div class="w-full bg-gray p-6 ">
+                <div class="grid grid-cols-1 w-full">
+
+                    <!--======Multiple Test=======-->
+                    <div>
+                        <div class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                            <div class="">
+                                <span class="h6">Muliple Choice</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-gray p-6 border border-black-400">
+
+                            <div id="multiple-test">
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span class="mark-text"> Mark: </span> <span class="mark-total">1/1</span><br />
+                                    <span>Question 1:<span />
+
+                                </div>
+                                <div class="w-full items-center bg-gray  ">
+                                    <div>
+                                        <div contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold">
+                                            Ai đang làm test này?
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full items-center bg-gray">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q1" name="cb-option1" value="1" checked disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100 true-answer" name="option1" placeholder="Option 1" value="Nguyễn Quang Thắng" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q1" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="Lưu Mạnh Hùng" readonly></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q1" name="cb-option3" value="3" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option3" placeholder="Option 3" value="Nga Nga" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div id="multiple-test">
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span class="mark-text"> Mark: </span> <span class="mark-total">0/1</span><br />
+                                    <span>
+                                        Question 2:  <span />
+                                        <span></span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div>
+                                        <div contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold ">
+                                            Ai là chủ tịch nước Việt Nam đương thời?
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full items-center bg-gray ">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q2" name="cb-option1" value="1" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="Trương Tấn Sang" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q2" name="cb-option2" value="2" checked disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100 false-answer" name="option2" placeholder="Option 2" value="Nguyễn Xuân Phúc" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+
+                                <div class="w-full items-center bg-gray correct-background">
+                                    <div class="p-0">
+                                        <div contenteditable="false" class=" bg-gray p-4 ">
+                                            <span class="font-sans">Correct answer: </span><span class="quest-answer">Trương Tấn Sang</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div id="multiple-test">
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 3:  <span />
+                                        <span></span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div>
+                                        <div contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold ">
+                                            Quả trứng ra trước con gà?
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full items-center bg-gray">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q3" name="cb-option1" value="1" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="True" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q3" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="False" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div id="multiple-test">
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 4:<span />
+                                        <span></span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div>
+                                        <div contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold ">
+                                            Đàn ông trong hình làm gì?
+                                        </div>
+                                        <div class="w-full bg-gray p-6">
+                                            <img src="~/fonts/xxx.jpg" class="block ml-auto mr-auto" alt="xxx" />
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full items-center bg-gray">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q4" name="cb-option1" value="1" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="Làm việc văn phòng" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="multiple-q4" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="Làm thợ xây" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--=======End Multiple Test=======-->
+                    <!--=======Reading Test========-->
+                    <div>
+                        <div class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                            <div class="">
+                                <span class="h6">Reading</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-gray p-6 border border-black-400">
+                            <div class="w-full items-center bg-gray p-6 ">
+                                <span>Read and answer the questions below :</span>
+                            </div>
+
+                            <div class="w-full items-center bg-gray  ">
+                                <div>
+                                    <div contenteditable="false" class="w-full items-center bg-gray p-6 ">
+                                        Khác với ca dao, thì tục ngữ lại thể hiện những câu nói đúc kết kinh nghiệm của dân gian.
+                                        Về mọi mặt trong cuộc sống như: tự nhiên, lao động sản xuất và xã hội, được nhân dân vận dụng vào đời sống, suy nghĩ, lời ăn tiếng nói và khuyên răn…
+                                        Với ý nghĩa ngắn gọn dễ hiểu, dễ nhớ, có nhịp điệu, có hình ảnh thường gieo vần lưng. Và đây cũng là một thể loại văn học dân gian Việt Nam.
+                                        Tục ngữ được hình thành từ cuộc sống thực tiễn của con người. Trong đó gữa hình thức và nội dung, tục ngữ có một sự gắn bó chặt chẽ.
+                                        Thông thường trong một câu tục ngữ có 2 nghĩa: nghĩa đen và nghĩa bóng.
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <hr />
+
+                            <div id="reading-test">
+                                <div class="w-full items-center bg-gray p-6">
+                                    <span>Question 1:</span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div class="">
+                                        <div contenteditable="false" class="w-full items-center bg-gray p-6 font-sans font-semibold ">
+                                            Bạn nghĩ sao về khái niệm trên ?
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full items-center bg-gray ">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="reading-q1" name="cb-option1" value="1" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="Nhạt Nhẽo" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="reading-q1" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="Văn Vở" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="reading-q1" name="cb-option3" value="3" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option3" placeholder="Option 3" value="Cũng Đúng" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div id="reading-test">
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>Question 2:</span>
+                                </div>
+                                <div class="w-full items-center bg-gray">
+                                    <div class="">
+                                        <div contenteditable="false" class="w-full items-center bg-gray p-6 font-sans font-semibold ">
+                                            Có ý rằng văn học dân gian đang bị dần bị lãng quên điều này đúng hay sai?
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full items-center bg-gray ">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="reading-q2" name="cb-option1" value="1" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="Đúng" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="reading-q2" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="Sai" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--========End Reading Test==========-->
+                    <!--======Short Answer=======-->
+                    <div>
+                        <div id="short-test" class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                            <div class="">
+                                <span class="h6">Short Answer</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-gray p-6 border border-black-400">
+
+                            <div>
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 1:  <span />
+                                        <span>Which of the following is incorrect?</span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div>
+                                        <div class="w-full items-center p-6 ">
+                                            <div contenteditable="false" class="w-full items-center bg-gray">
+                                                Chú bán dầu qua cầu sao lại té?<br />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full items-center bg-gray ">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td><input type="text" class="txt w-full pl-3" id="short-q1" name="edit" placeholder="Answer" value="" disabled></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div>
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 2:  <span />
+                                        <span>Which of the following is incorrect?</span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div>
+                                        <div class="w-full items-center p-6 ">
+                                            <div contenteditable="false" class="w-full items-center bg-gray">
+                                                Bao giờ bán được một tỉ hộp kem đánh răng?<br />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="w-full  items-center bg-gray ">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td><input type="text" class="txt w-full pl-3" id="short-q2" name="edit" placeholder="Answer" value="" disabled></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!--=======End Short Answer=======-->
+                    <!--======Matching=======-->
+                    <div>
+                        <div class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                            <div class="">
+                                <span class="h6">Matching</span>
+                            </div>
+                        </div>
+
+                        <div class="block border border-black-400 p-6">
+                            <div id="matching-test" class="w-full items-center bg-gray p-6 ">
+                                <span>
+                                    Question 1:  <span />
+                                    <span>Matching each of following card:</span>
+                            </div>
+                            <div class="w-full bg-gray p-6">
+                                <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
+                                    <div class="w-full">
+                                        <ul class="w-1/2 float-left">
+
+                                            <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your name?" /></li>
+
+                                            <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How old are you?" /></li>
+
+                                            <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your favorite?" /></li>
+
+                                            <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How much?" /></li>
+
+                                        </ul>
+
+                                        <ul class="w-1/2 float-right">
+
+                                            <li id="matching-q1"><input type="text" class="text-center my-2 py-2 w-full border border-black-400 bg-green-200 pointer-events-none" name="name" value="10000$" /></li>
+
+                                            <li id="matching-q1"><input type="text" class="text-center my-2 py-2 w-full border border-black-400 bg-green-200 pointer-events-none" name="name" value="Playing Game" /></li>
+
+                                            <li id="matching-q1"><input type="text" class="text-center my-2 py-2 w-full border border-black-400 bg-green-200 pointer-events-none" name="name" value="Thắng" /></li>
+
+                                            <li id="matching-q1"><input type="text" class="text-center my-2 py-2 w-full border border-black-400 bg-green-200 pointer-events-none" name="name" value="16" /></li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--=======End Matching=======-->
+                    <!--=======Fill Blank=======-->
+                    <div>
+                        <div id="short-test" class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                            <div class="">
+                                <span class="h6">Fill Blank</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-gray p-6 border border-black-400">
+
+                            <div>
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 1:  <span />
+                                        <span></span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div>
+                                        <div class="w-full items-center p-6 ">
+                                            <div contenteditable="false" id="fill-content" class="w-full items-center bg-gray">
+                                                Chú bán <input type="text" id="fill-q1" name="name" value="" placeholder="" disabled /> qua cầu mà té, chú bán <input type="text" id="fill-q1" name="name" value="" placeholder="" disabled /> ở lại làm chi. Con lele đánh trống thổi kèn, con kìm kịp thồi tò tí te tò te
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div>
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 2:  <span />
+                                        <span>Which of the following is incorrect?</span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div>
+                                        <div class="w-full items-center p-6 ">
+                                            <div contenteditable="false" id="fill-content" class="w-full items-center bg-gray">
+                                                Em trồng giàn bông trước <select id="fill-q2" disabled><option value="" selected></option> <option value="cửa">cửa</option> <option value="thềm">thềm</option><option value="cổng">cổng</option></select> nhà em<br />
+                                                Em tặng một cây cho cô giáo hiền<br />
+                                                Dàn bông lên đua khoe ngát hương<br />
+                                                Nhưng <select id="fill-q2" disabled><option value="" selected></option> <option value="ngọt ngào hơn">ngọt ngào hơn</option> <option value="không thơm bằng">không thơm bằng</option></select> hơn là khi em cầm<br />
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!--=======End Fill Blank=======-->
+                    <!--=======Indicate Mistake=======-->
+                    <div>
+                        <div id="short-test" class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                            <div class="">
+                                <span class="h6">Indicate Mistake</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full bg-gray p-6 border border-black-400">
+
+                            <div>
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 1:  <span />
+                                        <span></span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div contenteditable="false" id="indicate-content" class="w-full items-center bg-gray p-6 ">
+                                        Kìa chú là chú <u>ếch</u> con có <u>hai</u> là hai mắt <u>vuông</u><br />
+                                        Chú ngồi học bài một mình bên hố bom kề vườn xoan.
+                                    </div>
+                                </div>
+
+                                <div class="w-full items-center bg-gray ">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="indicate-q1" name="cb-option1" value="1" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="Ếch" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="indicate-q1" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="Hai" readonly></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="indicate-q1" name="cb-option3" value="3" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option3" placeholder="Option 3" value="Vuông" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                <hr />
+                            </div>
+
+                            <div>
+                                <div class="w-full items-center bg-gray p-6 ">
+                                    <span>
+                                        Question 2:  <span />
+                                        <span></span>
+                                </div>
+                                <div class="w-full items-center bg-gray ">
+                                    <div contenteditable="false" id="indicate-content" class="w-full items-center bg-gray p-6 ">
+                                        Một con vịt xòe ra hai cái <u>tay</u><br />
+                                        Nó kêu rằng cáp cáp cáp, <u>gâu gâu gâu</u><br />
+                                        Gặp <u>hồ nước</u> nó bì bà bì bõm<br />
+                                        Lúc lên bờ vẫy cái cánh cho khô<br />
+                                    </div>
+                                </div>
+
+                                <div class="w-full items-center bg-gray ">
+                                    <table class="w-full border-spacing-2">
+
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="indicate-q2" name="cb-option1" value="1" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="tay" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="indicate-q2" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="gâu gâu gâu" readonly></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="w-2"><input type="checkbox" id="indicate-q2" name="cb-option2" value="2" disabled></td>
+                                            <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 3" value="hồ nước" readonly></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                <hr />
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <!--=======End Indicate Mistake=======-->
+
+
+
+
+
+                </div>
+
+            </div>
+        </div>
+        <!--End Report-->
+
+
+
+
+    </div>
+
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/validate.js"></script>
+<script src="~/Scripts/circle.js"></script>
+
+

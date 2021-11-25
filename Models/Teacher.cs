@@ -12,20 +12,22 @@ namespace InClassVoting.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Passage_Done
+    public partial class Teacher
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Passage_Done()
+        public Teacher()
         {
-            this.QuestionDones = new HashSet<QuestionDone>();
+            this.Courses = new HashSet<Course>();
+            this.Polls = new HashSet<Poll>();
         }
     
-        public int P_DoneID { get; set; }
-        public string ChapterName { get; set; }
-        public string Text { get; set; }
-        public byte[] PassageImage { get; set; }
+        public int TID { get; set; }
+        public string Email { get; set; }
+        public string Name { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<QuestionDone> QuestionDones { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Poll> Polls { get; set; }
     }
 }

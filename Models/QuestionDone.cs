@@ -28,8 +28,10 @@ namespace InClassVoting.Models
         public int Qtype { get; set; }
         public Nullable<bool> MixChoice { get; set; }
         public Nullable<bool> GivenWord { get; set; }
-        public Nullable<int> Time { get; set; }
         public byte[] ImageData { get; set; }
+        public Nullable<int> StudentReceive { get; set; }
+        public Nullable<int> CorrectNumber { get; set; }
+        public Nullable<int> Time { get; set; }
     
         public virtual Passage_Done Passage_Done { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

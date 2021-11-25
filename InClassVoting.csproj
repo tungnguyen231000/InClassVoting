@@ -147,7 +147,8 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Student\Controllers\HomeController.cs" />
-    <Compile Include="Areas\Student\Controllers\QuizController\QuizController.cs" />
+    <Compile Include="Areas\Student\Controllers\QuizController.cs" />
+    <Compile Include="Areas\Student\Controllers\ReportController.cs" />
     <Compile Include="Areas\Student\StudentAreaRegistration.cs" />
     <Compile Include="Areas\Teacher\Controllers\PollController\PollController.cs" />
     <Compile Include="Areas\Teacher\Controllers\QuestionBankController\ChapterController.cs" />
@@ -183,6 +184,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DBModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\LessonOutcome.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\MatchQuestion.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
@@ -193,6 +197,12 @@
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Passage_Done.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Poll.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Poll_Answer.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Question.cs">
@@ -207,6 +217,12 @@
     <Compile Include="Models\QuestionDone.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\QuestionDoneLO.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\QuestionLO.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\QuestionType.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
@@ -216,16 +232,19 @@
     <Compile Include="Models\QuizDone.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Quiz_QuizDone.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Models\Student.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Student_Answer.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Student_PollAnswer.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Student_QuizDone.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Teacher.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -277,8 +296,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Models\DBModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DBModel.Context.cs</LastGenOutput>
       <DependentUpon>DBModel.edmx</DependentUpon>
+      <LastGenOutput>DBModel.Context.cs</LastGenOutput>
     </Content>
     <Content Include="Models\DBModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -288,19 +307,11 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Teacher\Views\web.config" />
-    <Content Include="Areas\Teacher\Views\Shared\Error.cshtml" />
     <Content Include="Areas\Teacher\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Teacher\Views\Shared\_QuestionBankLayout.cshtml" />
     <Content Include="Areas\Teacher\Views\Shared\_QuizLibraryLayout.cshtml" />
     <Content Include="Areas\Teacher\Views\Home\Home.cshtml" />
     <Content Include="Areas\Teacher\Views\Course\_ShowCourseListForQuestionBank.cshtml" />
-    <EntityDeploy Include="Models\DBModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DBModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\DBModel.edmx.diagram">
-      <DependentUpon>DBModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Areas\Teacher\Views\Course\_ShowCourseListForQuizLibrary.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\QuestionBank.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\QuizLibrary.cshtml" />
@@ -325,7 +336,6 @@
     <Content Include="Areas\Teacher\Views\Shared\_ReportLayout.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportHome.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ViewReportListByCourse.cshtml" />
-    <Content Include="Areas\Teacher\Views\Report\ReportDetail.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\_ShowQuestionsList.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\_ShowQuizList.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditReadingQuestion.cshtml" />
@@ -338,6 +348,19 @@
     <Content Include="Areas\Teacher\Views\Question\CreateFillBlankQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditFillBlankQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Poll\CreateOneAnswerPoll.cshtml" />
+    <Content Include="Areas\Student\Views\Report\QuizReport.cshtml" />
+    <Content Include="Areas\Teacher\Views\Report\ReportStudentQuiz.cshtml" />
+    <Content Include="Areas\Teacher\Views\Report\ReportByQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Report\ReportByStudent.cshtml" />
+    <EntityDeploy Include="Models\DBModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DBModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\DBModel.edmx.diagram">
+      <DependentUpon>DBModel.edmx</DependentUpon>
+    </Content>
+    <None Include="Properties\PublishProfiles\InClassVoting - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\InClassVoting - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\circle.js" />
     <Content Include="Scripts\countdown.js" />
@@ -376,11 +399,7 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\teacher.chapter.js" />
     <Content Include="Views\HomeTotal\Home.cshtml" />
   </ItemGroup>

@@ -27,7 +27,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         {
             int courseID = int.Parse(cid);
             ViewBag.Course = db.Courses.Find(courseID);
-            ViewBag.CoutnQuiz = db.Quizs.Where(q => q.CourseID == courseID).Count();
+            ViewBag.CoutnQuiz = db.Quizs.Where(q => q.CourseID == courseID).OrderByDescending(qz => qz.QuizID).Count();
             if (i == null)
             {
                 i = 1;
@@ -35,7 +35,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
             ViewBag.Page = i;
             //fix quiz number (quiz no)
-            ViewBag.QuizCount = (i - 1) * 3;
+            ViewBag.QuizCount = (i - 1) * 10;
 
             //get search text
             if (searchText == null)
@@ -55,7 +55,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         {
             /*Debug.WriteLine("=====" + searchText);*/
             int courseID = int.Parse(cid);
-            var qzList = db.Quizs.Where(qz => qz.CourseID == courseID).ToList();
+            var qzList = db.Quizs.Where(qz => qz.CourseID == courseID).OrderByDescending(qz=>qz.QuizID).ToList();
             List<Quiz> quizzes = new List<Quiz>();
             if (searchText != null && !searchText.Trim().Equals(""))
             {
@@ -70,7 +70,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
             ViewBag.QuizCount = quizCount;
             /*Debug.WriteLine("hjhihi" + quizCount); */
-            return PartialView("_ShowQuizList", quizzes.ToPagedList(i ?? 1, 3));
+            return PartialView("_ShowQuizList", quizzes.ToPagedList(i ?? 1, 10));
         }
 
         //View Quiz Detail
@@ -140,12 +140,12 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 {
                     i = 1;
                 }
-                ViewBag.QuestionNo = (i - 1) * 3;
-                string domain = "https://localhost:44350/Student/Quiz/DoQuizPaperTest?qzID=";
+                ViewBag.QuestionNo = (i - 1) * 10;
+                string domain = "https://inclassvoting.azurewebsites.net/Student/Quiz/DoQuizPaperTest?qzID=";
                 string parameterPart = ViewBag.Quiz.QuizID.ToString();
                 /*string encodePart = Uri.EscapeDataString(parameterPart);*/
                 ViewBag.QuizLink = domain + parameterPart;
-                return View(qList.ToPagedList(i ?? 1, 3));
+                return View(qList.ToPagedList(i ?? 1, 10));
             }
 
         }
@@ -169,10 +169,11 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         public ActionResult DeleteQuiz(string qzID)
         {
             int quizID = int.Parse(qzID);
-            var quiz_quizDoneList = db.Quiz_QuizDone.Where(qq => qq.QuizID == quizID).ToList();
-            foreach (var qqd in quiz_quizDoneList)
+            var quizDoneList = db.QuizDones.Where(qq => qq.QuizID == quizID).ToList();
+            foreach (var qqd in quizDoneList)
             {
-                db.Quiz_QuizDone.Remove(qqd);
+                qqd.QuizID = null;
+                db.Entry(qqd).State = EntityState.Modified;
                 db.SaveChanges();
             }
             var quiz = db.Quizs.Find(quizID);
@@ -1062,6 +1063,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                             qSave.Time = quest.Time;
                             qSave.MixChoice = quest.MixChoice;
                             qSave.GivenWord = quest.GivenWord;
+                            qSave.StudentReceive = 0;
+                            qSave.CorrectNumber = 0;
                             db.QuestionDones.Add(qSave);
                             db.SaveChanges();
 
@@ -1098,6 +1101,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                             mSave.Time = mQuest.Time;
                             mSave.ColumnA = mQuest.ColumnA;
                             mSave.ColumnB = mQuest.ColumnB;
+                            mSave.StudentReceive = 0;
+                            mSave.CorrectNumber = 0;
                             db.MatchQuestionDones.Add(mSave);
                             db.SaveChanges();
                             int mSaveID = int.Parse(db.MatchQuestionDones.OrderByDescending(m => m.M_DoneID).Where(m => m.ChapterName.Equals(mSave.ChapterName)).Select(m => m.M_DoneID).First().ToString());
@@ -1115,6 +1120,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 quiz.Status = "Doing";
                 db.Entry(quiz).State = EntityState.Modified;
                 QuizDone saveQuiz = new QuizDone();
+                saveQuiz.QuizID = quizID;
                 saveQuiz.NumOfQuestion = qSaveNumOfQuest;
                 saveQuiz.TotalMark = qSaveMark;
                 saveQuiz.Time = qSaveTime;
@@ -1127,10 +1133,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 db.QuizDones.Add(saveQuiz);
                 db.SaveChanges();
                 int quizSaveID = int.Parse(db.QuizDones.OrderByDescending(q => q.QuizDoneID).Where(q => q.CourseID == saveQuiz.CourseID).Select(q => q.QuizDoneID).First().ToString());
-                Quiz_QuizDone quiz_QuizDone = new Quiz_QuizDone();
+               /* Quiz_QuizDone quiz_QuizDone = new Quiz_QuizDone();
                 quiz_QuizDone.QuizID = quizID;
                 quiz_QuizDone.QuizDoneID = quizSaveID;
-                db.Quiz_QuizDone.Add(quiz_QuizDone);
+                db.Quiz_QuizDone.Add(quiz_QuizDone);*/
                 db.SaveChanges();
                 ViewBag.Quiz = quiz;
                 return View();

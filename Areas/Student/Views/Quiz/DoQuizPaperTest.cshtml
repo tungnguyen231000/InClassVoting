@@ -463,6 +463,7 @@
                                         <div contenteditable="false" class="w-full items-center bg-gray">
                                             @question.Text
                                         </div>
+
                                     </div>
                                     @if (question.ImageData != null)
                                     {
@@ -474,12 +475,14 @@
                                     }
                                 </div>
 
+                                <input type="hidden" name="qid" value="@question.Q_DoneID" />
+                                <input type="hidden" name="qtype" value="4" />
                             </div>
 
                             <div class="w-full items-center bg-gray ">
                                 <table class="w-full border-spacing-2">
                                     <tr>
-                                        <td>Answer: &nbsp;<input type="text" style="width:90%" class="txt w-full pl-3" id="@dataOpt" name="txtshortAnswer" placeholder="..." value=""></td>
+                                        <td>Answer: &nbsp;<input type="text" style="width:90%" class="txt w-full pl-3" id="@dataOpt" name="txtshortAnswer" placeholder="..."></td>
                                     </tr>
 
                                 </table>
@@ -499,63 +502,60 @@
 
             <!--======Matching=======-->
             <div>
-                <div class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
-                    <div class="">
-                        <span class="h6">Matching</span>
+                @*<div class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                        <div class="">
+                            <span class="h6">Matching</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="block border border-black-400 p-6">
-                    <div id="matching-test" class="w-full items-center bg-gray p-6 ">
-                        <span>
-                            Question 1:  <span />
-                            <span>Matching each of following card:</span>
-                    </div>
-                    <div class="w-full bg-gray p-6">
-                        <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
-                            <div class="w-full">
-                                <ul class="w-1/2 float-left">
+                    <div class="block border border-black-400 p-6">
+                        <div id="matching-test" class="w-full items-center bg-gray p-6 ">
+                            <span>
+                                Question 1:  <span />
+                                <span>Matching each of following card:</span>
+                        </div>
+                        <div class="w-full bg-gray p-6">
+                            <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
+                                <div class="w-full">
+                                    <ul class="w-1/2 float-left">
 
-                                    <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your name?" /></li>
+                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your name?" /></li>
 
-                                    <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How old are you?" /></li>
+                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How old are you?" /></li>
 
-                                    <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your favorite?" /></li>
+                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your favorite?" /></li>
 
-                                    <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How much?" /></li>
+                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How much?" /></li>
 
-                                </ul>
+                                    </ul>
 
-                                <ul id="matching-change-table" class="w-1/2 float-right">
+                                    <ul id="matching-change-table" class="w-1/2 float-right">
 
-                                    <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="10000$" /></li>
+                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="10000$" /></li>
 
-                                    <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="Playing Game" /></li>
+                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="Playing Game" /></li>
 
-                                    <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="Thắng" /></li>
+                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="Thắng" /></li>
 
-                                    <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="16" /></li>
+                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="16" /></li>
 
-                                </ul>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
+                *@
             </div>
             <!--=======End Matching=======-->
 
             <!--=======Indicate Mistake=======-->
             if (ViewBag.IndicateMistakeQuestion.Count != 0)
             {
-
                 <div>
                     <div id="indicate-test" class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
-                            <span class="h6">Indicate Mistake</span>
+                        <span class="h6">Indicate Mistake</span>
                     </div>
                 </div>
-
-
                 <div class="w-full bg-gray p-6 border border-black-400">
                     @{ int countIndicateQuestion = 0;
                     }
@@ -563,20 +563,23 @@
                     {
                         countIndicateQuestion++;
                         <div class="w-full items-center bg-gray p-6 ">
-                            <span>Question @countIndicateQuestion:<span/>
+                            <span>Question @countIndicateQuestion:<span />
                         </div>
                         <div class="w-full items-center bg-gray  ">
                             <div>
                                 <div contenteditable="false" id="indicate-content" class="w-full items-center bg-gray p-6 ">
                                     @{
                                         string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
+                                        List<string> letterRepresent = new List<string>();
                                         List<string> underLineWords = new List<string>();
                                         Regex regex = new Regex(@"\(([^()]+)\)*");
                                         foreach (Match match in regex.Matches(question.Text))
                                         {
                                             string ansList = match.Value;
                                             string choices = ansList.Trim().Substring(1, ansList.Length - 2);
-                                            underLineWords.Add(choices);
+                                            string[] letterAndAnswer = choices.Split(new char[] { '-' });
+                                            letterRepresent.Add(letterAndAnswer[0].Trim());
+                                            underLineWords.Add(letterAndAnswer[1].Trim());
                                         }
                                     }
                                     @for (int i = 0; i < questionSplit.Length; i++)
@@ -584,7 +587,8 @@
                                         <span>@questionSplit[i]</span>
                                         if (i < questionSplit.Length - 1)
                                         {
-                                            <u>@underLineWords[i]</u>
+                                            string letter = "(" + letterRepresent[i] + ")";
+                                            <span style="color:blue">@letter</span> <u>@underLineWords[i]</u>
                                         }
 
                                     }
@@ -610,20 +614,7 @@
                                             <input type="checkbox" id="@dataOpt" name="cbIndicateOption" value="@answers.QA_DoneID">
                                         </td>
                                         <td>
-                                            @if (countAnswer == 1)
-                                            {<label>A.</label>}
-                                            else if (countAnswer == 2)
-                                            {<label>B.</label>}
-                                            else if (countAnswer == 3)
-                                            {<label>C.</label>}
-                                            else if (countAnswer == 4)
-                                            {<label>D.</label>}
-                                            else if (countAnswer == 5)
-                                            {<label>E.</label>}
-                                            else if (countAnswer == 6)
-                                            {<label>F.</label>}
-                                            &nbsp;
-                                            <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="indicateOption" value="@answers.Text" readonly>
+                                            <input type="text" class="w-full pl-3 bg-gray-100" name="indicateOption" value="@answers.Text" readonly>
                                         </td>
                                     </tr>
 
@@ -637,89 +628,6 @@
                     }
                 </div>
             }
-            <div>
-                <div id="indicate-test" class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
-                    <div class="">
-                        <span class="h6">Indicate Mistake</span>
-                    </div>
-                </div>
-
-                <div class="w-full bg-gray p-6 border border-black-400">
-
-                    <div>
-                        <div class="w-full items-center bg-gray p-6 ">
-                            <span>
-                                Question 1:  <span />
-                                <span></span>
-                        </div>
-                        <div class="w-full items-center bg-gray ">
-                            <div contenteditable="false" id="indicate-content" class="w-full items-center bg-gray p-6 ">
-                                Kìa chú là chú <u>ếch</u> con có <u>hai</u> là hai mắt <u>vuông</u><br />
-                                Chú ngồi học bài một mình bên hố bom kề vườn xoan.
-                            </div>
-                        </div>
-
-                        <div class="w-full items-center bg-gray ">
-                            <table class="w-full border-spacing-2">
-
-                                <tr>
-                                    <td class="w-2"><input type="checkbox" id="indicate-q1" name="cb-option1" value="1"></td>
-                                    <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="Ếch" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td class="w-2"><input type="checkbox" id="indicate-q1" name="cb-option2" value="2"></td>
-                                    <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="Hai" readonly></td>
-                                </tr>
-
-                                <tr>
-                                    <td class="w-2"><input type="checkbox" id="indicate-q1" name="cb-option3" value="3"></td>
-                                    <td><input type="text" class="w-full pl-3 bg-gray-100" name="option3" placeholder="Option 3" value="Vuông" readonly></td>
-                                </tr>
-
-                            </table>
-                        </div>
-                        <hr />
-                    </div>
-
-                    <div>
-                        <div class="w-full items-center bg-gray p-6 ">
-                            <span>
-                                Question 2:  <span />
-                                <span></span>
-                        </div>
-                        <div class="w-full items-center bg-gray ">
-                            <div contenteditable="false" id="indicate-content" class="w-full items-center bg-gray p-6 ">
-                                Một con vịt xòe ra hai cái <u>tay</u><br />
-                                Nó kêu rằng cáp cáp cáp, <u>gâu gâu gâu</u><br />
-                                Gặp <u>hồ nước</u> nó bì bà bì bõm<br />
-                                Lúc lên bờ vẫy cái cánh cho khô<br />
-                            </div>
-                        </div>
-
-                        <div class="w-full items-center bg-gray ">
-                            <table class="w-full border-spacing-2">
-
-                                <tr>
-                                    <td class="w-2"><input type="checkbox" id="indicate-q2" name="cb-option1" value="1"></td>
-                                    <td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="tay" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td class="w-2"><input type="checkbox" id="indicate-q2" name="cb-option2" value="2"></td>
-                                    <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 2" value="gâu gâu gâu" readonly></td>
-                                </tr>
-                                <tr>
-                                    <td class="w-2"><input type="checkbox" id="indicate-q2" name="cb-option2" value="2"></td>
-                                    <td><input type="text" class="w-full pl-3 bg-gray-100" name="option2" placeholder="Option 3" value="hồ nước" readonly></td>
-                                </tr>
-
-                            </table>
-                        </div>
-                        <hr />
-                    </div>
-
-                </div>
-
-            </div>
             <!--=======End Indicate Mistake=======-->
             <div class=" inline-block mt-4">
                 <input type="button" class="float-right btn btn-bs-primary" id="btnSubmit" name="name" onclick="submitPaper()" value="Finish Quiz" />

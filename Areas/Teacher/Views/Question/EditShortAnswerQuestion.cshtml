@@ -21,20 +21,23 @@
                 </div>
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span>Time:</span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+                        <span><b>Time:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="..." value="@ViewBag.Question.Time">
                     </div>
                     <div class="m-6  ">
-                        <span>Mark:</span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
+                        <span><b>Mark:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="..." value="@ViewBag.Question.Mark">
                     </div>
                 </div>
 
             </div>
 
             <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div>
+                    <span><b>Question:</b> </span>
+                </div>
                 <div class="w-10/12  float-left mt-3">
-                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Content ...">@ViewBag.Question.Text</textarea>
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder=" ...">@ViewBag.Question.Text</textarea>
                 </div>
 
                 <div class="w-2/12 drag-content float-right">
@@ -63,28 +66,14 @@
 
             <div class="w-full items-center bg-gray p-6 border border-black-400">
                 <table class="w-full border-spacing-2">
-                    @{int countAnswer = 0;}
                     @foreach (var answer in ViewBag.Question.QuestionAnswers)
                     {
-                        countAnswer++;
-                        if (countAnswer == 1)
+                        if (answer.IsCorrect)
                         {
                             <tr>
-                                <td><input type="text" class="w-full pl-3" name="answer" placeholder="Correct Answer" value="@answer.Text"></td>
+                                <td><b>Answer:&nbsp; </b><input type="text" class="w-full pl-3" style="width:95%" name="answer" placeholder="..." value="@answer.Text"></td>
                             </tr>
                         }
-                        else if (countAnswer == 2)
-                        {
-                            <tr>
-                                <td><input type="text" class="w-full pl-3" name="altAnswer" placeholder="Alternative Answer" value="@answer.Text"></td>
-                            </tr>
-                        }
-                    }
-                    @if (countAnswer < 2)
-                    {
-                        <tr>
-                            <td><input type="text" class="w-full pl-3" name="altAnswer" placeholder="Alternative Answer"></td>
-                        </tr>
                     }
                 </table>
             </div>
@@ -95,6 +84,21 @@
 
         </div>
     }
+    <br />
+    <br />
+    <div class="w-full items-center bg-gray p-6 border border-black-400">
+        <h1 class="h6">Example: Short Answer Question</h1>
+
+        <p style="color:blue">
+            If you want the question can have more than 1 correct answer
+            Put the "//" symbol between answers
+        </p>
+        <br />
+        Who is Barack Obama?
+        <br />
+        <br />
+        Answer : <input type="text" style="background-color: white; width: 90%" class="w-full pl-3" value="A male man; Former US President" disabled>
+    </div>
 </div>
 
 <script src="~/Scripts/dragdropimage.js"></script>
