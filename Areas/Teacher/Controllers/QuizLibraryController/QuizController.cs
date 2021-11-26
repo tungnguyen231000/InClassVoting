@@ -136,6 +136,43 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 ViewBag.QuestionType = db.QuestionTypes.ToList();
                 ViewBag.ChapterList = db.Chapters.Where(ch => ch.CourseID == course.CID);
                 ViewBag.CountQuest = qList.Count();
+
+                //if quiz have random question
+                if (quiz.MixQuestionNumber != null)
+                {
+                    ViewBag.RandomQuestionNum = quiz.MixQuestionNumber;
+                }
+
+                //if quiz shuffle the question
+                if (quiz.MixQuestion == true)
+                {
+                    ViewBag.Shuffle = 1;
+                }
+                else
+                {
+                    ViewBag.Shuffle = 0;
+                }
+
+                //if pulish mark is true
+                if (quiz.PublicResult == true)
+                {
+                    ViewBag.PublishMark = 1;
+                }
+                else
+                {
+                    ViewBag.PublishMark = 0;
+                }
+
+                //if pulish answer is true
+                if (quiz.PublicAnswer == true)
+                {
+                    ViewBag.PublicAnswer = 1;
+                }
+                else
+                {
+                    ViewBag.PublicAnswer = 0;
+                }
+
                 if (i == null)
                 {
                     i = 1;
@@ -611,6 +648,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             ViewBag.QuestionType = db.QuestionTypes.ToList();
             ViewBag.ChapterList = db.Chapters.Where(ch => ch.CourseID == course.CID);
             ViewBag.Questions = questions;
+
             dyQuestions.Questions = qList;
             dyQuestions.Matchings = mList;
             ViewBag.CountQuest = qList.Count() + mList.Count();
@@ -619,8 +657,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
         //Create new quiz
         [HttpPost]
-        public ActionResult CreateNewQuiz(string cid, string quizName, string questions, string cbMixQuestions, string rdQuestionNum)
+        public ActionResult CreateNewQuiz(string cid, string quizName, string questions, string cbMixQuestions, string rdQuestionNum,
+            string cbPublishMark, string cbPublishAnswer)
         {
+            
             Quiz quiz = new Quiz();
             quiz.QuizName = quizName;
             quiz.Questions = questions;
@@ -630,9 +670,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             quiz.Status = "Not Done";
             int courseID = int.Parse(cid);
             quiz.CourseID = courseID;
-            Debug.WriteLine(cid + "==-=-=-=" + quiz.CourseID);
-            int mixChoice = int.Parse(cbMixQuestions);
 
+            int mixChoice = int.Parse(cbMixQuestions);
+            //check if shuffle answer check box is checked
             if (mixChoice == 1)
             {
                 quiz.MixQuestion = true;
@@ -641,6 +681,30 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             {
                 quiz.MixQuestion = false;
             }
+
+            int publishMark = int.Parse(cbPublishMark);
+            //check if the quiz mark publish option is check
+            if (publishMark == 1)
+            {
+                quiz.PublicResult = true;
+            }
+            else
+            {
+                quiz.PublicResult = false;
+            }
+            
+            int publishAnswer = int.Parse(cbPublishAnswer);
+            //check if the quiz answer publish option is check
+            if (publishAnswer == 1)
+            {
+                quiz.PublicAnswer = true;
+            }
+            else
+            {
+                quiz.PublicAnswer = false;
+            }
+
+           
 
             Dictionary<int, string> questionSet = new Dictionary<int, string>();
             Dictionary<int, string> matchingSet = new Dictionary<int, string>();
@@ -688,7 +752,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             if (!rdQuestionNum.Equals(""))
             {
                 int numOfRandom = int.Parse(rdQuestionNum);
-                quiz.MixQuestionNumber = quiz.NumOfQuestion;
                 quiz.MixQuestionNumber = numOfRandom;
 
             }

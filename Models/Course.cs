@@ -18,7 +18,7 @@ namespace InClassVoting.Models
         public Course()
         {
             this.Chapters = new HashSet<Chapter>();
-            this.LessonOutcomes = new HashSet<LessonOutcome>();
+            this.LearningOutcomes = new HashSet<LearningOutcome>();
             this.Quizs = new HashSet<Quiz>();
             this.QuizDones = new HashSet<QuizDone>();
         }
@@ -31,7 +31,7 @@ namespace InClassVoting.Models
         public virtual ICollection<Chapter> Chapters { get; set; }
         public virtual Teacher Teacher { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LessonOutcome> LessonOutcomes { get; set; }
+        public virtual ICollection<LearningOutcome> LearningOutcomes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Quiz> Quizs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

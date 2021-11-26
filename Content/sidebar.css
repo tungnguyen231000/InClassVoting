@@ -7,3 +7,8 @@
     font-size: 30px;
     text-align: center;
 }
+
+.fill-input {
+    border: 1px solid black;
+    margin-bottom:2px;
+}

@@ -175,8 +175,9 @@
                         countMultipleQuestion++;
                         <div class="w-full items-center bg-gray p-6 ">
                             <span>
-                                Question @countMultipleQuestion:  <span />
-                                <span></span>
+                                Question @countMultipleQuestion:
+                            </span>
+                            <span></span>
                         </div>
                         <div class="w-full items-center bg-gray  ">
                             <div>
@@ -359,8 +360,9 @@
                         string dataOpt = "fillblank-" + countFillBlankQuestion;
                         <div class="w-full items-center bg-gray p-6 ">
                             <span>
-                                Question @countFillBlankQuestion:  <span />
-                                <span></span>
+                                Question @countFillBlankQuestion:
+                            </span>
+                            <span></span>
                         </div>
                         <input type="hidden" name="qid" value="@question.Q_DoneID" />
                         <input type="hidden" name="qtype" value="3" />
@@ -373,7 +375,7 @@
                                     <span>@questionSplit[i]</span>
                                     if (i < questionSplit.Length - 1)
                                     {
-                                        <input type="text" id="@dataOpt" style="width:15%;color:blue" name="fillBankNotGivenAnswer" placeholder="...">
+                                        <input type="text" id="@dataOpt" value="" style="width: 15%; color:blue"  class="fill-input" name="fillBankNotGivenAnswer" placeholder="...">
                                     }
 
                                 }
@@ -396,8 +398,8 @@
                                     <span>@questionSplit[i]</span>
                                     if (i < questionSplit.Length - 1)
                                     {
-                                        <select id="@dataOpt" style="width:15%;color:blue" name="fillBankGivenAnswer">
-                                            <option value="-1" style="color:gray" selected disabled>Select one answer </option>
+                                        <select id="@dataOpt" style="width:15%;color:blue" name="fillBankGivenAnswer" class="fillblank-question fill-input">
+                                            <option label=""></option>
                                             @{
                                                 string[] options = answerList[i].Split(new char[] { '~' });
                                             }
@@ -415,7 +417,6 @@
                                                 }
 
                                             }
-
                                         </select>
                                     }
 
@@ -629,6 +630,8 @@
                 </div>
             }
             <!--=======End Indicate Mistake=======-->
+
+
             <div class=" inline-block mt-4">
                 <input type="button" class="float-right btn btn-bs-primary" id="btnSubmit" name="name" onclick="submitPaper()" value="Finish Quiz" />
             </div>

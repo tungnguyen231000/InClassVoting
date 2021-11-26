@@ -12,10 +12,10 @@ namespace InClassVoting.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class LessonOutcome
+    public partial class LearningOutcome
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public LessonOutcome()
+        public LearningOutcome()
         {
             this.QuestionDoneLOes = new HashSet<QuestionDoneLO>();
             this.QuestionLOes = new HashSet<QuestionLO>();

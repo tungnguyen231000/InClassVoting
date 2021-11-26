@@ -27,7 +27,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <p class="h5">Enter Course Name</p>
+                            <p class="h5">Enter course name</p>
                             <div style="display:flex; margin-bottom:25px">
                                 <input type="text" id="fname" name="newcourseName" placeholder="Enter here..">
                                 <input type="hidden" name="chid" value="-1">
@@ -202,7 +202,7 @@
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editCourseModal" onclick="getCourseIdToUpdate(@course.CID,'@course.Name')">Rename</a></li>
                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="getCourseIdToDelete(@course.CID,'@course.Name')">Delete</a></li>
-
+                                <li><a href="~/Teacher/LearningOutcome/ViewLearningOutcome?cid=@course.CID" class="dropdown-item">View Learning Outcome</a></li>
                             </ul>
                         </div>
                     </div>

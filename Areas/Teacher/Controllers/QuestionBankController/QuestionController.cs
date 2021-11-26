@@ -26,109 +26,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         public ActionResult ViewQuestionByChapter(string chid, string qtype, string searchText, int? i)
         {
             int chapID = int.Parse(chid);
-            var chapter = db.Chapters.Find(chapID); 
-            var questions = db.Questions.Where(q => q.ChapterID == chapID).ToList();
-            var matchings = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
-            List<Question> qList = new List<Question>();
-            List<MatchQuestion> mList = new List<MatchQuestion>();
-
-            if (qtype == null || qtype.Trim().Equals(""))
-            {
-                qtype = "-1";
-            }
-            //get question type by dropdown list
-            int qTypeID = int.Parse(qtype);
-            if (qTypeID == -1)
-            {
-                mList = matchings;
-                qList = questions;
-            }
-            else
-            {
-                if (qTypeID == 5)
-                {
-                    mList = matchings;
-                }
-                else
-                {
-                    qList = questions.Where(q => q.Qtype == qTypeID).ToList();
-                }
-
-            }
-
-
-            // check if user search by question text
-            if (searchText != null && !searchText.Equals(""))
-            {
-                if (mList != null)
-                {
-                    mList = mList.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
-                                    m.ColumnB.ToLower().Contains(searchText.ToLower().Trim())).ToList();
-                }
-                if (qList != null)
-                {
-                    qList = qList.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim())).ToList();
-                }
-
-            }
-
-            foreach (var m in mList)
-            {
-                Question q = new Question();
-                q.Text = m.ColumnA + "//" + m.ColumnB;
-                q.Qtype = 5;
-                q.Mark = m.Mark;
-                q.QID = m.MID;
-                qList.Add(q);
-            }
-
-            if (i == null)
-            {
-                i = 1;
-            }
-
-            ViewBag.Page = i;
-            //fix question number (question no)
-            ViewBag.QuestCount = (i - 1) * 10;
-            /*else
-            {
-                ViewBag.questCount = questCount;
-            }*/
-
-            //get search text
-            if (searchText == null)
-            {
-                ViewBag.Search = "";
-            }
-            else
-            {
-                ViewBag.Search = searchText;
-            }
-
-            //get question type
-
-            if (qtype == null)
-            {
-                ViewBag.QType = "";
-            }
-            else
-            {
-                ViewBag.QType = qtype;
-            }
-            /*Debug.WriteLine("///" + qtype);*/
-
-            ViewBag.CountQuest = db.Questions.Count(q=>q.ChapterID==chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID);
-            ViewBag.CourseName = chapter.Course.Name;
-            ViewBag.Chapter = chapter;
-            ViewBag.QuestionType = db.QuestionTypes.ToList();
-           
-            return View(qList.ToPagedList(i ?? 1, 10));
-        }
-
-        //show question list
-       /* public ActionResult ShowQuestionsList(string chid, string qtype, string searchText, int? i, int? questCount)
-        {
-            int chapID = int.Parse(chid);
             var chapter = db.Chapters.Find(chapID);
             var questions = db.Questions.Where(q => q.ChapterID == chapID).ToList();
             var matchings = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
@@ -184,14 +81,53 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 q.QID = m.MID;
                 qList.Add(q);
             }
-            ViewBag.CountQuest = qList.Count();
+            //get search text
+            if (searchText == null)
+            {
+                ViewBag.Search = "";
+            }
+            else
+            {
+                ViewBag.Search = searchText;
+            }
 
-            ViewBag.QuestCount = questCount;
+            //get question type
+
+            if (qtype == null)
+            {
+                ViewBag.QType = "";
+            }
+            else
+            {
+                ViewBag.QType = qtype;
+            }
+            /*Debug.WriteLine("///" + qtype);*/
+            int totalQuestion = db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID);
+            ViewBag.CountQuest = totalQuestion;
+            ViewBag.CourseName = chapter.Course.Name;
             ViewBag.Chapter = chapter;
-            ViewBag.QType = qtype;
-            *//*Debug.WriteLine("///" + qtype);*//*
-            return PartialView("_ShowQuestionsList", qList.ToPagedList(i ?? 1, 3));
-        }*/
+            ViewBag.QuestionType = db.QuestionTypes.ToList();
+            if (i == null)
+            {
+                i = 1;
+            }
+            else
+            {
+                if (totalQuestion % 10 == 0)
+                {
+                    if (i > (totalQuestion / 10))
+                    {
+                        i = totalQuestion / 10;
+                    }
+                }
+
+            }
+
+            ViewBag.QuestCount = (i - 1) * 10;
+            ViewBag.Page = i;
+
+            return View(qList.ToPagedList(i ?? 1, 10));
+        }
 
         //delete question
         public ActionResult DeleteQuestion(string chapterId, FormCollection collection)
@@ -479,7 +415,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 db.Entry(quiz).State = EntityState.Modified;
             }
 
-            
+
             db.SaveChanges();
 
             string[] options = collection["option"].Split(new char[] { ',' });
@@ -1204,7 +1140,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
             db.SaveChanges();
 
-            
+
 
             return Redirect(previousUrl);
         }
@@ -1239,8 +1175,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             {
                 question.Time = int.Parse(time);
             }
-
-
 
             //check if question have given word or not
             string givenWord = collection["givenWord"];
@@ -1358,6 +1292,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
+
             //check if question have given word or not
             string givenWord = collection["givenWord"];
             if (givenWord != null && !givenWord.Trim().Equals(""))
@@ -1372,6 +1307,73 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             db.Entry(question).State = EntityState.Modified;
 
+            var oldAnswerList = db.QuestionAnswers.Where(a => a.QuestionID == questionID);
+            //delete the old answer
+            foreach (var a in oldAnswerList)
+            {
+                db.QuestionAnswers.Remove(a);
+            }
+
+            //check if the question is given word or not
+            if (question.GivenWord == true)
+            {
+                List<string> answerList = new List<string>();
+                Regex regex = new Regex(@"\(([^()]+)\)*");
+                //get text inside round bracket
+                foreach (Match match in regex.Matches(questionText))
+                {
+                    string ansList = match.Value;
+                    answerList.Add(ansList);
+                }
+
+                //add correct answer to db
+                if (answerList != null)
+                {
+                    foreach (string ans in answerList)
+                    {
+                        string trimBracketAns = ans.Trim().Substring(2, ans.Length - 3);
+                        string[] choices = trimBracketAns.Split(new char[] { '~' });
+                        foreach (string choice in choices)
+                        {
+                            if (choice.Trim().ToLower().Contains("="))
+                            {
+                                QuestionAnswer qa = new QuestionAnswer();
+                                qa.QuestionID = questionID;
+                                qa.Text = choice.Substring(1, choice.Length - 1);
+                                qa.IsCorrect = true;
+                                db.QuestionAnswers.Add(qa);
+                            }
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                Debug.WriteLine("hihi");
+                List<string> answerList = new List<string>();
+                Regex regex = new Regex(@"\(([^()]+)\)*");
+                //get text inside round bracket
+                foreach (Match match in regex.Matches(questionText))
+                {
+                    string ansList = match.Value;
+                    answerList.Add(ansList);
+                }
+                //add correct answer to db
+                if (answerList != null)
+                {
+                    foreach (string ans in answerList)
+                    {
+                        string correctAns = ans.Trim().Substring(1, ans.Length - 2);
+                        QuestionAnswer qa = new QuestionAnswer();
+                        qa.QuestionID = questionID;
+                        qa.Text = correctAns.Trim();
+                        qa.IsCorrect = true;
+                        db.QuestionAnswers.Add(qa);
+                    }
+                }
+            }
+
             string questAndType = question.QID + "-" + question.Qtype;
             var quizContainQuestions = db.Quizs.Where(qz => qz.Questions.Contains(questAndType)).ToList();
             //update mark for quiz
@@ -1383,7 +1385,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             db.SaveChanges();
 
-            db.SaveChanges();
 
             return Redirect(previousUrl);
         }

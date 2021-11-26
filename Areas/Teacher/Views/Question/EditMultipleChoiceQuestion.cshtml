@@ -93,31 +93,31 @@
                             }
                             else
                             {
-                                <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer" ></td>
+                                <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer"></td>
                             }
-                        <td>
-                            &nbsp;
-                            @if (countAnswer == 1)
-                            {<label>A.</label>}
-                            else if (countAnswer == 2)
-                            {<label>B.</label>}
-                            else if (countAnswer == 3)
-                            {<label>C.</label>}
-                            else if (countAnswer == 4)
-                            {<label>D.</label>}
-                            else if (countAnswer == 5)
-                            {<label>E.</label>}
-                            else if (countAnswer == 6)
-                            {<label>F.</label>}
-                            &nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option" value="@answer.Text">
-                        </td>
+                            <td>
+                                &nbsp;
+                                @if (countAnswer == 1)
+                                {<label>A.</label>}
+                                else if (countAnswer == 2)
+                                {<label>B.</label>}
+                                else if (countAnswer == 3)
+                                {<label>C.</label>}
+                                else if (countAnswer == 4)
+                                {<label>D.</label>}
+                                else if (countAnswer == 5)
+                                {<label>E.</label>}
+                                else if (countAnswer == 6)
+                                {<label>F.</label>}
+                                &nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option" value="@answer.Text">
+                            </td>
                         </tr>
                     }
                     @while (countAnswer < 6)
                     {
                         <tr>
                             @{countAnswer++;}
-                            <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer" ></td>
+                            <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer"></td>
                             <td>
                                 &nbsp;
                                 @if (countAnswer == 1)
@@ -147,5 +147,9 @@
     }
 
 </div>
+
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>*@
+@*<script src="~/Scripts/validate.js"></script>*@
 <script src="~/Scripts/dragdropimage.js"></script>
 

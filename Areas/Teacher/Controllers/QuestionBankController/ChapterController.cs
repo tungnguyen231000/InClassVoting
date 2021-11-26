@@ -44,7 +44,6 @@ namespace InClassVoting.Areas.teacher.Controllers
             updateChapter.Name = newChapterName.Trim();
             db.Entry(updateChapter).State = EntityState.Modified;
             db.SaveChanges();
-            /*return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapterID);*/
             return Redirect(Request.UrlReferrer.ToString());
         }
 

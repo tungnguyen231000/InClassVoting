@@ -17,9 +17,9 @@ namespace InClassVoting.Models
         public int QuestionDoneLOID { get; set; }
         public Nullable<int> QuestionDoneID { get; set; }
         public int Qtype { get; set; }
-        public int LessonOutcomeID { get; set; }
+        public int LearningOutcomeID { get; set; }
     
-        public virtual LessonOutcome LessonOutcome { get; set; }
+        public virtual LearningOutcome LearningOutcome { get; set; }
         public virtual QuestionType QuestionType { get; set; }
     }
 }

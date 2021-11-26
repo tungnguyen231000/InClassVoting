@@ -27,7 +27,7 @@ namespace InClassVoting.Models
     
         public virtual DbSet<Chapter> Chapters { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
-        public virtual DbSet<LessonOutcome> LessonOutcomes { get; set; }
+        public virtual DbSet<LearningOutcome> LearningOutcomes { get; set; }
         public virtual DbSet<MatchQuestion> MatchQuestions { get; set; }
         public virtual DbSet<MatchQuestionDone> MatchQuestionDones { get; set; }
         public virtual DbSet<Passage> Passages { get; set; }

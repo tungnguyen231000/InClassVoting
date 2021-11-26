@@ -154,10 +154,10 @@
     <Compile Include="Areas\Teacher\Controllers\QuestionBankController\ChapterController.cs" />
     <Compile Include="Areas\Teacher\Controllers\QuestionBankController\CourseController.cs" />
     <Compile Include="Areas\Teacher\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Teacher\Controllers\QuestionBankController\LearningOutcomeController.cs" />
     <Compile Include="Areas\Teacher\Controllers\QuestionBankController\QuestionController.cs" />
     <Compile Include="Areas\Teacher\Controllers\QuizLibraryController\QuizController.cs" />
     <Compile Include="Areas\Teacher\Controllers\ReportController\ReportController.cs" />
-    <Compile Include="Areas\Teacher\Controllers\SearchController\SearchController.cs" />
     <Compile Include="Areas\Teacher\teacherAreaRegistration.cs" />
     <Compile Include="Controllers\HomeTotalController.cs" />
     <Compile Include="Global.asax.cs">
@@ -184,7 +184,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DBModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="Models\LessonOutcome.cs">
+    <Compile Include="Models\LearningOutcome.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\MatchQuestion.cs">
@@ -282,6 +282,7 @@
     <Content Include="Content\img\user2.jpg" />
     <Content Include="Content\img\user3.jpg" />
     <Content Include="Content\Layout.css" />
+    <Content Include="Content\LO.css" />
     <Content Include="Content\Login.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\persent-circle.css" />
@@ -316,7 +317,6 @@
     <Content Include="Areas\Teacher\Views\Question\QuestionBank.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\QuizLibrary.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\ViewQuestionByChapter.cshtml" />
-    <Content Include="Areas\Teacher\Views\Search\QuestionBankSearch.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateMultipleChoiceQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateReadingQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditMultipleChoiceQuestion.cshtml" />
@@ -352,6 +352,7 @@
     <Content Include="Areas\Teacher\Views\Report\ReportStudentQuiz.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportByQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportByStudent.cshtml" />
+    <Content Include="Areas\Teacher\Views\LearningOutcome\ViewLearningOutcome.cshtml" />
     <EntityDeploy Include="Models\DBModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>DBModel.Designer.cs</LastGenOutput>
@@ -385,9 +386,11 @@
     <Content Include="Scripts\Layout.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\more-option.js" />
+    <Content Include="Scripts\teacher.quiz.js" />
     <Content Include="Scripts\sidebar.js" />
     <Content Include="Scripts\SlideQ.js" />
     <Content Include="Scripts\teacher.course.js" />
+    <Content Include="Scripts\teacher.lo.js" />
     <Content Include="Scripts\TestJS.js" />
     <Content Include="Scripts\validate.js" />
     <Content Include="Web.config" />

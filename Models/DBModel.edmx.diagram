@@ -4,60 +4,58 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="47e842a2eb874a36b6ad5523d53bf7a5" Name="Diagram1" ZoomLevel="49">
-        <EntityTypeShape EntityType="inclassvoting01Model.Chapter" Width="1.5" PointX="19.25" PointY="14.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Course" Width="1.5" PointX="16" PointY="20.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.LessonOutcome" Width="1.5" PointX="9.25" PointY="14" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.MatchQuestion" Width="1.5" PointX="21.625" PointY="14.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.MatchQuestionDone" Width="1.5" PointX="27.75" PointY="8.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Passage" Width="1.5" PointX="12.125" PointY="6.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Passage_Done" Width="1.5" PointX="35.375" PointY="9.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Poll" Width="1.5" PointX="13" PointY="28.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Poll_Answer" Width="1.5" PointX="20.625" PointY="28.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Question" Width="1.5" PointX="24.875" PointY="8.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.QuestionAnswer" Width="1.5" PointX="26.375" PointY="15.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.QuestionAnswerDone" Width="1.5" PointX="30" PointY="3.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.QuestionDone" Width="1.5" PointX="33.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.QuestionDoneLO" Width="1.5" PointX="13.75" PointY="9" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.QuestionLO" Width="1.5" PointX="10.625" PointY="17.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.QuestionType" Width="1.5" PointX="32.5" PointY="12.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Quiz" Width="1.5" PointX="17.875" PointY="25" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.QuizDone" Width="1.5" PointX="23.5" PointY="20.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Student" Width="1.5" PointX="36.375" PointY="26.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Student_Answer" Width="1.5" PointX="36.875" PointY="19" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Student_PollAnswer" Width="1.5" PointX="30.875" PointY="29.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Student_QuizDone" Width="1.5" PointX="31.75" PointY="25.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="inclassvoting01Model.Teacher" Width="1.5" PointX="9.625" PointY="22.375" IsExpanded="true" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Chapter__CourseI__6477ECF3" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__MatchQues__Chapt__73BA3083" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Passage__Chapter__6754599E" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Question__Chapte__6C190EBB" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Course__TeacherI__619B8048" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__LessonOut__Cours__19DFD96B" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Quiz__CourseID__76969D2E" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuizDone__Course__7C4F7684" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Lesso__2180FB33" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionL__Lesso__1DB06A4F" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Question__Passag__6D0D32F4" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Passa__7F2BE32F" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Poll__TeacherID__10566F31" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Poll_Answ__PollI__1332DBDC" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Student_P__Poll___160F4887" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Question__Qtype__6E01572D" ManuallyRouted="false" >
-        </AssociationConnector>
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionA__Quest__70DDC3D8" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionA__Quest__04E4BC85" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Qtype__00200768" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Qtype__208CD6FA" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__QuestionL__Qtype__1CBC4616" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Student_A__Qtype__0D7A0286" ManuallyRouted="false" >
-        </AssociationConnector>
-        <AssociationConnector Association="inclassvoting01Model.FK__QuizDone__QuizID__7B5B524B" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Student_A__QuizD__0B91BA14" ManuallyRouted="false" ></AssociationConnector>
-        <AssociationConnector Association="inclassvoting01Model.FK__Student_Q__QuizD__08B54D69" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Student_A__Stude__0C85DE4D" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Student_P__Stude__17036CC0" ManuallyRouted="false" />
-        <AssociationConnector Association="inclassvoting01Model.FK__Student_Q__Stude__07C12930" ManuallyRouted="false" />
+      <Diagram DiagramId="055a876350c64b81898387e18117ae0a" Name="Diagram1">
+        <EntityTypeShape EntityType="inclassvoting01Model.Chapter" Width="1.5" PointX="0.75" PointY="14.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Course" Width="1.5" PointX="1.5" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.LearningOutcome" Width="1.5" PointX="0.75" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.MatchQuestion" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.MatchQuestionDone" Width="1.5" PointX="8.75" PointY="2.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Passage" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Passage_Done" Width="1.5" PointX="3.75" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Poll" Width="1.5" PointX="1.5" PointY="31.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Poll_Answer" Width="1.5" PointX="3.75" PointY="31.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Question" Width="1.5" PointX="3" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.QuestionAnswer" Width="1.5" PointX="5.25" PointY="15.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.QuestionAnswerDone" Width="1.5" PointX="8.25" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.QuestionDone" Width="1.5" PointX="6" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.QuestionDoneLO" Width="1.5" PointX="3" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.QuestionLO" Width="1.5" PointX="3" PointY="15.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.QuestionType" Width="1.5" PointX="0.75" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Quiz" Width="1.5" PointX="1.5" PointY="26" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.QuizDone" Width="1.5" PointX="3.75" PointY="20" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Student" Width="1.5" PointX="3.75" PointY="25.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Student_Answer" Width="1.5" PointX="6" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Student_PollAnswer" Width="1.5" PointX="6" PointY="25.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Student_QuizDone" Width="1.5" PointX="6" PointY="21.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="inclassvoting01Model.Teacher" Width="1.5" PointX="1.5" PointY="23" IsExpanded="true" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Chapter__CourseI__182C9B23" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__MatchQues__Chapt__276EDEB3" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Passage__Chapter__1B0907CE" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Question__Chapte__1FCDBCEB" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Course__TeacherI__15502E78" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__LearningO__Cours__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Quiz__CourseID__2A4B4B5E" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuizDone__Course__300424B4" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Learn__5535A963" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionL__Learn__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Question__Passag__20C1E124" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Passa__32E0915F" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Poll__TeacherID__440B1D61" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Poll_Answ__PollI__46E78A0C" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Student_P__Poll___49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Question__Qtype__21B6055D" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionA__Quest__24927208" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionA__Quest__38996AB5" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Qtype__33D4B598" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionD__Qtype__5441852A" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuestionL__Qtype__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Student_A__Qtype__412EB0B6" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__QuizDone__QuizID__2F10007B" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Student_A__QuizD__3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Student_Q__QuizD__3C69FB99" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Student_A__Stude__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Student_P__Stude__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="inclassvoting01Model.FK__Student_Q__Stude__3B75D760" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

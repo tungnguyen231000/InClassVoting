@@ -22,11 +22,11 @@
                 </div>
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span><b>Time:</b></span> 
+                        <span><b>Time:</b></span>
                         <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
                     </div>
                     <div class="m-6  ">
-             <span><b>Mark:</b></span>
+                        <span><b>Mark:</b></span>
                         <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                             countQuestion++;
                             <tr>
                                 <td> &nbsp;@countQuestion.&nbsp;</td>
-                                @if (countQuestion<=columnA.Length)
+                                @if (countQuestion <= columnA.Length)
                                 {
                                     <td><input type="text" class="text-center" name="answerLeft" placeholder="left" value="@columnA[i]" /></td>
 
@@ -84,3 +84,7 @@
 
     }
 </div>
+
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>*@
+@*<script src="~/Scripts/validate.js"></script>*@

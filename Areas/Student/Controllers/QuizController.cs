@@ -26,7 +26,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             else
             {
                 //get quiz saved in database
-                var quiz = db.QuizDones.Where(qz => qz.QuizID == quizId).OrderByDescending(qz=>qz.QuizDoneID).FirstOrDefault();
+                var quiz = db.QuizDones.Where(qz => qz.QuizID == quizId).OrderByDescending(qz => qz.QuizDoneID).FirstOrDefault();
 
 
                 List<QuestionDone> multipleQuestionsList = new List<QuestionDone>();
@@ -513,7 +513,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                             if (countCorrectAns == numOfCorrectAns)
                             {
                                 studentMark = studentMark + question.Mark;
-                                question.CorrectNumber = question.CorrectNumber + 1; 
+                                question.CorrectNumber = question.CorrectNumber + 1;
                             }
                         }
 
@@ -533,45 +533,48 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     question.StudentReceive = question.StudentReceive + 1;
                     countShortAnswerQuest++;
                     string[] answerList = null;
-                    //get mutiple choice answer
+                    //get short answer question answer
                     if (form["txtshortAnswer"] != null && !form["txtshortAnswer"].Trim().Equals(""))
                     {
-                        answerList = form["txtshortAnswer"].Split(new char[] { ',' });
+                        answerList = form["txtshortAnswer"].Split(new char[] { '\\' });
                     }
                     var correctAnswer = db.QuestionAnswerDones.Where(qd => qd.QuestionID == question.Q_DoneID && qd.IsCorrect == true).FirstOrDefault();
 
-                    string[] correctAnswerList = correctAnswer.Text.Split(new char[] { ';' });
+                    string[] correctAnswerList = correctAnswer.Text.Split(new char[] { '\\' });
 
-
-                    for (int i = 0; i < answerList.Count(); i++)
+                    if (answerList != null)
                     {
-                        Debug.WriteLine(answerList[i] + "---");
-                    }
-                    var answer = answerList[countShortAnswerQuest - 1];
-                    //if student answer not null
-                    if (answer != null)
-                    {
-                        Student_Answer studentChoice = new Student_Answer();
-                        studentChoice.QuizDoneID = qzDoneID;
-                        studentChoice.StudentID = sID;
-                        studentChoice.QuestionDoneID = question.Q_DoneID;
-                        studentChoice.Qtype = 4;
-                        studentChoice.Answer = answer;
-                        studentChoice.IsCorrect = false;
-                        foreach (var ans in correctAnswerList)
+                        for (int i = 0; i < answerList.Count(); i++)
                         {
-                            Debug.WriteLine(answer.Trim().ToLower() + "=Answer:" + ans.Trim().ToLower());
-                            //check if the answer is correct
-                            if (ans.Trim().ToLower().Equals(answer.Trim().ToLower()))
-                            {
-                                studentChoice.IsCorrect = true;
-                                studentMark = studentMark + question.Mark;
-                                question.CorrectNumber = question.CorrectNumber + 1; 
-                            }
+                            Debug.WriteLine(answerList[i] + "---");
                         }
-                        db.Student_Answer.Add(studentChoice);
+                        var answer = answerList[countShortAnswerQuest - 1];
+                        //if student answer not null
+                        if (answer != null)
+                        {
+                            Student_Answer studentChoice = new Student_Answer();
+                            studentChoice.QuizDoneID = qzDoneID;
+                            studentChoice.StudentID = sID;
+                            studentChoice.QuestionDoneID = question.Q_DoneID;
+                            studentChoice.Qtype = 4;
+                            studentChoice.Answer = answer;
+                            studentChoice.IsCorrect = false;
+                            foreach (var ans in correctAnswerList)
+                            {
+                                Debug.WriteLine(answer.Trim().ToLower() + "=Answer:" + ans.Trim().ToLower());
+                                //check if the answer is correct
+                                if (ans.Trim().ToLower().Equals(answer.Trim().ToLower()))
+                                {
+                                    studentChoice.IsCorrect = true;
+                                    studentMark = studentMark + question.Mark;
+                                    question.CorrectNumber = question.CorrectNumber + 1;
+                                }
+                            }
+                            db.Student_Answer.Add(studentChoice);
+                        }
                     }
-                     db.Entry(question).State = EntityState.Modified;
+
+                    db.Entry(question).State = EntityState.Modified;
                     db.SaveChanges();
                     qListStr = qListStr + question.Q_DoneID + "-4;";
                 }

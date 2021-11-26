@@ -6,7 +6,7 @@
     background-color: #ace5b4;
 }
 .false-answer {
-    background-color: #D92700;
+    background-color: #FF6F6F;
     color: whitesmoke;
 }
 
@@ -27,5 +27,11 @@
 .mark-total {
     font-weight: bold;
     color: blue;
-    ;
+ 
+}
+
+.question-num {
+    font-family: "Lucida Console", Monospace;
+    font-weight: bold;
+    font-size: 20px;
 }

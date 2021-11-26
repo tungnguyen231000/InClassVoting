@@ -34,6 +34,7 @@ namespace InClassVoting.Models
         public Nullable<System.DateTime> EndTime { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<bool> PublicResult { get; set; }
+        public Nullable<bool> PublicAnswer { get; set; }
     
         public virtual Course Course { get; set; }
         public virtual Quiz Quiz { get; set; }

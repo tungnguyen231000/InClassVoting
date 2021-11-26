@@ -10,7 +10,7 @@
     z-index: 999;
 }
 
-.start-dialog{
+.start-dialog, .start-dialog2 {
     height: auto;
     width: align-content;
     display: none;

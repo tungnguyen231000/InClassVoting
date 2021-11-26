@@ -47,7 +47,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             return View(quizzes.ToPagedList(i ?? 1, 3));
         }
 
-        public ActionResult ReportByQuestion(string qzid)
+        public ActionResult ReportByQuestion(string qzid, string searchText)
         {
             int quizDoneID = int.Parse(qzid);
             var qzDone = db.QuizDones.Find(quizDoneID);
@@ -58,7 +58,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             if (qzDone.Questions != null && !qzDone.Questions.Equals(""))
             {
                 List<string> questSet = qzDone.Questions.Split(new char[] { ';' }).ToList();
-               
+
                 Dictionary<int, string> questionSet = new Dictionary<int, string>();
                 Dictionary<int, string> matchingSet = new Dictionary<int, string>();
                 foreach (string questions in questSet)
@@ -91,6 +91,13 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 }
             }
 
+            if (searchText != null && !searchText.Trim().Equals(""))
+            {
+                questionsList = questionsList.Where(ql => ql.Text.Trim().ToLower().Contains(searchText.ToLower())).ToList();
+                matchQuestionsList = matchQuestionsList.Where(ml => ml.ColumnA.Trim().ToLower().Contains(searchText.ToLower()) ||
+                 ml.ColumnB.Trim().ToLower().Contains(searchText.ToLower())).ToList();
+            }
+
             var studentDoneTest = db.Student_QuizDone.Where(stq => stq.QuizDoneID == quizDoneID).ToList();
 
             ViewBag.Quiz = qzDone;
@@ -98,30 +105,54 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             ViewBag.MatchingList = matchQuestionsList;
             ViewBag.QuestCount = questionsList.Count + matchQuestionsList.Count;
             ViewBag.StudentCount = studentDoneTest.Count;
+            ViewBag.Search = searchText;
 
             return View();
         }
 
 
-        public ActionResult ReportByStudent(string qzid)
+        public ActionResult ReportByStudent(string qzid, string searchText)
         {
             int quizDoneID = int.Parse(qzid);
             var qzDone = db.QuizDones.Find(quizDoneID);
-            
+
 
             var studentDoneTest = db.Student_QuizDone.Where(stq => stq.QuizDoneID == quizDoneID).ToList();
 
-            foreach(var stu in studentDoneTest)
+            foreach (var stu in studentDoneTest)
             {
-                Debug.WriteLine(stu.SQID+"==="+stu.QuizDoneID+"=="+stu.Student.Name+"=="+stu.TotalMark);
+                Debug.WriteLine(stu.SQID + "===" + stu.QuizDoneID + "==" + stu.Student.Name + "==" + stu.ReceivedQuestions);
+            }
+
+            if (searchText != null && !searchText.Trim().Equals(""))
+            {
+                studentDoneTest = studentDoneTest.Where(st => st.Student.Name.Trim().ToLower().Contains(searchText.ToLower())).ToList();
+            }
+            else
+            {
+                /*searchText*/
             }
 
             ViewBag.Quiz = qzDone;
             ViewBag.QuestCount = qzDone.NumOfQuestion;
             ViewBag.StudentCount = studentDoneTest.Count;
             ViewBag.StudenDone = studentDoneTest;
+            ViewBag.Search = searchText;
 
             return View();
+        }
+
+        public ActionResult Search(string qzid, string searchType, string searchText)
+        {
+            int type = int.Parse(searchType);
+            if (type == 1)
+            {
+                return RedirectToAction("ReportByStudent", new { @qzid = qzid, @searchText = searchText });
+            }
+            else
+            {
+                return RedirectToAction("ReportByQuestion", new { @qzid = qzid, @searchText = searchText });
+            }
         }
 
 
@@ -141,8 +172,8 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             string[] questionReceived = student_quiz.ReceivedQuestions.Split(new char[] { ';' });
 
             //get student answer
-            var student_Answers = db.Student_Answer.Where(sa=>sa.QuizDoneID == student_quiz.QuizDoneID).ToList();
-            foreach(var st in student_Answers)
+            var student_Answers = db.Student_Answer.Where(sa => sa.QuizDoneID == student_quiz.QuizDoneID).ToList();
+            foreach (var st in student_Answers)
             {
                 Debug.WriteLine(st.StudentID + "==" + st.QuestionDoneID + "===" + st.Answer + "==" + st.IsCorrect);
             }
@@ -177,9 +208,10 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             foreach (KeyValuePair<int, string> keyValuePair in questionSet)
             {
                 var quest = db.QuestionDones.Find(keyValuePair.Key);
-                
+
                 if (quest.Qtype == 1)
                 {
+
                     multipleQuestionsList.Add(quest);
 
                 }
@@ -221,8 +253,9 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             ViewBag.ReadingQuestion = readingQuestionsList;
             ViewBag.MatchingQuestion = matchQuestionsList;
             ViewBag.Percentage = percentage;
-
+            ViewBag.StudentAnswer = student_Answers;
             ViewBag.Quiz = db.QuizDones.Find(quizId);
+            ViewBag.Student = db.Students.Find(studentId);
 
             return View();
         }
