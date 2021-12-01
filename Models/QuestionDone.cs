@@ -21,19 +21,22 @@ namespace InClassVoting.Models
         }
     
         public int Q_DoneID { get; set; }
-        public string ChapterName { get; set; }
+        public Nullable<int> ChapterID { get; set; }
         public Nullable<int> PassageID { get; set; }
         public string Text { get; set; }
         public Nullable<double> Mark { get; set; }
+        public Nullable<int> Time { get; set; }
         public int Qtype { get; set; }
         public Nullable<bool> MixChoice { get; set; }
         public Nullable<bool> GivenWord { get; set; }
-        public Nullable<int> Time { get; set; }
         public byte[] ImageData { get; set; }
+        public Nullable<int> StudentReceive { get; set; }
+        public Nullable<int> CorrectNumber { get; set; }
     
-        public virtual Passage_Done Passage_Done { get; set; }
+        public virtual Chapter Chapter { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<QuestionAnswerDone> QuestionAnswerDones { get; set; }
         public virtual QuestionType QuestionType { get; set; }
+        public virtual Passage_Done Passage_Done { get; set; }
     }
 }

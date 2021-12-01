@@ -3,5 +3,4 @@
 function getCourseId(val) {
     courseId = val;
     document.getElementById("newChapCID").value = courseId;
-    console.log("jijij");
 }

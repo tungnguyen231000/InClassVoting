@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "ReportHome";
+    Layout = "~/Areas/Student/Views/Shared/_Layout.cshtml";
+}
+
+
+<link rel="stylesheet" type="text/css" href="~/Content/StudentReport.css">
+<div class="container">
+    <div class="head">
+        <div id="QuizBlock" class="btnBlock">
+            <a class="aHref" href="~/Student/Quiz/StudentReport">Quiz</a>
+        </div>
+
+    </div>
+    <div style="margin-top:40px;margin-bottom:10px" class="block-search-dropdown">
+        <div style="width: fit-content;" class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+            <div class="mr-2 transition duration-500 px-3 border-b">
+                <input class="search-box flex-1" type="text" id="searchString" placeholder="search">
+                <button type="button" onclick="reloadModalAddQuestion()" class="search-box">
+                    <i class="fad fa-search"></i>
+                </button>
+            </div>
+        </div>
+        <div class="btn-group rbButtonMg ">
+            <h1 style="margin: auto; margin-right: 10px">Course: </h1>
+            <select id="ddlChapter" onchange="reloadModalAddQuestion()" class="btn-indigo mg-left ">
+                <option value="-1">Course </option>
+                <option value="">MAS </option>
+                <option value="">MAD </option>
+                <option value="">PMG </option>
+                <option value="">VNR </option>
+            </select>
+        </div>
+        <div class="btn-group rbButtonMg">
+            <h1 style="margin: auto; margin-right: 10px">Date: </h1>
+            <select id="ddlQtype" onchange="reloadModalAddQuestion()" class="btn-indigo mg-left ">
+                <option value="-1">Date</option>
+                <option value="">11/22/2021</option>
+                <option value="">11/22/2021</option>
+                <option value="">11/22/2021</option>
+                <option value="">11/22/2021</option>
+            </select>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width: 36%;" scope="col">Name</th>
+                <th cope="col">Course</th>
+                <th style="width: 47%;" scope="col">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <th style="width: 19%;" scope="row">Tes1</th>
+                <td>MAS</td>
+                <td>11/22/2021</td>
+            </tr>
+
+            <tr>
+                <th scope="row">Tes1</th>
+                <td>MAS</td>
+                <td>11/22/2021</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+</div>
+<script src="~/Scripts/studentReport.js"></script>

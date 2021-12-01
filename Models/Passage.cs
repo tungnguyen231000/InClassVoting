@@ -23,6 +23,7 @@ namespace InClassVoting.Models
         public int PID { get; set; }
         public Nullable<int> ChapterID { get; set; }
         public string Text { get; set; }
+        public byte[] PassageImage { get; set; }
     
         public virtual Chapter Chapter { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

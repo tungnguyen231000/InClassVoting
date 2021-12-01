@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewBag.Title = "StartPoll";
+    Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+
+    <div class="grid grid-cols-1 w-full border bg-gray p-6  border-black-400 ">
+        <!-- Start Form Poll-->
+        @using (Html.BeginForm("EndPoll", "Poll", FormMethod.Post, new { id = "formPollWaiting" }))
+        {
+            <input type="hidden" name="poid" value="@ViewBag.Poll.PollID" />
+            <div class="w-full items-center bg-gray p-6 ">
+                <h1 class="h6">
+                    <span>@ViewBag.Poll.PollName</span>
+                </h1>
+            </div>
+
+            <div class="w-full items-center bg-gray p-6 ">
+                @if (ViewBag.CountDown != null)
+                {
+                    <span class="float-left">Time Left:</span>
+                    <span class="border-none pl-6 float-left h6" size="3" type="text" id="time" name="create-question-time" data-time="@ViewBag.CountDown" placeholder="Time">00:00</span>
+                }
+
+            </div>
+            <div class="w-full items-center bg-gray p-6 ">
+                <div>
+                    <div class="w-full items-center p-6 ">
+                        <div contenteditable="false" class="w-full items-center bg-gray question-num-2">
+                            @ViewBag.Poll.Question
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="w-full items-center bg-gray">
+                <table class="w-full border-spacing-2">
+
+                    @foreach (var pollChoice in ViewBag.Poll.Poll_Answer)
+                    {
+                        <tr>
+                            <td class="w-2">
+                                @if (ViewBag.Poll.Polltype.Equals("MultipleAnswer"))
+                                {
+                                    <input type="checkbox" name="option">
+                                }
+                                else
+                                {
+                                    <input type="radio" class="mode-rdb2" name="option">
+                                }
+
+                            </td>
+                            <td>
+                                <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="multipleOption" value="@pollChoice.Answer_Text" readonly>
+                            </td>
+                        </tr>
+
+                    }
+                </table>
+            </div>
+        }
+        <!-- End Form Poll-->
+
+    </div>
+
+</div>
+
+<script src="~/Scripts/teacher.poll.countdown.js"></script>

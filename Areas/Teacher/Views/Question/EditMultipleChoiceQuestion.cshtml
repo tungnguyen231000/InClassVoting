@@ -4,7 +4,6 @@
     Layout = "~/Areas/teacher/Views/Shared/_Layout.cshtml";
 }
 
-
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     @using (Html.BeginForm("EditMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "checkbox-form" }))
     {
@@ -22,20 +21,23 @@
 
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span>Time:</span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+                        <span><b>Time:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="..." value="@ViewBag.Question.Time">
                     </div>
                     <div class="m-6  ">
-                        <span>Mark:</span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
+                        <span><b>Mark:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="..." value="@ViewBag.Question.Mark">
                     </div>
                 </div>
 
             </div>
 
             <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div>
+                    <span><b>Question:</b> </span>
+                </div>
                 <div class="w-10/12  float-left mt-3">
-                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Content ...">@ViewBag.Question.Text</textarea>
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="...">@ViewBag.Question.Text</textarea>
                 </div>
 
                 <div class="w-2/12 drag-content float-right">
@@ -44,7 +46,7 @@
                         {
                             var base64 = Convert.ToBase64String(ViewBag.Question.ImageData);
                             var imgSrc = string.Format("data:image/png;base64,{0}", base64);
-                            <img src="@imgSrc"  alt="pic"/>
+                            <img src="@imgSrc" alt="pic" />
                         }
                         else
                         {
@@ -56,8 +58,7 @@
                     </div>
                     <div>
                         <div>
-                            
-                            <input type="file" class="file-input btn-image" name="imgfile" accept="image/*" >
+                            <input type="file" class="file-input btn-image" name="imgfile" id="questionImg" accept="image/*">
                         </div>
                     </div>
                 </div>
@@ -65,7 +66,7 @@
 
             <div class="w-full items-center bg-gray p-6 border border-black-400">
                 <div>
-                    <span>Mix Choice: </span>
+                    <span><b>Shuffle Answer:</b></span>
                     @if (ViewBag.Question.MixChoice == true)
                     {
                         <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" checked>
@@ -92,31 +93,31 @@
                             }
                             else
                             {
-                                <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer" ></td>
+                                <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer"></td>
                             }
-                        <td>
-                            &nbsp;
-                            @if (countAnswer == 1)
-                            {<label>A.</label>}
-                            else if (countAnswer == 2)
-                            {<label>B.</label>}
-                            else if (countAnswer == 3)
-                            {<label>C.</label>}
-                            else if (countAnswer == 4)
-                            {<label>D.</label>}
-                            else if (countAnswer == 5)
-                            {<label>E.</label>}
-                            else if (countAnswer == 6)
-                            {<label>F.</label>}
-                            &nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option" value="@answer.Text">
-                        </td>
+                            <td>
+                                &nbsp;
+                                @if (countAnswer == 1)
+                                {<label>A.</label>}
+                                else if (countAnswer == 2)
+                                {<label>B.</label>}
+                                else if (countAnswer == 3)
+                                {<label>C.</label>}
+                                else if (countAnswer == 4)
+                                {<label>D.</label>}
+                                else if (countAnswer == 5)
+                                {<label>E.</label>}
+                                else if (countAnswer == 6)
+                                {<label>F.</label>}
+                                &nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option" value="@answer.Text">
+                            </td>
                         </tr>
                     }
                     @while (countAnswer < 6)
                     {
                         <tr>
                             @{countAnswer++;}
-                            <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer" ></td>
+                            <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="@countAnswer"></td>
                             <td>
                                 &nbsp;
                                 @if (countAnswer == 1)
@@ -138,6 +139,7 @@
                 </table>
             </div>
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <a href="#" style="background-color:aquamarine" class="btn" data-bs-toggle="modal" data-bs-target="#preiewQuestion" onclick="loadPreview()"> Preview</a> &nbsp;
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
             </div>
 
@@ -146,4 +148,8 @@
 
 </div>
 
-<!-- end wrapper -->
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>*@
+@*<script src="~/Scripts/validate.js"></script>*@
+<script src="~/Scripts/dragdropimage.js"></script>
+

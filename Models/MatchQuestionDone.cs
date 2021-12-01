@@ -15,11 +15,15 @@ namespace InClassVoting.Models
     public partial class MatchQuestionDone
     {
         public int M_DoneID { get; set; }
-        public string ChapterName { get; set; }
+        public Nullable<int> ChapterID { get; set; }
         public string ColumnA { get; set; }
         public string ColumnB { get; set; }
         public string Solution { get; set; }
-        public Nullable<int> Time { get; set; }
         public Nullable<double> Mark { get; set; }
+        public Nullable<int> Time { get; set; }
+        public Nullable<int> StudentReceive { get; set; }
+        public Nullable<int> CorrectNumber { get; set; }
+    
+        public virtual Chapter Chapter { get; set; }
     }
 }

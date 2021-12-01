@@ -18,6 +18,7 @@ namespace InClassVoting.Models
         public Student()
         {
             this.Student_Answer = new HashSet<Student_Answer>();
+            this.Student_PollAnswer = new HashSet<Student_PollAnswer>();
             this.Student_QuizDone = new HashSet<Student_QuizDone>();
         }
     
@@ -27,6 +28,8 @@ namespace InClassVoting.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student_Answer> Student_Answer { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Student_PollAnswer> Student_PollAnswer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student_QuizDone> Student_QuizDone { get; set; }
     }

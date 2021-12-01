@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "ShowPollLink";
+    Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="w-full items-center bg-gray " style="margin-bottom:10px">
+    @using (Html.BeginForm("StartPoll", "Poll", FormMethod.Post))
+    {
+        <div class="w-full items-center bg-gray " style="margin-bottom:10px">
+            <div class="text-center">
+                <h1 class="h3">
+                    <span>Poll name: @ViewBag.Poll.PollName</span>
+                </h1>
+            </div>
+        </div>
+        <div style="display:flex">
+            <h1 style="margin: auto" class="quiz-lable2">Link Poll: </h1>
+            <p class="linkquiz-lable" style="margin: auto; margin-left: 10px;">@ViewBag.PollLink</p>
+            <input type="hidden" id="pollLink" value="@ViewBag.PollLink" />
+
+            <input type="hidden" name="poid" value="@ViewBag.Poll.PollID" />
+            <a style="background-color:cornflowerblue;margin-left:20px;margin-right:10px;color:white" class="btn " onclick="copyLink()">Copy</a>
+        </div>
+
+        <div style="margin-top:5px">
+            <button type="submit" style="background-color:aquamarine;margin-left:20px; margin-right:10px" class="btn ">Start Quiz</button>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+
+
+    function copyLink() {
+        var copyText = document.getElementById("pollLink");
+
+        copyText.select();
+        navigator.clipboard.writeText(copyText.value);
+
+    }
+</script>

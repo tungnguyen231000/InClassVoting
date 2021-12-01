@@ -1,0 +1,127 @@
+﻿
+@{
+    ViewBag.Title = "ReportByQuestion";
+    Layout = "~/Areas/Teacher/Views/Shared/_ReportLayout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/error.css">
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <div class="grid grid-cols-1 w-full ">
+        <div class="topcontent w-auto flex flex-row justify-center bg-gray p-6">
+            <div class=" w-full py-6 w-9/12 flex flex-row">
+                <h1 class="h4 pl-6 w-5/12">@ViewBag.Quiz.Quiz_Name</h1>
+                <div class="w-7/12 w-full">
+                    @using (Html.BeginForm("Search", "Report", FormMethod.Get))
+                    {
+                        <div class="w-10/12 flex">
+                            Search:&nbsp; <input type="text" name="searchText" class="pl-2 w-7/12 txt-report" placeholder="..." value="@ViewBag.Search" />
+                            <button type="submit" class="btn btn-report"><i class="fad fa-search"></i></button>
+                            <div class="w-5/12 pt-2">
+                                <span class="ms-error"></span>
+                            </div>
+                        </div>
+                        <div class="w-7/12 flex py-2">
+                            <div class="w-4/12">
+                                <input type="radio" name="searchType" value="0" checked />
+                                <label for="radio-question">Question</label>
+                            </div>
+                            <div class="w-4/12">
+                                <input type="radio" name="searchType" value="1" />
+                                <label for="radio-student">Student</label>
+                            </div>
+
+                        </div>
+                        <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizDoneID" />
+                    }
+                </div>
+
+            </div>
+
+
+
+            <div class=" p-6 w-3/12">
+                <div>
+                    <span class="">Done Date: @ViewBag.Quiz.CreatedDate.ToString("dd-MM-yyyy") </span>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="p-6">
+            <div style="margin-bottom: 40px;">
+                <div>
+                    <h2 class="h6">Publish option:</h2>
+                    <label>Mark</label>&nbsp;<input id="checkBoxMask" name="cbMark" onchange="publishChange()" class="mode-rdb" type="checkbox" />&nbsp;&nbsp;
+                    <label>Answers</label>&nbsp;<input id="checkBoxAnswer" onchange="checkAnswer()" name="cbMark" class="mode-rdb" type="checkbox" /><br/>
+                    <a href="#" id="savePublish" hidden style="margin-top:5px;color: blue; text-decoration: underline; font-size:14px">Save Changes</a>
+                </div>
+            </div>
+            <div class="text-center flex flex-wrap column-gap inline-block">
+                <a href="~/Teacher/Report/ReportByQuestion?qzid=@ViewBag.Quiz.QuizDoneID" class="p-2 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Question (<span>@ViewBag.QuestCount</span>)</a>
+                <a href="~/Teacher/Report/ReportByStudent?qzid=@ViewBag.Quiz.QuizDoneID" class="p-2 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Student (<span>@ViewBag.StudentCount</span>)</a>
+            </div>
+
+
+            <!--Report-->
+            <div class="w-full bg-gray p-6 border border-black-400">
+
+                @if (ViewBag.QuestionList.Count != 0)
+                {
+                    <table class="w-full ">
+                        <thead>
+                            <tr>
+                                <th class="w-1/12 ">STT</th>
+                                <th class="w-5/12 ">Question</th>
+                                <th class="w-2/12 ">Type</th>
+                                <th class="w-2/12 ">Correct/Total</th>
+                            </tr>
+                        </thead>
+                        @{
+                            int countQ = 0;
+                        }
+                        @foreach (var question in ViewBag.QuestionList)
+                        {
+                            countQ++;
+                            <tr class="hover:bg-gray-200">
+                                <td class="w-1/12">@countQ</td>
+                                <td class="w-5/12"><span class="data-row">@question.Text </span></td>
+                                <td class="w-2/12">@question.QuestionType.Name</td>
+                                <td class="w-2/12">@question.CorrectNumber/@question.StudentReceive</td>
+                            </tr>
+                        }
+
+                    </table>
+                }
+                else
+                {
+                    <p style="text-align: center; font-size: larger;">No Question Found!!!</p>
+                }
+            </div>
+
+        </div>
+        <!--End Report-->
+
+
+
+
+    </div>
+
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/validate.js"></script>
+<script type="text/javascript">
+    function checkAnswer() {
+        if (document.getElementById("checkBoxAnswer").checked) {
+            document.getElementById("checkBoxMask").checked = "true";
+        }
+        console.log("hihi2");
+        document.getElementById("savePublish").hidden = false;
+    }
+    function publishChange() {
+        console.log("hihi");
+        document.getElementById("savePublish").hidden = false;
+    }
+</script>
+

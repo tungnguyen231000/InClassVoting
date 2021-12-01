@@ -17,9 +17,12 @@ namespace InClassVoting.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Chapter()
         {
-            this.Passages = new HashSet<Passage>();
             this.MatchQuestions = new HashSet<MatchQuestion>();
+            this.Passages = new HashSet<Passage>();
             this.Questions = new HashSet<Question>();
+            this.MatchQuestionDones = new HashSet<MatchQuestionDone>();
+            this.QuestionDones = new HashSet<QuestionDone>();
+            this.Passage_Done = new HashSet<Passage_Done>();
         }
     
         public int ChID { get; set; }
@@ -28,10 +31,16 @@ namespace InClassVoting.Models
     
         public virtual Course Course { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Passage> Passages { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MatchQuestion> MatchQuestions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Passage> Passages { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Question> Questions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MatchQuestionDone> MatchQuestionDones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<QuestionDone> QuestionDones { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Passage_Done> Passage_Done { get; set; }
     }
 }

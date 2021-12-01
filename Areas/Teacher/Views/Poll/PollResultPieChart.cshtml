@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewBag.Title = "PollResultPieChart";
+    Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/Poll.css">
+<style>
+    .pie-chart {
+        position: relative;
+        width: 600px;
+        min-height: 450px;
+        margin-left: 35%;
+        outline: 1px solid #ccc;
+    }
+
+        .pie-chart h2 {
+            position: absolute;
+            margin: 1rem;
+        }
+
+        .pie-chart cite {
+            position: absolute;
+            bottom: 0;
+            font-size: 80%;
+            padding: 1rem;
+            color: gray;
+        }
+
+        .pie-chart figcaption {
+            position: absolute;
+            bottom: 1em;
+            right: 1em;
+            font-size: smaller;
+            text-align: right;
+        }
+
+        .pie-chart span:after {
+            display: inline-block;
+            content: "";
+            width: 0.8em;
+            height: 0.8em;
+            margin-left: 0.4em;
+            height: 0.8em;
+            border-radius: 0.2em;
+            background: currentColor;
+        }
+</style>
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <div class="grid grid-cols-1 w-full">
+        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 ">
+            <h1 class="h4 text-center">
+                <span>Poll Result</span>
+            </h1>
+        </div>
+
+
+        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
+            <div>
+                <span class="h5">Number of participants:</span>
+                <!--Tổng số sinh viên tham gia poll-->
+                <span id="data-total" class="h5">@ViewBag.Poll.TotalParticipian</span>
+            </div>
+        </div>
+        <div class="xl:fixed xl:w-full lg:fixed lg:w-full md:fixed md:w-full md:top-0 md:z-20 items-center bg-gray p-6 border border-black-400">
+            <div>
+                <textarea class="p-2 w-full" name="create-question-question" rows="4" id="question">@ViewBag.Poll.Question</textarea>
+            </div>
+
+        </div>
+
+        <div class="w-full bg-gray p-6 border border-black-400">
+
+
+
+            <div class="pie-chart">
+                <h2>Pie Chart Result</h2>
+                <figcaption>
+
+                    <table class="p-3">
+                        @foreach (var pollAnswer in ViewBag.Poll.Poll_Answer)
+                        {
+                            double choose = pollAnswer.ChosenQuantity;
+                            double total = ViewBag.Poll.TotalParticipian;
+                            double choicePercent = (choose/total) * 100;
+                            
+                            int percentage = Convert.ToInt32(choicePercent);
+
+                            <tr class="p-3">
+                                <td><div class="bg-gray" contenteditable="false" id="data-string">@pollAnswer.Answer_Text</div></td>
+                                <td><span id="data-color"></span></td>
+                                <!--Vất phần trăm vào trong thẻ div có id="data-stuff" -->
+                                <td><div class="bg-gray inline" contenteditable="false" id="data-stuff">@percentage</div>%</td>
+                            </tr>
+                        }
+                    </table>
+
+
+                </figcaption>
+                @*<cite>Bảng Demo bằng CSS</cite>*@
+            </div>
+
+
+        </div>
+
+    </div>
+    <div style="flex">
+        <a href="~/Teacher/Home/Home" class="btn float-left">Back To Home</a>
+
+    </div>
+
+</div>
+<script src="~/Scripts/piechart.js"></script>
+

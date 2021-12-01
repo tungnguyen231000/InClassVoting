@@ -15,10 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="~/Content/Layout.css">
     <link rel="stylesheet" type="text/css" href="~/Content/Style.css">
-    <script src="~/Scripts/jquery-3.4.1.js"></script>
-    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
-    <script src="@Url.Content("~/Scripts/teacher.course.js")"></script>
-    <script src="@Url.Content("~/Scripts/teacher.chapter.js")"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/Test.css">
     <script src="~/Scripts/jquery-3.4.1.js"></script>
     <script src="~/Scripts/jquery-3.4.1.min.js"></script>
     @*<script src="~/Scripts/Layout.js"></script>*@
@@ -51,8 +48,7 @@
                 <a href="~/Teacher/Question/QuestionBank" style="margin-left: auto;"><i class="fas fa-university cl-icon"></i> Question Bank</a>
                 <a href="~/Teacher/Quiz/QuizLibrary" style="margin-left: auto;"><i class="fas fa-book-open cl-icon"></i> Quiz Library</a>
                 <a href="~/Teacher/Report/ReportHome" style="margin-left: auto;"><i class="fas fa-book cl-icon"></i> Report</a>
-                <a href="#" style="margin-left: auto;"><i class="fas fa-poll cl-icon"></i> Create Poll</a>
-                @*<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Create Poll</button>*@
+                <a href="~/Teacher/Poll/CreatePoll" style="margin-left: auto;"><i class="fas fa-poll cl-icon"></i> Create Poll</a>
             </div>
 
 
@@ -96,6 +92,19 @@
 
     </div>
     <!-- end navbar -->
+    <div class="start-dialog text-center border border-gray-300 p-6 bg-gray-100 rounded-lg w-3/12">
+
+        <div>
+            <h1 class="h4"> Choose poll type </h1>
+        </div>
+        <div class="block mt-2">
+            <a class="btn btn-bs-primary" href="~/Teacher/Poll/CreateOneAnswerPoll">Student can only choose one answer</a>
+        </div>
+        <div class="block mt-2">
+            <a class="btn btn-bs-primary" href="~/Teacher/Poll/CreateManyAnswerPoll"> Student can choose multiple answer</a>
+        </div>
+
+    </div>
     <!-- strat wrapper -->
     <div class="h-screen flex flex-row flex-wrap">
         <!-- strat content -->
@@ -108,6 +117,7 @@
     <!-- end wrapper -->
     <!-- script -->
     @*<script src="~/Scripts/Layout.js"></script>*@
+    @*<script src="~/Scripts/TestJS.js"></script>*@
     <!-- end script -->
 
 </body>

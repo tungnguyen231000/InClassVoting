@@ -5,70 +5,85 @@
 }
 
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-@using (Html.BeginForm("EditIndicateMistakeQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "fillblank-form" }))
-{
-    <div class="grid grid-cols-1 w-full ">
+    @using (Html.BeginForm("EditIndicateMistakeQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "fillblank-form" }))
+    {
+        <div class="grid grid-cols-1 w-full ">
 
-        <div class="w-full items-center bg-gray ">
-            <div class="text-center">
-                <h1 class="h6">
-                    <span>Question Type:</span>
-                    <span>Indicate Mistake</span>
-                    <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
-                    <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
-                    <input type="hidden" name="qid" value="@ViewBag.Question.QID" />
-                </h1>
-            </div>
-
-            <div class="flex md:mx-16">
-                <div class="m-6  ">
-                    <span>Time:</span>
-                    <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+            <div class="w-full items-center bg-gray ">
+                <div class="text-center">
+                    <h1 class="h6">
+                        <span>Question Type:</span>
+                        <span>Indicate Mistake</span>
+                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
+                        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
+                        <input type="hidden" name="qid" value="@ViewBag.Question.QID" />
+                    </h1>
                 </div>
-                <div class="m-6  ">
-                    <span>Mark:</span>
-                    <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
-                </div>
-            </div>
-        </div>
 
-        <div class="w-full items-center bg-gray p-6 border border-black-400">
-            <div class="w-10/12  float-left mt-3">
-                <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder="Content ...">@ViewBag.Question.Text</textarea>
-            </div>
-
-            @*<div class="w-2/12 drag-content float-right">
-                    <div class="drag-area">
-                        <div><i class="icon fas fa-cloud-upload-alt"></i></div>
-                        <div><h3 class="header">Drag and Drop to Upload File</h3></div>
-                        <div><h4 class="or">or</h4></div>
-                        <div><button type="button" class="btn btn-image">Browser Upload File</button></div>
-                        <div><input type="file" class="file-input" hidden></div>
+                <div class="flex md:mx-16">
+                    <div class="m-6  ">
+                        <span><b>Time:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="..." value="@ViewBag.Question.Time">
                     </div>
-                </div>*@
-        </div>
+                    <div class="m-6  ">
+                        <span><b>Mark:</b></span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="..." value="@ViewBag.Question.Mark">
+                    </div>
+                </div>
+            </div>
 
-        <div class="w-full items-center bg-gray p-6 border border-black-400">
-            <div class="ms-error"></div>
-            <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 22px">
-                @foreach (var answer in ViewBag.Question.QuestionAnswers)
-                {
-                    if (answer.IsCorrect)
+            <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div>
+                    <span><b>Question:</b> </span>
+                </div>
+                <div class="w-10/12  float-left mt-3">
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="question" placeholder=" ...">@ViewBag.Question.Text</textarea>
+                </div>
+            </div>
+
+            <div class="w-full items-center bg-gray p-6 border border-black-400">
+                <div class="ms-error"></div>
+                <table class="w-full border-spacing-2" style="border-collapse: separate; border-spacing: 22px">
+                    @foreach (var answer in ViewBag.Question.QuestionAnswers)
                     {
-                        <tr>
-                            <td><input type="text" class="w-full pl-3" name="answer" placeholder="Correct Answer" value="@answer.Text"></td>
-                        </tr>
+                        if (answer.IsCorrect)
+                        {
+                            <tr>
+                                <td>Answer : <input type="text" class="w-full pl-3" style="width:95%" name="answer" placeholder="Correct Answer" value="@answer.Text"></td>
+                            </tr>
+                        }
                     }
-                }
 
-            </table>
+                </table>
+            </div>
+
+            <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
+            </div>
+
         </div>
+    }
+    <br />
+    <br />
 
-        <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-            <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
-        </div>
+    <div class="w-full items-center bg-gray p-6 border border-black-400">
+        <h1 class="h6">Example: Indicate Mistake Question</h1>
 
+        <p style="color:blue">
+            Put the letter present for the answer in front of the option and add the "-" between them<br />
+            Put the right answer in the text box below
+        </p>
+
+        Became ill when she was <span style="background-color:lemonchiffon">(A-11)</span> years old.
+        She wasn’t strong enough to work or <span style="background-color:lemonchiffon">(B-walk)</span>
+        She went to <span style="background-color:lemonchiffon">(C-an USA)</span> for an operation.
+        She decided to try <span style="background-color:lemonchiffon">(D-to swim)</span> with dolphins as a new treatment.
+        <br />
+        <br />
+        Answer : <input type="text" style="background-color: white; width: 90%" class="w-full pl-3" value="D" disabled>
     </div>
-}
 </div>
 
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>*@
+@*<script src="~/Scripts/validate.js"></script>*@

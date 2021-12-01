@@ -22,15 +22,7 @@ namespace InClassVoting.Areas.teacher.Controllers
             chapter.Name = chapterName.Trim();
             db.Chapters.Add(chapter);
             db.SaveChanges();
-            int chapID = int.Parse(chid);
-            /*if (chapID == -1)
-            {
-                return Redirect("~/Teacher/Question/QuestionBank");
-            }
-            else
-            {
-                return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
-            }*/
+           
             return Redirect(Request.UrlReferrer.ToString());
         }
 
@@ -44,7 +36,6 @@ namespace InClassVoting.Areas.teacher.Controllers
             updateChapter.Name = newChapterName.Trim();
             db.Entry(updateChapter).State = EntityState.Modified;
             db.SaveChanges();
-            /*return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapterID);*/
             return Redirect(Request.UrlReferrer.ToString());
         }
 
@@ -69,6 +60,32 @@ namespace InClassVoting.Areas.teacher.Controllers
                 }
                 db.Questions.Remove(question);
             }
+            
+            var questionDoneContain = db.QuestionDones.Where(q => q.ChapterID == chapterId).ToList();
+            //remove chapter of question done
+            foreach (var questionDone in questionDoneContain)
+            {
+                questionDone.ChapterID= null;
+                db.Entry(questionDone).State = EntityState.Modified;
+            }
+            db.Chapters.Remove(chapter);
+            
+            var passageContain = db.Passages.Where(p => p.ChapterID == chapterId).ToList();
+
+            //remove passage inside chapter
+            foreach (var passage in passageContain)
+            {
+                db.Passages.Remove(passage);
+            }
+            
+            var passageDoneContain = db.Passages.Where(p => p.ChapterID == chapterId).ToList();
+            //remove chapter of question done
+            foreach (var passageD in passageDoneContain)
+            {
+                passageD.ChapterID= null;
+                db.Entry(passageD).State = EntityState.Modified;
+            }
+
             db.Chapters.Remove(chapter);
 
             db.SaveChanges();

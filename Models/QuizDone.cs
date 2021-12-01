@@ -17,12 +17,12 @@ namespace InClassVoting.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public QuizDone()
         {
-            this.Quiz_QuizDone = new HashSet<Quiz_QuizDone>();
             this.Student_Answer = new HashSet<Student_Answer>();
             this.Student_QuizDone = new HashSet<Student_QuizDone>();
         }
     
         public int QuizDoneID { get; set; }
+        public Nullable<int> QuizID { get; set; }
         public string Quiz_Name { get; set; }
         public int CourseID { get; set; }
         public string Questions { get; set; }
@@ -31,11 +31,13 @@ namespace InClassVoting.Models
         public Nullable<bool> MixQuestion { get; set; }
         public Nullable<int> MixQuestionNumber { get; set; }
         public Nullable<int> Time { get; set; }
+        public Nullable<System.DateTime> EndTime { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
+        public Nullable<bool> PublicResult { get; set; }
+        public Nullable<bool> PublicAnswer { get; set; }
     
         public virtual Course Course { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Quiz_QuizDone> Quiz_QuizDone { get; set; }
+        public virtual Quiz Quiz { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Student_Answer> Student_Answer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -19,6 +19,7 @@ namespace InClassVoting.Models
         public Nullable<int> QuizDoneID { get; set; }
         public string ReceivedQuestions { get; set; }
         public string Status { get; set; }
+        public Nullable<double> StudentMark { get; set; }
         public Nullable<double> TotalMark { get; set; }
     
         public virtual QuizDone QuizDone { get; set; }

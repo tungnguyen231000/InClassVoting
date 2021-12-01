@@ -55,6 +55,7 @@ namespace InClassVoting.Areas.teacher.Controllers
              {
                  return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
              }*/
+
             return Redirect(Request.UrlReferrer.ToString());
         }
 
@@ -86,6 +87,8 @@ namespace InClassVoting.Areas.teacher.Controllers
             int courseIdToDelete = int.Parse(courseIdDelete);
             var deleteCourse = db.Courses.Find(courseIdToDelete);
             var chapterInsideCourse = db.Chapters.Where(ch => ch.CourseID == courseIdToDelete).ToList();
+            var quizInsideCourse = db.Quizs.Where(qz => qz.CourseID == courseIdToDelete).ToList();
+            var quizDoneInsideCourse = db.QuizDones.Where(qz => qz.CourseID == courseIdToDelete).ToList();
 
             //delete chapter inside course
             foreach (var chapter in chapterInsideCourse)
@@ -104,19 +107,26 @@ namespace InClassVoting.Areas.teacher.Controllers
                 }
                 db.Chapters.Remove(chapter);
             }
+
+            //delete quiz inside course
+            foreach(var quiz in quizInsideCourse)
+            {
+                db.Quizs.Remove(quiz);
+            }
+
+            //delete report inside course
+            foreach (var quizDone in quizDoneInsideCourse)
+            {
+                db.QuizDones.Remove(quizDone);
+            }
+
             db.Courses.Remove(deleteCourse);
             db.SaveChanges();
+
+            //delete quiz inside course
+
             int chapID = int.Parse(chid);
 
-            //return questionbank page
-            /* if (chapID == -1)
-             {
-                 return Redirect("~/Teacher/Question/QuestionBank");
-             }
-             else
-             {
-                 return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
-             }*/
             return Redirect(Request.UrlReferrer.ToString());
         }
 

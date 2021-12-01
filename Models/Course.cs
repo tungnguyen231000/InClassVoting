@@ -18,15 +18,20 @@ namespace InClassVoting.Models
         public Course()
         {
             this.Chapters = new HashSet<Chapter>();
+            this.LearningOutcomes = new HashSet<LearningOutcome>();
             this.Quizs = new HashSet<Quiz>();
             this.QuizDones = new HashSet<QuizDone>();
         }
     
         public int CID { get; set; }
         public string Name { get; set; }
+        public Nullable<int> TeacherID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Chapter> Chapters { get; set; }
+        public virtual Teacher Teacher { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LearningOutcome> LearningOutcomes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Quiz> Quizs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
