@@ -55,6 +55,7 @@ namespace InClassVoting.Areas.teacher.Controllers
              {
                  return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
              }*/
+
             return Redirect(Request.UrlReferrer.ToString());
         }
 

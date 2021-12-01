@@ -1,6 +1,5 @@
 ﻿window.onload = function () {
     console.log("OK");
-    // Set the date we're counting down to 20s
     var time = document.getElementById("time")
 
     var value = time.getAttribute('data-time') * 1000;
@@ -30,8 +29,8 @@
         if (distance <= 0) {
             clearInterval(x);
             document.getElementById("time").innerHTML = "EXPIRED";
-            document.getElementById("btnSubmit").disabled = true;
-            document.getElementById("formPaperQuiz").submit();
+            /*document.getElementById("btnSubmit").disabled = true;*/
+            document.getElementById("formPollWaiting").submit();
         }
     }, 1000);
 
@@ -44,12 +43,3 @@
         }
     }
 };
-
-function submitPaper() {
-    console.log("bye");
-    var time = document.getElementById("time");
-    time.setAttribute('data-time', 0);
-    document.getElementById("time").innerHTML = "EXPIRED";
-    document.getElementById("btnSubmit").disabled = true;
-    document.getElementById("formPaperQuiz").submit();
-}

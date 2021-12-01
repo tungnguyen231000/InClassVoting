@@ -171,27 +171,31 @@
     else
     {
         <div class="border-bt">
-            <div style="display:flex;margin-top:20px">
-                <div style="display:flex">
-                    <h1 style="margin: auto" class="quiz-lable">Link quiz: </h1>
-                    <p class="linkquiz-lable" style="margin: auto; margin-left: 10px;" id="linkQ">@ViewBag.QuizLink</p>
-                    <input type="hidden" id="quizLink" value="@ViewBag.QuizLink" />
-                    <a style="background-color:aquamarine;margin-left:20px;margin-right:10px" class="btn " onclick="copyLink()">Copy</a>
+
+            @using (Html.BeginForm("PreviewQuiz", "Quiz", FormMethod.Get, new { target = "_blank" }))
+            {
+                <div style="display:flex;margin-top:20px">
+                    <div style="display:flex">
+                        <h1 class="quiz-lable">Quiz Mode: </h1>
+                        <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" />
+                        <h4 class="label-mode-content-3">Paper test</h4>
+                        <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" name="rdPreview" type="radio" value="0" />
+                        <h4 class="label-mode-content-3"> Question by question</h4>
+                        <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizID" />
+                        <button type="submit" style="width: 177px;" class="label-preview"><i class="fas fa-eye" style="margin-right:5px"></i>Preview</button>
+
+                    </div>
                 </div>
+                <div style="display:flex;margin-top:20px">
 
-            </div>
-
-            <div style="display:flex;margin-top:20px">
-                <div style="display:flex">
-                    <h1 class="quiz-lable2">Quiz Mode: </h1>
-                    <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" type="radio" />
-                    <h4 class="label-mode-content">Paper test</h4>
-                    <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" type="radio" />
-                    <h4 class="label-mode-content"> Question by question</h4>
-                    <a href="#" style="width: 177px;" class="label-preview"><i class="fas fa-eye" style="margin-right:5px"></i>Preview</a>
+                    <div style="display:flex">
+                        <h1 style="margin: auto" class="quiz-lable2">Link quiz: </h1>
+                        <p class="linkquiz-lable" style="margin: auto; margin-left: 10px;" id="linkQ">@ViewBag.QuizLink</p>
+                        <input type="hidden" id="quizLink" value="@ViewBag.QuizLink" />
+                        <a style="background-color:aquamarine;margin-left:20px;margin-right:10px" class="btn " onclick="copyLink()">Copy</a>
+                    </div>
                 </div>
-
-            </div>
+            }
             <div class="tb-mg-top">
                 <table class="table">
                     <thead>
@@ -223,15 +227,14 @@
                                             @question.QuestionType.Name}
                                     </td>
                                     <td>@question.Mark</td>
-                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&&qid=@question.QID&&qtype=@question.Qtype" class="fas fa-trash-alt"></a></td>
+                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&qid=@question.QID&qtype=@question.Qtype&i=@ViewBag.Page" class="fas fa-trash-alt"></a></td>
                                 </tr>
                             }
                         }
                     </tbody>
                 </table>
                 <div class="paging">
-                    @Html.PagedListPager(Model, i => Url.Action("QuizDetail", "Quiz", new
-               { i, qzID = ViewBag.Quiz.QuizID }))
+                    @Html.PagedListPager(Model, i => Url.Action("QuizDetail", "Quiz", new { i, qzID = ViewBag.Quiz.QuizID }))
                 </div>
             </div>
             <div style="display: flex; margin-left: auto;margin-bottom:20px">
@@ -242,101 +245,102 @@
 
         </div>
         <div class="border-bt">
-            <h1 class="quiz-lable">Other options</h1>
-            <div style="display: flex; margin-top: 20px">
-                <div style="display:flex">
-                    @if (ViewBag.Shuffle == 1)
-                    {
-                        <input type="checkbox" name="cbMixQuestions" class="form-check-input" id="cbMixQuestions" value="1" checked />
-                        <input type="hidden" name="cbMixQuestions" value="0" />
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="cbMixQuestions" class="form-check-input" id="cbMixQuestions" value="1" />
-                        <input type="hidden" name="cbMixQuestions" value="0" />
-                    }
-                    <h4 class="label-mode">Shuffle Question</h4>
-                </div>
-            </div>
-
-            @if (ViewBag.RandomQuestionNum == null)
+            @using (Html.BeginForm("SaveQuizOption", "Quiz", FormMethod.Post))
             {
+                <input type="hidden" name="qzID" value="@ViewBag.Quiz.QuizID" />
+                <h1 class="quiz-lable">Other options</h1>
                 <div style="display: flex; margin-top: 20px">
                     <div style="display:flex">
-
-                        <input onchange="isCheckedMixQ()" type="checkbox" name="cbRandomQuestion" class="form-check-input" id="rdQuestion" value="1" />
-                        <input type="hidden" name="cbRandomQuestion" value="0" />
-                        <h4 class="label-mode">Randomize question for each student</h4>
+                        @if (ViewBag.Shuffle == 1)
+                        {
+                            <input type="checkbox" onchange="saveChanges()" name="cbMixQuestions" class="form-check-input" id="cbMixQuestions" value="1" checked />
+                            <input type="hidden" name="cbMixQuestions" value="0" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" onchange="saveChanges()" name="cbMixQuestions" class="form-check-input" id="cbMixQuestions" value="1" />
+                            <input type="hidden" name="cbMixQuestions" value="0" />
+                        }
+                        <h4 class="label-mode">Shuffle question</h4>
                     </div>
                 </div>
-                <div style="display: flex; margin-top: 20px">
-                    <div style="display:flex">
-                        <div id="rdQuestionNum" style="display:none">
-                            <div style="display:flex">
-                                <h4 class="label-mode-content-2">Number of random question :</h4>
-                                <span>
-                                    <input name="rdQuestionNum" type="number" min="1" max="@ViewBag.CountQuest" />
-                                </span>
 
+                if (ViewBag.RandomQuestionNum == null)
+                {
+                    <div style="display: flex; margin-top: 20px">
+                        <div style="display:flex">
+                            <input onchange="isCheckedMixQ()" type="checkbox" name="cbRandomQuestion" class="form-check-input" id="rdQuestion" value="1" />
+                            <input type="hidden" name="cbRandomQuestion" value="0" />
+                            <h4 class="label-mode">Randomize question for each student</h4>
+                        </div>
+                        <div style="display:flex">
+                            <div id="rdQuestionNum" style="display:none" class="div-rd-question">
+                                <div style="display:flex">
+                                    <h4 class="label-mode-content-2">Number of random question :</h4>
+                                    <span>
+                                        <input name="rdQuestionNum" type="number" min="1" max="@ViewBag.CountQuest" />
+                                    </span>
+
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
-            else
-            {
-                <div style="display: flex; margin-top: 20px">
-                    <div style="display:flex">
-                        <input onchange="isCheckedMixQ()" type="checkbox" name="cbRandomQuestion" class="form-check-input" id="rdQuestion" value="1" checked />
-                        <input type="hidden" name="cbRandomQuestion" value="0" />
-                        <h4 class="label-mode">Randomize question for each student</h4>
-                    </div>
-                </div>
-                <div style="display: flex; margin-top: 20px">
-                    <div style="display:flex">
-                        <div id="rdQuestionNum" style="display:block">
-                            <div style="display:flex">
-                                <h4 class="label-mode-content-2">Number of random question :</h4>
-                                <span>
-                                    <input name="rdQuestionNum" type="number" min="1" max="@ViewBag.CountQuest" value="@ViewBag.RandomQuestionNum" />
-                                </span>
+                }
+                else
+                {
+                    <div style="display: flex; margin-top: 20px">
+                        <div style="display:flex">
+                            <input onchange="isCheckedMixQ()" type="checkbox" name="cbRandomQuestion" class="form-check-input" id="rdQuestion" value="1" checked />
+                            <input type="hidden" name="cbRandomQuestion" value="0" />
+                            <h4 class="label-mode">Randomize question for each student</h4>
+                        </div>
+                        <div style="display:flex">
+                            <div id="rdQuestionNum" style="display:block" class="div-rd-question">
+                                <div style="display:flex">
+                                    <h4 class="label-mode-content-2">Number of random question :</h4>
+                                    <span>
+                                        <input name="rdQuestionNum" onchange="saveChanges()" type="number" min="1" max="@ViewBag.CountQuest" value="@ViewBag.RandomQuestionNum" />
+                                    </span>
 
+                                </div>
                             </div>
                         </div>
                     </div>
+                }
+
+                <h4 style="margin-top: 20px" class="label-mode-4">Review options</h4>
+                <div style="margin-top: 10px;margin-bottom:20px;">
+                    <div class="div-mode">
+                        @if (ViewBag.PublishMark == 1)
+                        {
+                            <input id="checkBoxMask" onchange="saveChanges()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" checked />
+                            <input type="hidden" name="cbPublishMark" value="0" />
+                        }
+                        else
+                        {
+                            <input id="checkBoxMask" onchange="saveChanges()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" />
+                            <input type="hidden" name="cbPublishMark" value="0" />
+                        }
+
+
+                        <h4 class="label-mode-content-2">Mark</h4>
+                        @if (ViewBag.PublicAnswer == 1)
+                        {
+                            <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" checked />
+                            <input type="hidden" name="cbPublishAnswer" value="0" />
+                        }
+                        else
+                        {
+                            <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />
+                            <input type="hidden" name="cbPublishAnswer" value="0" />
+                        }
+                        <h4 class="label-mode-content-2">Question's answers</h4>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;margin-bottom:20px;">
+                    <button type="submit" id="saveOption" hidden class="save-change-a">Save Changes</button>
                 </div>
             }
-
-
-            <h4 style="margin-top: 20px" class="label-mode">Review options</h4>
-            <div style="margin-top: 10px;margin-bottom:20px;">
-                <div class="div-mode">
-                    @if (ViewBag.PublishMark == 1)
-                    {
-                        <input id="checkBoxMask" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" checked />
-                        <input type="hidden" name="cbPublishMark" value="0" />
-                    }
-                    else
-                    {
-                        <input id="checkBoxMask" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" />
-                        <input type="hidden" name="cbPublishMark" value="0" />
-                    }
-
-
-                    <h4 class="label-mode-content-2">Mark</h4>
-                    @if (ViewBag.PublicAnswer == 1)
-                    {
-                        <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" checked />
-                        <input type="hidden" name="cbPublishAnswer" value="0" />
-                    }
-                    else
-                    {
-                        <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />
-                        <input type="hidden" name="cbPublishAnswer" value="0" />
-                    }
-                    <h4 class="label-mode-content-2">Question's answers</h4>
-                </div>
-            </div>
         </div>
         <div style="display: flex; margin-top: 15px; margin-left:auto">
             <a href="~/Teacher/Quiz/QuizStarted?qzid=@ViewBag.Quiz.QuizID" class="btn btn-start-quiz">Start Quiz</a>
@@ -351,22 +355,13 @@
 <script src="~/Scripts/teacher.quiz.js"></script>
 <script type="text/javascript">
 
-    @*function reloadModalAddQuestion() {
-        var chid = document.getElementById("ddlChapter").value;
-        var cid = document.getElementById("cidAddModal").value;
-        var qzid = document.getElementById("qzidAddModal").value;
-        var qtype = document.getElementById("ddlQtype").value;
-        var searchText = document.getElementById("searchString").value;
-        $("#divShowQuestions").load('@Url.Action("ShowQuestionForEditQuiz", "Quiz")' +
-            '?chid=' + chid + '&cid=' + cid + '&qzid=' + qzid + '&qtype=' + qtype + '&searchText=' + searchText);
-    }
-
-    function copyLink() {
-        var copyText = document.getElementById("quizLink");
-
-        copyText.select();
-        navigator.clipboard.writeText(copyText.value);
-
-    }*@
-
+function reloadModalAddQuestion() {
+    var chid = document.getElementById("ddlChapter").value;
+    var cid = document.getElementById("cidAddModal").value;
+    var qzid = document.getElementById("qzidAddModal").value;
+    var qtype = document.getElementById("ddlQtype").value;
+    var searchText = document.getElementById("searchString").value;
+    $("#divShowQuestions").load('@Url.Action("ShowQuestionForEditQuiz", "Quiz")' +
+        '?chid=' + chid + '&cid=' + cid + '&qzid=' + qzid + '&qtype=' + qtype + '&searchText=' + searchText);
+}
 </script>

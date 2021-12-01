@@ -55,7 +55,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         {
             /*Debug.WriteLine("=====" + searchText);*/
             int courseID = int.Parse(cid);
-            var qzList = db.Quizs.Where(qz => qz.CourseID == courseID).OrderByDescending(qz=>qz.QuizID).ToList();
+            var qzList = db.Quizs.Where(qz => qz.CourseID == courseID).OrderByDescending(qz => qz.QuizID).ToList();
             List<Quiz> quizzes = new List<Quiz>();
             if (searchText != null && !searchText.Trim().Equals(""))
             {
@@ -135,7 +135,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 ViewBag.Course = course;
                 ViewBag.QuestionType = db.QuestionTypes.ToList();
                 ViewBag.ChapterList = db.Chapters.Where(ch => ch.CourseID == course.CID);
-                ViewBag.CountQuest = qList.Count();
+                int totalQuestion = qList.Count();
+                ViewBag.CountQuest = totalQuestion;
 
                 //if quiz have random question
                 if (quiz.MixQuestionNumber != null)
@@ -173,20 +174,103 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     ViewBag.PublicAnswer = 0;
                 }
 
+
+                string domain = "https://inclassvoting.azurewebsites.net/Student/Quiz/DoQuizPaperTest?qzID=";
+                string parameterPart = ViewBag.Quiz.QuizID.ToString();
+                string encodePart = Base64Encode(parameterPart);
+                ViewBag.QuizLink = domain + encodePart;
+
                 if (i == null)
                 {
                     i = 1;
                 }
+                else
+                {
+                    if (totalQuestion % 10 == 0)
+                    {
+                        if (i > (totalQuestion / 10))
+                        {
+                            i = (totalQuestion / 10);
+                        }
+                    }
+                }
+                if (i == 0)
+                {
+                    i = null;
+                }
                 ViewBag.QuestionNo = (i - 1) * 10;
-                string domain = "https://inclassvoting.azurewebsites.net/Student/Quiz/DoQuizPaperTest?qzID=";
-                string parameterPart = ViewBag.Quiz.QuizID.ToString();
-                /*string encodePart = Uri.EscapeDataString(parameterPart);*/
-                ViewBag.QuizLink = domain + parameterPart;
+                ViewBag.Page = i;
                 return View(qList.ToPagedList(i ?? 1, 10));
             }
 
         }
 
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        //Edit Quiz Option
+        [HttpPost]
+        public ActionResult SaveQuizOption(string qzID, string cbMixQuestions, string rdQuestionNum,
+            string cbPublishMark, string cbPublishAnswer, string cbRandomQuestion)
+        {
+            int quizID = int.Parse(qzID);
+            var quiz = db.Quizs.Find(quizID);
+            int mixChoice = int.Parse(cbMixQuestions);
+            //check if shuffle answer check box is checked
+            if (mixChoice == 1)
+            {
+                quiz.MixQuestion = true;
+            }
+            else
+            {
+                quiz.MixQuestion = false;
+            }
+
+            int publishMark = int.Parse(cbPublishMark);
+            //check if the quiz mark publish option is check
+            if (publishMark == 1)
+            {
+                quiz.PublicResult = true;
+            }
+            else
+            {
+                quiz.PublicResult = false;
+            }
+
+            int publishAnswer = int.Parse(cbPublishAnswer);
+            //check if the quiz answer publish option is check
+            if (publishAnswer == 1)
+            {
+                quiz.PublicAnswer = true;
+            }
+            else
+            {
+                quiz.PublicAnswer = false;
+            }
+
+            int rdQuestion = int.Parse(cbRandomQuestion);
+            if (rdQuestion == 0)
+            {
+                quiz.MixQuestionNumber = null;
+            }
+            else
+            {
+                //get quiz random question number
+                if (!rdQuestionNum.Equals("") && rdQuestionNum != null)
+                {
+                    int numOfRandom = int.Parse(rdQuestionNum);
+                    quiz.MixQuestionNumber = numOfRandom;
+                }
+            }
+
+
+            db.Entry(quiz).State = EntityState.Modified;
+            db.SaveChanges();
+            return Redirect(Request.UrlReferrer.ToString());
+        }
 
         //Edit Quiz Name
         [HttpPost]
@@ -383,7 +467,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
             ViewBag.Questions = questList;
             ViewBag.Matchings = matchList;
-            return PartialView("_ShowQuestionForEditQuiz"/*, questList.ToPagedList(i ?? 1, 3)*/);
+            return PartialView("_ShowQuestionForEditQuiz"/*, questList.ToPagedList(i ?? 1, 10)*/);
         }
 
         [HttpPost]
@@ -393,6 +477,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             int quizID = int.Parse(qzID);
             var quiz = db.Quizs.Find(quizID);
             string questSet = "";
+            int? page = null;
             var questions = collection["qID"];
             var matchings = collection["mID"];
             if (quiz.Questions != null)
@@ -438,10 +523,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         {
                             quiz.Mark = quiz.Mark + m.Mark;
                         }
-                        /*if (m.Time != null)
+                        if (m.Time != null)
                         {
                             quiz.Time = quiz.Time + m.Time;
-                        }*/
+                        }
 
                     }
                     db.SaveChanges();
@@ -493,18 +578,22 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         {
                             quiz.Mark = quiz.Mark + m.Mark;
                         }
-                        /*if (m.Time != null)
+                        if (m.Time != null)
                         {
                             quiz.Time = quiz.Time + m.Time;
-                        }*/
+                        }
                         db.Entry(quiz).State = EntityState.Modified;
                         db.SaveChanges();
 
                     }
                 }
-                if (!questSet.Equals(""))
+
+
+                if (!questSet.Equals("") && questSet != null)
                 {
+
                     questSet = questSet.Substring(0, questSet.Length - 1);
+
                 }
                 else
                 {
@@ -512,16 +601,34 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 }
                 quiz.Questions = questSet;
 
-                /*  Debug.WriteLine("=======12=" + quiz.Questions);*/
                 db.Entry(quiz).State = EntityState.Modified;
             }
             db.SaveChanges();
 
-            return Redirect("~/Teacher/Quiz/QuizDetail?qzID=" + quiz.QuizID);
+            int question = quiz.Questions.Split(new char[] { ';' }).Count();
+            if (question == 0)
+            {
+                page = null;
+            }
+            else
+            {
+                if (question % 10 == 0)
+                {
+                    page = question / 10;
+                }
+                else
+                {
+                    page = (question / 10) + 1;
+
+                }
+            }
+
+
+            return Redirect("~/Teacher/Quiz/QuizDetail?qzID=" + quiz.QuizID + "&i=" + page);
         }
 
         //Delete Question Inside Quiz
-        public ActionResult DeleteQuestionsInsideQuiz(string qzID, string qid, string qtype)
+        public ActionResult DeleteQuestionsInsideQuiz(string qzID, string qid, string qtype, int? i)
         {
             int quizID = int.Parse(qzID);
             var quiz = db.Quizs.Find(quizID);
@@ -586,18 +693,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             db.Entry(quiz).State = EntityState.Modified;
             db.SaveChanges();
 
-            return Redirect("~/Teacher/Quiz/QuizDetail?qzID=" + quiz.QuizID);
+            return Redirect("~/Teacher/Quiz/QuizDetail?qzID=" + quiz.QuizID + "&i=" + i);
         }
 
         //Create Quiz View
-        public ActionResult CreateNewQuiz(string cid, string questions, string tempName)
+        public ActionResult CreateNewQuiz(string cid, string questions, string tempName, int? i)
         {
 
             int courseID = int.Parse(cid);
             var course = db.Courses.Find(courseID);
             List<Question> qList = new List<Question>();
             List<MatchQuestion> mList = new List<MatchQuestion>();
-            dynamic dyQuestions = new ExpandoObject();
 
             //check if question list is empty
             if (!questions.Equals(""))
@@ -638,7 +744,14 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 foreach (KeyValuePair<int, string> keyValuePair in matchingSet)
                 {
                     var mQuest = db.MatchQuestions.Find(keyValuePair.Key);
-                    mList.Add(mQuest);
+                    Question matchQuest = new Question();
+                    matchQuest.QID = mQuest.MID;
+                    matchQuest.Text = mQuest.ColumnA + "//" + mQuest.ColumnB;
+                    matchQuest.Qtype = 5;
+                    QuestionType qt = db.QuestionTypes.Find(5);
+                    matchQuest.QuestionType = qt;
+                    matchQuest.Mark = mQuest.Mark;
+                    qList.Add(matchQuest);
                 }
 
             }
@@ -648,11 +761,27 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             ViewBag.QuestionType = db.QuestionTypes.ToList();
             ViewBag.ChapterList = db.Chapters.Where(ch => ch.CourseID == course.CID);
             ViewBag.Questions = questions;
+            int totalQuestion = qList.Count();
+            ViewBag.CountQuest = totalQuestion;
 
-            dyQuestions.Questions = qList;
-            dyQuestions.Matchings = mList;
-            ViewBag.CountQuest = qList.Count() + mList.Count();
-            return View(dyQuestions);
+            if (i == null)
+            {
+                i = 1;
+            }
+            else
+            {
+                if (totalQuestion % 10 == 0)
+                {
+                    if (i > (totalQuestion / 10))
+                    {
+                        i = totalQuestion / 10;
+                    }
+                }
+
+            }
+            ViewBag.QuestionNo = (i - 1) * 10;
+            ViewBag.Page = i;
+            return View(qList.ToPagedList(i ?? 1, 10));
         }
 
         //Create new quiz
@@ -660,7 +789,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         public ActionResult CreateNewQuiz(string cid, string quizName, string questions, string cbMixQuestions, string rdQuestionNum,
             string cbPublishMark, string cbPublishAnswer)
         {
-            
+
             Quiz quiz = new Quiz();
             quiz.QuizName = quizName;
             quiz.Questions = questions;
@@ -692,7 +821,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             {
                 quiz.PublicResult = false;
             }
-            
+
             int publishAnswer = int.Parse(cbPublishAnswer);
             //check if the quiz answer publish option is check
             if (publishAnswer == 1)
@@ -704,7 +833,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 quiz.PublicAnswer = false;
             }
 
-           
+            if (!rdQuestionNum.Equals("") && rdQuestionNum != null)
+            {
+                int numOfRandom = int.Parse(rdQuestionNum);
+                quiz.MixQuestionNumber = numOfRandom;
+
+            }
+
 
             Dictionary<int, string> questionSet = new Dictionary<int, string>();
             Dictionary<int, string> matchingSet = new Dictionary<int, string>();
@@ -720,9 +855,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     if (qtypeID == 5)
                     {
                         int mID = int.Parse(questAndType[0]);
-                        /*Debug.WriteLine("=====1===" + q);*/
                         var match = db.MatchQuestions.Find(mID);
-                        /*Debug.WriteLine("=====32===" + match.Mark);*/
                         if (match.Mark != null)
                         {
                             quiz.Mark = quiz.Mark + match.Mark;
@@ -744,16 +877,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         {
                             quiz.Time = quiz.Time + question.Time;
                         }
-                        Debug.WriteLine("=======24=" + question.Mark + question.Time);
                     }
 
                 }
-            }
-            if (!rdQuestionNum.Equals(""))
-            {
-                int numOfRandom = int.Parse(rdQuestionNum);
-                quiz.MixQuestionNumber = numOfRandom;
-
             }
             db.Quizs.Add(quiz);
             db.SaveChanges();
@@ -927,12 +1053,10 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         [HttpPost]
         public ActionResult AddQuestionToTemporaryQuiz(FormCollection collection, string cid, string questSet, string tempName)
         {
-
-
             /*Debug.WriteLine("oklaaa-" + questSet);*/
             var questions = collection["qID"];
             var matchings = collection["mID"];
-            
+
 
             //if temparory question list have question inside
             if (!questSet.Equals("") && questSet != null)
@@ -984,8 +1108,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         var q = db.Questions.Find(questID);
                         questSet = questSet + q.QID.ToString() + "-" + q.Qtype.ToString() + ";";
 
-                        /*Debug.WriteLine("==========4");
-                        Debug.WriteLine(questSet);*/
+                        Debug.WriteLine("==========4");
+                        Debug.WriteLine(questSet);
 
                     }
 
@@ -1019,19 +1143,28 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             {
                 Debug.WriteLine("oklaaa-" + questSet);
                 return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId + "&questions=" + "&tempName=" + tempName);
-                /*return Redirect(Request.UrlReferrer.ToString());*/
             }
             else
             {
-
+                int question = questSet.Split(new char[] { ';' }).Count();
+                int page;
+                if (question % 10 == 0)
+                {
+                    page = question / 10;
+                }
+                else
+                {
+                    page = (question / 10) + 1;
+                }
+                Debug.WriteLine("okla2222aa-" + questSet + tempName);
                 /*Debug.WriteLine("okj");*/
-                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId + "&questions=" + questSet + "&tempName=" + tempName);
+                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId + "&questions=" + questSet + "&tempName=" + tempName + "&i=" + page);
 
             }
         }
 
         //Delete question inside temporary list
-        public ActionResult DeleteQuestionsInsideTemporaryQuiz(string qid, string qtype, string questSet, string cid, string tempName)
+        public ActionResult DeleteQuestionsInsideTemporaryQuiz(string qid, string qtype, string questSet, string cid, string tempName, int? i)
         {
             /* Debug.WriteLine(questSet+"000000000000");*/
             int typeID = int.Parse(qtype);
@@ -1054,7 +1187,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
             else
             {
-                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + cid + "&questions=" + newQuestionSet.Substring(0, newQuestionSet.Length - 1) + "&tempName=" + tempName);
+                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + cid + "&questions=" + newQuestionSet.Substring(0, newQuestionSet.Length - 1) + "&tempName=" + tempName + "&i=" + i);
 
             }
         }
@@ -1074,6 +1207,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 int qSaveNumOfQuest = 0;
                 List<QuestionDone> saveQuest = new List<QuestionDone>();
                 List<MatchQuestionDone> saveMatch = new List<MatchQuestionDone>();
+                List<Passage> passageAdded = new List<Passage>();
+                Passage_Done pSave = new Passage_Done();
                 Dictionary<int, string> questionSet = new Dictionary<int, string>();
                 Dictionary<int, string> matchingSet = new Dictionary<int, string>();
 
@@ -1107,32 +1242,50 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                             var quest = db.Questions.Find(keyValuePair.Key);
                             var qAnswer = db.QuestionAnswers.Where(qa => qa.QuestionID == quest.QID).ToList();
                             QuestionDone qSave = new QuestionDone();
-                            Passage_Done pSave = new Passage_Done();
                             //if question is reading
                             if (quest.Qtype == 2)
                             {
-                                pSave.Text = quest.Passage.Text;
-                                pSave.ChapterName = quest.Passage.Chapter.Name;
-                                db.Passage_Done.Add(pSave);
-                                db.SaveChanges();
-                                qSave.PassageID = int.Parse(db.Passage_Done.OrderByDescending(p => p.P_DoneID).Where(p => p.ChapterName == pSave.ChapterName).Select(p => p.P_DoneID).First().ToString());
+
+                                bool added = false;
+                                foreach (var p in passageAdded)
+                                {
+                                    Debug.WriteLine("123---" + p.PID);
+                                    if (quest.PassageID == p.PID)
+                                    {
+                                        added = true;
+                                    }
+                                }
+                                if (!added)
+                                {
+                                    passageAdded.Add(quest.Passage);
+                                    Passage_Done newPassage = new Passage_Done();
+                                    newPassage.Text = quest.Passage.Text;
+                                    newPassage.ChapterID = quest.Passage.ChapterID;
+                                    db.Passage_Done.Add(newPassage);
+                                    db.SaveChanges();
+                                    pSave.P_DoneID = int.Parse(db.Passage_Done.OrderByDescending(p => p.P_DoneID).Where(p => p.ChapterID == newPassage.ChapterID).Select(p => p.P_DoneID).First().ToString());
+
+                                }
+
+                                qSave.PassageID = pSave.P_DoneID;
                             }
                             //save question to db
                             qSave.Text = quest.Text;
                             qSave.Mark = quest.Mark;
                             qSave.Qtype = quest.Qtype;
                             qSave.ImageData = quest.ImageData;
-                            qSave.ChapterName = quest.Chapter.Name;
+                            qSave.ChapterID = quest.ChapterID;
                             qSave.Time = quest.Time;
                             qSave.MixChoice = quest.MixChoice;
                             qSave.GivenWord = quest.GivenWord;
                             qSave.StudentReceive = 0;
                             qSave.CorrectNumber = 0;
+
                             db.QuestionDones.Add(qSave);
                             db.SaveChanges();
 
                             //save question answer to db
-                            int qSaveID = int.Parse(db.QuestionDones.OrderByDescending(q => q.Q_DoneID).Where(q => q.ChapterName.Equals(qSave.ChapterName)).Select(q => q.Q_DoneID).First().ToString());
+                            int qSaveID = int.Parse(db.QuestionDones.OrderByDescending(q => q.Q_DoneID).Where(q => q.ChapterID == qSave.ChapterID).Select(q => q.Q_DoneID).First().ToString());
                             /*Debug.WriteLine("==-=-=" + qSaveID.ToString());*/
                             qStringForQuizSave = qStringForQuizSave + qSaveID + "-" + quest.Qtype.ToString() + ";";
                             qSaveMark = qSaveMark + qSave.Mark;
@@ -1159,16 +1312,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         {
                             var mQuest = db.MatchQuestions.Find(keyValuePair.Key);
                             MatchQuestionDone mSave = new MatchQuestionDone();
-                            mSave.ChapterName = mQuest.Chapter.Name;
+                            mSave.ChapterID = mQuest.ChapterId;
                             mSave.Mark = mQuest.Mark;
                             mSave.Time = mQuest.Time;
                             mSave.ColumnA = mQuest.ColumnA;
                             mSave.ColumnB = mQuest.ColumnB;
+                            mSave.Solution = mQuest.Solution;
                             mSave.StudentReceive = 0;
                             mSave.CorrectNumber = 0;
                             db.MatchQuestionDones.Add(mSave);
                             db.SaveChanges();
-                            int mSaveID = int.Parse(db.MatchQuestionDones.OrderByDescending(m => m.M_DoneID).Where(m => m.ChapterName.Equals(mSave.ChapterName)).Select(m => m.M_DoneID).First().ToString());
+                            int mSaveID = int.Parse(db.MatchQuestionDones.OrderByDescending(m => m.M_DoneID).Where(m => m.ChapterID == mSave.ChapterID).Select(m => m.M_DoneID).First().ToString());
                             qStringForQuizSave = qStringForQuizSave + mSaveID + "-5;";
                             qSaveMark = qSaveMark + mSave.Mark;
                             qSaveTime = qSaveTime + mSave.Time;
@@ -1193,13 +1347,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 saveQuiz.CourseID = quiz.Course.CID;
                 saveQuiz.Quiz_Name = quiz.QuizName;
                 saveQuiz.CreatedDate = DateTime.Today;
+                saveQuiz.PublicResult = quiz.PublicResult;
+                saveQuiz.PublicAnswer = quiz.PublicAnswer;
                 db.QuizDones.Add(saveQuiz);
                 db.SaveChanges();
+
                 int quizSaveID = int.Parse(db.QuizDones.OrderByDescending(q => q.QuizDoneID).Where(q => q.CourseID == saveQuiz.CourseID).Select(q => q.QuizDoneID).First().ToString());
-               /* Quiz_QuizDone quiz_QuizDone = new Quiz_QuizDone();
-                quiz_QuizDone.QuizID = quizID;
-                quiz_QuizDone.QuizDoneID = quizSaveID;
-                db.Quiz_QuizDone.Add(quiz_QuizDone);*/
+
                 db.SaveChanges();
                 ViewBag.Quiz = quiz;
                 return View();
@@ -1227,6 +1381,323 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
         }
 
+        public ActionResult PreviewQuiz(string qzid, int rdPreview)
+        {
+            if (rdPreview == 1)
+            {
+                return Redirect("~/Teacher/Quiz/PreviewQuizPaperTest?qzid=" + qzid);
+            }
+            else
+            {
+                return Redirect("~/Teacher/Quiz/PreviewQuizQuestionByQuestion?qzid=" + qzid);
+            }
+        }
+
+
+        public ActionResult PreviewQuizPaperTest(string qzid)
+        {
+            int quizId = int.Parse(qzid);
+            var quiz = db.Quizs.Find(quizId);
+
+            List<Question> multipleQuestionsList = new List<Question>();
+            List<Question> readingQuestionsList = new List<Question>();
+            List<Question> fillBlankQuestionsList = new List<Question>();
+            List<Question> shortAnswerQuestionsList = new List<Question>();
+            List<Question> indicateMistakeQuestionsList = new List<Question>();
+            List<MatchQuestion> matchQuestionsList = new List<MatchQuestion>();
+            List<Passage> passageList = new List<Passage>();
+            //check if questions list is null
+            if (quiz.Questions != null && !quiz.Questions.Equals(""))
+            {
+                //////////////////////////////////////
+                string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
+                List<string> questionList = quizQuestions.ToList();
+
+                //////////////////////////////////////
+
+                Dictionary<int, string> questionSet = new Dictionary<int, string>();
+                Dictionary<int, string> matchingSet = new Dictionary<int, string>();
+                foreach (string questions in questionList)
+                {
+                    string[] questAndType = questions.Split(new char[] { '-' });
+                    int qType = int.Parse(questAndType[1]);
+                    if (qType == 5)
+                    {
+                        int mID = int.Parse(questAndType[0]);
+                        matchingSet.Add(mID, questAndType[1]);
+                    }
+                    else
+                    {
+                        int qID = int.Parse(questAndType[0]);
+                        questionSet.Add(qID, questAndType[1]);
+                    }
+
+                }
+
+
+                foreach (KeyValuePair<int, string> keyValuePair in questionSet)
+                {
+                    var quest = db.Questions.Find(keyValuePair.Key);
+
+                    List<QuestionAnswer> qAnswer = quest.QuestionAnswers.ToList();
+                    /*foreach (var ans in quest.QuestionAnswers)
+                    {
+                        Debug.WriteLine("i=-" + ans.Text);
+                    }*/
+                    if (quest.Qtype == 1)
+                    {
+                        //if question mix choice
+                        if (quest.MixChoice == true)
+                        {
+                            Random rd = new Random();
+                            int numOfAnswer = qAnswer.Count;
+                            while (numOfAnswer > 1)
+                            {
+                                numOfAnswer--;
+                                int k = rd.Next(numOfAnswer + 1);
+                                var qaTemp = qAnswer[k];
+                                qAnswer[k] = qAnswer[numOfAnswer];
+                                qAnswer[numOfAnswer] = qaTemp;
+                            }
+                            quest.QuestionAnswers = qAnswer;
+                        }
+                        multipleQuestionsList.Add(quest);
+                    }
+                    else if (quest.Qtype == 2)
+                    {
+                        //if question mix choice
+                        if (quest.MixChoice == true)
+                        {
+                            Random rd = new Random();
+                            int numOfAnswer = qAnswer.Count;
+                            while (numOfAnswer > 1)
+                            {
+                                numOfAnswer--;
+                                int k = rd.Next(numOfAnswer + 1);
+                                var qaTemp = qAnswer[k];
+                                qAnswer[k] = qAnswer[numOfAnswer];
+                                qAnswer[numOfAnswer] = qaTemp;
+                            }
+                            quest.QuestionAnswers = qAnswer;
+                        }
+                        readingQuestionsList.Add(quest);
+
+                        //add passage to a list
+                        var passage = quest.Passage;
+                        bool existed = false;
+                        foreach (var p in passageList)
+                        {
+                            if (passage.PID == p.PID)
+                            {
+                                existed = true;
+                            }
+
+                        }
+                        if (!existed)
+                        {
+                            passageList.Add(passage);
+                        }
+
+                    }
+                    else if (quest.Qtype == 3)
+                    {
+                        fillBlankQuestionsList.Add(quest);
+                    }
+                    else if (quest.Qtype == 4)
+                    {
+                        shortAnswerQuestionsList.Add(quest);
+                    }
+                    else if (quest.Qtype == 6)
+                    {
+                        indicateMistakeQuestionsList.Add(quest);
+                    }
+                }
+
+                foreach (KeyValuePair<int, string> keyValuePair in matchingSet)
+                {
+                    var matchQuest = db.MatchQuestions.Find(keyValuePair.Key);
+                    matchQuestionsList.Add(matchQuest);
+
+                }
+            }
+
+            ViewBag.Quiz = quiz;
+            ViewBag.MultipleQuestion = multipleQuestionsList;
+            ViewBag.FillBlankQuestion = fillBlankQuestionsList;
+            ViewBag.ShortAnswerQuestion = shortAnswerQuestionsList;
+            ViewBag.IndicateMistakeQuestion = indicateMistakeQuestionsList;
+            ViewBag.ReadingQuestion = readingQuestionsList;
+            ViewBag.PassageList = passageList;
+            ViewBag.MatchingQuestion = matchQuestionsList;
+
+
+            int? time = quiz.Time;
+            string second = "";
+            string minute = "";
+            if ((time % 60) != 0)
+            {
+                if (time % 60 < 10)
+                {
+                    second = "0" + (time % 60);
+                }
+                else
+                {
+                    second = (time % 60).ToString();
+                }
+            }
+            if ((time / 60) != 0)
+            {
+                if (time / 60 < 10)
+                {
+                    minute = "0" + (time / 60);
+                }
+                else
+                {
+                    minute = (time / 60).ToString();
+                }
+            }
+            string timeDisplay = minute + ":" + second;
+
+            ViewBag.Time = timeDisplay;
+            return View();
+
+
+        }
+
+        public ActionResult PreviewQuizQuestionByQuestion(string qzid)
+        {
+            int quizId = int.Parse(qzid);
+            var quiz = db.Quizs.Find(quizId);
+
+            List<Question> questionsList = new List<Question>();
+            List<MatchQuestion> matchQuestionsList = new List<MatchQuestion>();
+            List<Passage> passageList = new List<Passage>();
+            //check if questions list is null
+            if (quiz.Questions != null && !quiz.Questions.Equals(""))
+            {
+                //////////////////////////////////////
+                string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
+                List<string> questionIdList = quizQuestions.ToList();
+
+                //////////////////////////////////////
+
+                Dictionary<int, string> questionSet = new Dictionary<int, string>();
+                Dictionary<int, string> matchingSet = new Dictionary<int, string>();
+                foreach (string questions in questionIdList)
+                {
+                    string[] questAndType = questions.Split(new char[] { '-' });
+                    int qType = int.Parse(questAndType[1]);
+                    if (qType == 5)
+                    {
+                        int mID = int.Parse(questAndType[0]);
+                        matchingSet.Add(mID, questAndType[1]);
+                    }
+                    else
+                    {
+                        int qID = int.Parse(questAndType[0]);
+                        questionSet.Add(qID, questAndType[1]);
+                    }
+
+                }
+
+
+                foreach (KeyValuePair<int, string> keyValuePair in questionSet)
+                {
+                    var quest = db.Questions.Find(keyValuePair.Key);
+
+                    List<QuestionAnswer> qAnswer = quest.QuestionAnswers.ToList();
+                    /*foreach (var ans in quest.QuestionAnswers)
+                    {
+                        Debug.WriteLine("i=-" + ans.Text);
+                    }*/
+                    if (quest.Qtype == 1)
+                    {
+                        //if question mix choice
+                        if (quest.MixChoice == true)
+                        {
+                            Random rd = new Random();
+                            int numOfAnswer = qAnswer.Count;
+                            while (numOfAnswer > 1)
+                            {
+                                numOfAnswer--;
+                                int k = rd.Next(numOfAnswer + 1);
+                                var qaTemp = qAnswer[k];
+                                qAnswer[k] = qAnswer[numOfAnswer];
+                                qAnswer[numOfAnswer] = qaTemp;
+                            }
+                            quest.QuestionAnswers = qAnswer;
+                        }
+                        questionsList.Add(quest);
+                    }
+                    else if (quest.Qtype == 2)
+                    {
+                        //if question mix choice
+                        if (quest.MixChoice == true)
+                        {
+                            Random rd = new Random();
+                            int numOfAnswer = qAnswer.Count;
+                            while (numOfAnswer > 1)
+                            {
+                                numOfAnswer--;
+                                int k = rd.Next(numOfAnswer + 1);
+                                var qaTemp = qAnswer[k];
+                                qAnswer[k] = qAnswer[numOfAnswer];
+                                qAnswer[numOfAnswer] = qaTemp;
+                            }
+                            quest.QuestionAnswers = qAnswer;
+                        }
+                        questionsList.Add(quest);
+
+                        //add passage to a list
+                        var passage = quest.Passage;
+                        bool existed = false;
+                        foreach (var p in passageList)
+                        {
+                            if (passage.PID == p.PID)
+                            {
+                                existed = true;
+                            }
+
+                        }
+                        if (!existed)
+                        {
+                            passageList.Add(passage);
+                        }
+
+                    }
+                    else if (quest.Qtype == 3)
+                    {
+                        questionsList.Add(quest);
+                    }
+                    else if (quest.Qtype == 4)
+                    {
+                        questionsList.Add(quest);
+                    }
+                    else if (quest.Qtype == 6)
+                    {
+                        questionsList.Add(quest);
+                    }
+                }
+
+                foreach (KeyValuePair<int, string> keyValuePair in matchingSet)
+                {
+                    var matchQuest = db.MatchQuestions.Find(keyValuePair.Key);
+                    matchQuestionsList.Add(matchQuest);
+
+                }
+            }
+
+            ViewBag.Quiz = quiz;
+            ViewBag.QuestionList = questionsList;
+            ViewBag.PassageList = passageList;
+            ViewBag.MatchingQuestion = matchQuestionsList;
+
+
+            
+            return View();
+
+
+        }
     }
 
 

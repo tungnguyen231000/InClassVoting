@@ -3,41 +3,30 @@
     ViewBag.Title = "CreateReadingQuestion";
     Layout = "~/Areas/teacher/Views/Shared/_Layout.cshtml";
 }
-
+<link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css" />
 
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     @using (Html.BeginForm("CreateReadingQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "reading-form" }))
     {
+        <input value="@ViewBag.ChapterID" type="hidden" name="chid"/>
         <div class="grid grid-cols-1 w-full ">
+
             <div class="w-full items-center bg-gray">
                 <div class="text-center">
-                    <h1 class="h6">
+                    <h1 class="h3">
                         <span>Question Type:</span>
                         <span>Reading</span>
-                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
-                        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
                     </h1>
-                </div>
-
-                <div class="flex md:mx-16">
-                    <div class="m-6  ">
-                        <span><b>Time:</b></span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="...">
-                    </div>
-                    <div class="m-6  ">
-                        <span><b>Mark:</b></span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="...">
-                    </div>
                 </div>
 
             </div>
 
             <div class="w-full items-center bg-gray p-6 border border-black-400">
                 <div>
-                    <span><b>Reading Passage:</b> </span>
+                    <span class="h5"><b>Reading Passage:</b> </span>
                 </div>
-                <div class="w-10/12  float-left mt-3">
-                    <textarea class="p-2 w-full" name="paragraph" rows="4" placeholder=" ..."></textarea>
+                <div class="w-10/12  float-left mt-3 pr-6">
+                    <textarea class="p-2 w-full" name="paragraph" rows="7" id="paragraphReading" placeholder=" ..." style="width:95%"></textarea>
                 </div>
 
                 <div class="w-2/12 drag-content float-right">
@@ -47,65 +36,149 @@
                         <div><h4 class="or">or</h4></div>
                     </div>
                     <div>
-                        <div>
-                            <input type="file" class="file-input btn-image" name="imgfile" accept="image/*">
-                        </div>
+                        <input type="file" class="file-input btn-image" name="imgfile" accept="image/*">
                     </div>
                 </div>
             </div>
 
-            <div class="w-full items-center bg-gray p-6 border border-black-400">
-                <div>
-                    <span><b>Question:</b> </span>
+            <div id="table-question-reading">
+
+                <div id="reading-question" class="w-full items-center bg-gray p-6 border border-black-400">
+                    <div class="ms-error"></div>
+                    <div class="m-2">
+                        <i id="remove-question-reading" class="fas fa-times delete h4 float-right"></i>
+                    </div>
+                    <div class="m-4">
+                        <span id="reading-note" class="question-num-2" style="margin-right:20px">Question 1:</span>
+                        <span>Time:</span>
+                        <input id="timeReading" class="border border-black-400 pl-1 w-1/12" type="number" name="time" placeholder="...">
+                        <span>Mark:</span>
+                        <input id="markReading" class="border border-black-400 pl-1 w-1/12" type="number" name="mark" placeholder="...">
+
+                    </div>
+                    <div class="mx-4">
+                        <textarea class="p-2 w-full" id="questionReading" name="question" rows="3" placeholder="Question ..."></textarea>
+                    </div>
+                    <div class="mx-4 div-margin-20">
+                        <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" style="margin-top:6px">
+                        <input type="hidden" name="mixChoice" value="0">
+                        &nbsp;&nbsp;<span class="shuffle-lable">Shuffle Answer</span>
+
+                    </div>
+                    <table id="table-reading" class="w-full border-spacing-2">
+                        <tr id="reading-option">
+                            <td class="w-2">
+                                <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                            <input type="hidden" name="cboption" value="0">
+                            </td>
+                            <td> A.&nbsp;&nbsp;<input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...."></td>
+                        </tr>
+                        <tr id="reading-option">
+                            <td class="w-2">
+                                <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                <input type="hidden" name="cboption" value="0">
+                            </td>
+                            <td> B.&nbsp;&nbsp;<input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...."></td>
+
+                        </tr>
+                        <tr id="reading-option">
+                            <td class="w-2">
+                                <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                <input type="hidden" name="cboption" value="0">
+                            </td>
+                            <td> C.&nbsp;&nbsp;<input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...."></td>
+
+                        </tr>
+                        <tr id="reading-option">
+                            <td class="w-2">
+                                <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                <input type="hidden" name="cboption" value="0">
+                            </td>
+                            <td> D.&nbsp;&nbsp;<input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...."></td>
+
+                        </tr>
+                        <tr id="reading-option">
+                            <td class="w-2">
+                                <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                <input type="hidden" name="cboption" value="0">
+                            </td>
+                            <td> E.&nbsp;&nbsp;<input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...."></td>
+
+                        </tr>
+                        <tr id="reading-option">
+                            <td class="w-2">
+                                <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                <input type="hidden" name="cboption" value="0">
+                            </td>
+                            <td> F.&nbsp;&nbsp;<input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...."></td>
+                        </tr>
+                    </table>
                 </div>
-                <div class="mx-4">
-                    <textarea class="p-2 w-full" name="questionText" rows="3" placeholder="..."></textarea>
-                </div>
+
+
 
             </div>
-            <div class="w-full items-center bg-gray p-6 border border-black-400">
-                <div>
-                    <span><b>Shuffle Answer:</b></span>
-                    <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1">
-                </div>
-                <div class="ms-error"></div>
-                <table class="w-full border-spacing-2">
-                    <tr>
-                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="1"></td>
-                        <td> &nbsp;A.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
-                    </tr>
-                    <tr>
-                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="2"></td>
-                        <td> &nbsp;B.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
-                    </tr>
-                    <tr>
-                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="3"></td>
-                        <td>&nbsp;C.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
-                    </tr>
-                    <tr>
-                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="4"></td>
-                        <td> &nbsp;D.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
-                    </tr>
-                    <tr>
-                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="5"></td>
-                        <td> &nbsp;E.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
-                    </tr>
-                    <tr>
-                        <td class="w-2"><input type="checkbox" class="form-check-input" id="cb-option" name="cbOption" value="6"></td>
-                        <td> &nbsp;F.&nbsp;<input style="width:95%" type="text" class="w-full pl-3" name="option"></td>
-                    </tr>
-                </table>
 
+            <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block">
+                <a id="more-question-reading" class="btn-bs-info btn-more float-right w-2/12">More Question</a>
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <!--Thêm Button Preview-->
+                <button type="button" id="previewReading" class="btn btn-primary mr-6" data-toggle="modal" data-target="#readingPreview">
+                    Preview
+                </button>
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
             </div>
 
         </div>
     }
 </div>
+
+<!--Thêm Dialog Paper Preview-->
+<div class="modal fade" id="readingPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content p-5">
+            <div class="">
+                <button type="button" class="close float-right p-3" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="text-center h5" id="exampleModalLabel">Preview</h4>
+            </div>
+            <div class="w-full items-center bg-gray">
+                <div>
+                    <div contenteditable="false" id="paragraphReading-preview" class="w-full items-center bg-gray p-6 ">
+                    </div>
+                    <div class="drag-area-preview">
+                    </div>
+                </div>
+
+            </div>
+            <hr />
+            <div id="table-reading-question-preview">
+                <div id="reading-test-preview">
+                    <div class="w-full items-center bg-gray p-6">
+                        <span>Question 1:</span>
+                    </div>
+                    <div class="w-full items-center bg-gray ">
+                        <div class="">
+                            <div contenteditable="false" id="questionReading-preview" class="w-full items-center bg-gray p-6 font-sans font-semibold ">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="w-full items-center bg-gray ">
+                        <table id="table-reading-preview" class="w-full border-spacing-2">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>*@
+    <script src="~/Scripts/jquery.validate.min.js"></script>*@
 @*<script src="~/Scripts/validate.js"></script>*@
 <script src="~/Scripts/dragdropimage.js"></script>

@@ -3,12 +3,11 @@
 }
 
 .navigation .previous {
-    display:none;
     position: absolute;
-    top: 40%;
-    left: 10px;
+    top: 82%;
+    left: 3%;
     font-size: 15px;
-    font-weight: 700px;
+    font-weight: 700;
     z-index: 5;
 }
 
@@ -17,7 +16,7 @@
     top: 82%;
     right: 3%;
     font-size: 15px;
-    font-weight: 700px;
+    font-weight: 700;
     z-index: 5;
 }
 

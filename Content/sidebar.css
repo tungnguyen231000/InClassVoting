@@ -12,3 +12,9 @@
     border: 1px solid black;
     margin-bottom:2px;
 }
+
+.question-num {
+    font-weight: bold;
+    font-size: 18px;
+    text-decoration: underline;
+}

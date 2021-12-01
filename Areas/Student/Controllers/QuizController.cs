@@ -14,9 +14,17 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
         private DBModel db = new DBModel();
 
         // GET: Student/Quiz
+
+        public static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+
         public ActionResult DoQuizPaperTest(string qzid)
         {
-
+            qzid = Base64Decode(qzid);
             int quizId = int.Parse(qzid);
             var getQuiz = db.Quizs.Find(quizId);
             if (getQuiz.Status.Equals("Not Done") || getQuiz.Status.Equals("Done"))
@@ -27,14 +35,14 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             {
                 //get quiz saved in database
                 var quiz = db.QuizDones.Where(qz => qz.QuizID == quizId).OrderByDescending(qz => qz.QuizDoneID).FirstOrDefault();
-
-
                 List<QuestionDone> multipleQuestionsList = new List<QuestionDone>();
                 List<QuestionDone> readingQuestionsList = new List<QuestionDone>();
                 List<QuestionDone> fillBlankQuestionsList = new List<QuestionDone>();
                 List<QuestionDone> shortAnswerQuestionsList = new List<QuestionDone>();
                 List<QuestionDone> indicateMistakeQuestionsList = new List<QuestionDone>();
                 List<MatchQuestionDone> matchQuestionsList = new List<MatchQuestionDone>();
+                List<Passage_Done> passageList = new List<Passage_Done>();
+
                 int? quizTime = 0;
                 //check if questions list is null
                 if (quiz.Questions != null && !quiz.Questions.Equals(""))
@@ -42,38 +50,52 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     //////////////////////////////////////
                     string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
                     List<string> questionList = new List<string>();
+                    //if quiz mix question
+                    if (quiz.MixQuestion == true)
+                    {
+                        Random rd = new Random();
+                        int numOfQuest = quizQuestions.Count();
+                        while (numOfQuest > 1)
+                        {
+                            numOfQuest--;
+                            int k = rd.Next(numOfQuest + 1);
+                            var qaTemp = quizQuestions[k];
+                            quizQuestions[k] = quizQuestions[numOfQuest];
+                            quizQuestions[numOfQuest] = qaTemp;
+                        }
+                    }
                     //get random question in quiz
-                    if (quiz.MixQuestionNumber != null)
+                    if (quiz.MixQuestionNumber != null && quiz.MixQuestionNumber != 0)
                     {
                         List<int> addedQuestion = new List<int>();
                         Random rd = new Random();
                         for (int i = 0; i < quiz.MixQuestionNumber; i++)
                         {
                             int q = rd.Next(quizQuestions.Length);
-                            /*Debug.WriteLine("q1:=" + q);*/
+                            /* Debug.WriteLine("q1:=" + q);*/
                             while (addedQuestion.Contains(q))
                             {
                                 q = rd.Next(quizQuestions.Length);
                                 /*Debug.WriteLine("q2:=" + q);*/
                             }
-                            /*Debug.WriteLine("q3:=" + q);*/
+                            /* Debug.WriteLine("q10:=" + q);*/
                             questionList.Add(quizQuestions[q]);
                             addedQuestion.Add(q);
 
                         }
-                        /*Debug.WriteLine("===1=1==");*/
-                        foreach (string qq in questionList)
-                        {
+                        /* Debug.WriteLine("===1=1==");*/
 
-                            Debug.WriteLine(qq);
-                        }
 
                     }
                     else
                     {
                         questionList = quizQuestions.ToList();
                     }
-
+                    /*
+                                        foreach (string qq in questionList)
+                                        {
+                                            Debug.WriteLine(qq + "-123-12");
+                                        }*/
                     //////////////////////////////////////
 
                     Dictionary<int, string> questionSet = new Dictionary<int, string>();
@@ -99,12 +121,11 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     foreach (KeyValuePair<int, string> keyValuePair in questionSet)
                     {
                         var quest = db.QuestionDones.Find(keyValuePair.Key);
-
                         List<QuestionAnswerDone> qAnswer = quest.QuestionAnswerDones.ToList();
-                        /*foreach (var ans in quest.QuestionAnswerDones)
+                        foreach (var ans in quest.QuestionAnswerDones)
                         {
                             Debug.WriteLine("i=-" + ans.Text);
-                        }*/
+                        }
                         if (quest.Qtype == 1)
                         {
                             //if question mix choice
@@ -144,7 +165,26 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                                 quest.QuestionAnswerDones = qAnswer;
                             }
                             readingQuestionsList.Add(quest);
+
+                            //add passage to a list
+                            var passage = quest.Passage_Done;
+                            bool existed = false;
+                            foreach (var p in passageList)
+                            {
+                                if (passage.P_DoneID == p.P_DoneID)
+                                {
+                                    existed = true;
+                                    
+                                }
+
+                            }
+                            if (!existed)
+                            {
+                                passageList.Add(passage);
+                                Debug.WriteLine("dia"+passage.Text);
+                            }
                             quizTime = quizTime + quest.Time;
+
                             Debug.WriteLine("///" + quizTime);
                         }
                         else if (quest.Qtype == 3)
@@ -172,12 +212,17 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
                     }
                 }
+                else
+                {
+                    Debug.WriteLine("huhuh");
+                }
 
                 ViewBag.Quiz = quiz;
                 ViewBag.MultipleQuestion = multipleQuestionsList;
                 ViewBag.FillBlankQuestion = fillBlankQuestionsList;
                 ViewBag.ShortAnswerQuestion = shortAnswerQuestionsList;
                 ViewBag.IndicateMistakeQuestion = indicateMistakeQuestionsList;
+                ViewBag.PassageList = passageList;
                 ViewBag.ReadingQuestion = readingQuestionsList;
                 ViewBag.MatchingQuestion = matchQuestionsList;
                 ViewBag.Time = quizTime;
@@ -186,10 +231,8 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
         }
 
-        public ActionResult ShowAssignedQuiz()
-        {
-            return View(db.Quizs.ToList());
-        }
+
+
 
         //student press submit quiz
         [HttpPost]
@@ -202,9 +245,9 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             double? studentMark = 0;
             string qListStr = "";
             ////////////////////////////////////////////////
-            string check1 = form["cbMultipleOption"];
-            string check2 = form["qid"];
-            Debug.WriteLine("////" + check1 + "//" + studentID + "//=" + check2 + "//?");
+            string check2 = form["mid"];
+            string check1 = form["qid"];
+            Debug.WriteLine( "/=/" + check1 + "/-/=////" + check2 + "//");
 
             ////////////////////////////////////////////////
 
@@ -214,6 +257,11 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
             if (form["qid"] != null && !form["qid"].Trim().Equals(""))
             {
                 questionList = form["qid"].Split(new char[] { ',' });
+            }
+            
+            if (form["mid"] != null && !form["mid"].Trim().Equals(""))
+            {
+                matchingList = form["mid"].Split(new char[] { ',' });
             }
 
 
@@ -265,6 +313,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 {
                     var match = db.MatchQuestionDones.Find(int.Parse(m));
                     totalMark = totalMark + match.Mark;
+                    matchQuestionsList.Add(match);
                 }
             }
 
@@ -474,6 +523,17 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                                 question.CorrectNumber = question.CorrectNumber + 1;
                             }
                         }
+                        else
+                        {
+                            Student_Answer studentChoice = new Student_Answer();
+                            studentChoice.QuizDoneID = qzDoneID;
+                            studentChoice.StudentID = sID;
+                            studentChoice.QuestionDoneID = question.Q_DoneID;
+                            studentChoice.Qtype = 3;
+                            studentChoice.Answer = "";
+                            studentChoice.IsCorrect = false;
+                            db.Student_Answer.Add(studentChoice);
+                        }
 
                     }
                     else
@@ -516,6 +576,17 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                                 question.CorrectNumber = question.CorrectNumber + 1;
                             }
                         }
+                        else
+                        {
+                            Student_Answer studentChoice = new Student_Answer();
+                            studentChoice.QuizDoneID = qzDoneID;
+                            studentChoice.StudentID = sID;
+                            studentChoice.QuestionDoneID = question.Q_DoneID;
+                            studentChoice.Qtype = 3;
+                            studentChoice.Answer = "";
+                            studentChoice.IsCorrect = false;
+                            db.Student_Answer.Add(studentChoice);
+                        }
 
                     }
                     db.Entry(question).State = EntityState.Modified;
@@ -536,7 +607,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     //get short answer question answer
                     if (form["txtshortAnswer"] != null && !form["txtshortAnswer"].Trim().Equals(""))
                     {
-                        answerList = form["txtshortAnswer"].Split(new char[] { '\\' });
+                        answerList = form["txtshortAnswer"].Split(new char[] { ',' });
                     }
                     var correctAnswer = db.QuestionAnswerDones.Where(qd => qd.QuestionID == question.Q_DoneID && qd.IsCorrect == true).FirstOrDefault();
 
@@ -647,12 +718,92 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                 }
             }
 
-            //add student answer of indicate mistake question to db
+            //add student answer of matchib question to db
             if (matchQuestionsList != null)
             {
-                foreach (var question in matchQuestionsList)
+                List<string> solutionList = new List<string>(); ;
+                //get matching answer
+                if (form["solution"] != null && !form["solution"].Trim().Equals(""))
                 {
+                    solutionList = form["solution"].Split(new char[] { '|' }).ToList();
+                }
+                /*foreach (var question in matchQuestionsList)
+                {*/
+                for (int i=0; i < matchQuestionsList.Count; i++) { 
+                    Debug.WriteLine("////////////////////// " );
+                    matchQuestionsList[i].StudentReceive = matchQuestionsList[i].StudentReceive + 1;
+                    string studentAnswerAddToDB = "";
+                    bool isCorrect = false;
+                    if (solutionList != null)
+                    {
+                        Debug.WriteLine("huhuh"+solutionList[i]);
+                        /*foreach (string s in solutionList)
+                        {
 
+                            Debug.WriteLine("hihihih " + s);
+                            
+                        }*/
+                        int countCorrectAnswer = 0;
+                        List<string> questionAnswer = matchQuestionsList[i].Solution.Split(new char[] { ';' }).ToList();
+                        List<string> studentSolution = solutionList[i].Split(new char[] { ','}).ToList();
+                        int numberOfStudentSolution = studentSolution.Count;
+                        foreach(string s in studentSolution)
+                        {
+                            Debug.WriteLine("@@@@@ " + s);
+                        }
+                        for (int j=0;j< numberOfStudentSolution; j++)
+                        {
+                            string checkAns = studentSolution[0];
+                            Debug.WriteLine(studentSolution[0] +"==1==: " + checkAns);
+                            Debug.WriteLine("huh2uh" + studentSolution.Count);
+                            if (checkAns != null && !checkAns.Trim().Equals(""))
+                            {
+                                foreach (string correctAns in questionAnswer)
+                                {
+                                    Debug.WriteLine(correctAns+"====: " + checkAns);
+                                    if (checkAns.ToLower().Trim().Equals(correctAns.ToLower()))
+                                    {
+                                        countCorrectAnswer++;
+                                    }
+                                   
+                                }
+
+                                studentAnswerAddToDB = studentAnswerAddToDB + checkAns + ";";
+
+                            }
+                            Debug.WriteLine("@@11@@ " + studentSolution[0]);
+                            studentSolution.RemoveAt(0);
+                            Debug.WriteLine("studentsoltuion next: " + checkAns);
+                            Debug.WriteLine("db: " + studentAnswerAddToDB);
+
+                        }
+
+                        Debug.WriteLine("count: " + countCorrectAnswer);
+                        if (countCorrectAnswer == questionAnswer.Count )
+                        {
+                            isCorrect = true;
+                            studentMark = studentMark + matchQuestionsList[i].Mark;
+                            matchQuestionsList[i].CorrectNumber= matchQuestionsList[i].CorrectNumber + 1;
+                            Debug.WriteLine("true dat");
+                        }
+                        
+                       
+                    }
+                    if (!studentAnswerAddToDB.Equals(""))
+                    {
+                        Student_Answer studentChoice = new Student_Answer();
+                        studentChoice.QuizDoneID = qzDoneID;
+                        studentChoice.StudentID = sID;
+                        studentChoice.QuestionDoneID = matchQuestionsList[i].M_DoneID;
+                        studentChoice.Qtype = 5;
+                        studentChoice.Answer = studentAnswerAddToDB.Substring(0,studentAnswerAddToDB.Length-1);
+                        studentChoice.IsCorrect = isCorrect;
+                        db.Student_Answer.Add(studentChoice);
+                    }
+
+                    db.Entry(matchQuestionsList[i]).State = EntityState.Modified;
+                    db.SaveChanges();
+                    qListStr = qListStr + matchQuestionsList[i].M_DoneID + "-5;";
                 }
             }
 

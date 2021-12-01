@@ -27,11 +27,27 @@
 .mark-total {
     font-weight: bold;
     color: blue;
- 
 }
 
 .question-num {
-    font-family: "Lucida Console", Monospace;
     font-weight: bold;
-    font-size: 20px;
+    font-size:18px;
+    text-decoration: underline;
+}
+
+.question-num-2 {
+    font-weight: bold;
+    font-size:17px;
+    /*text-decoration: underline;*/
+}
+
+.shuffle-lable {
+    margin:auto;
+    font-size:16px;
+    text-decoration: underline;
+}
+
+.div-margin-20 {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

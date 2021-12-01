@@ -147,6 +147,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Student\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Student\Controllers\PollController.cs" />
     <Compile Include="Areas\Student\Controllers\QuizController.cs" />
     <Compile Include="Areas\Student\Controllers\ReportController.cs" />
     <Compile Include="Areas\Student\StudentAreaRegistration.cs" />
@@ -162,6 +163,9 @@
     <Compile Include="Controllers\HomeTotalController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Admin.cs">
+      <DependentUpon>DBModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Chapter.cs">
       <DependentUpon>DBModel.tt</DependentUpon>
@@ -289,6 +293,7 @@
     <Content Include="Content\Poll.css" />
     <Content Include="Content\sidebar.css" />
     <Content Include="Content\Slide.css" />
+    <Content Include="Content\StudentReport.css" />
     <Content Include="Content\Style.css" />
     <Content Include="Content\Test.css" />
     <Content Include="favicon.ico" />
@@ -326,9 +331,7 @@
     <Content Include="Areas\Teacher\Views\Quiz\_ShowQuestionForNewQuiz.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\CreateNewQuiz.cshtml" />
     <Content Include="Areas\Student\Views\web.config" />
-    <Content Include="Areas\Student\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Student\Views\Home\Home.cshtml" />
-    <Content Include="Areas\Student\Views\Quiz\ShowAssignedQuiz.cshtml" />
     <Content Include="Areas\Student\Views\Quiz\DoQuizPaperTest.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\QuizStarted.cshtml" />
     <Content Include="Areas\Student\Views\Quiz\QuizNotStartYet.cshtml" />
@@ -347,7 +350,6 @@
     <Content Include="Areas\Teacher\Views\Question\EditMatchingQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateFillBlankQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditFillBlankQuestion.cshtml" />
-    <Content Include="Areas\Teacher\Views\Poll\CreateOneAnswerPoll.cshtml" />
     <Content Include="Areas\Student\Views\Report\QuizReport.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportStudentQuiz.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportByQuestion.cshtml" />
@@ -360,6 +362,16 @@
     <Content Include="Models\DBModel.edmx.diagram">
       <DependentUpon>DBModel.edmx</DependentUpon>
     </Content>
+    <Content Include="Areas\Teacher\Views\Quiz\PreviewQuizPaperTest.cshtml" />
+    <Content Include="Areas\Student\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Student\Views\Report\ReportHome.cshtml" />
+    <Content Include="Areas\Teacher\Views\Poll\CreatePoll.cshtml" />
+    <Content Include="Areas\Teacher\Views\Poll\ShowPollLink.cshtml" />
+    <Content Include="Areas\Student\Views\Poll\DoPoll.cshtml" />
+    <Content Include="Areas\Teacher\Views\Poll\PollResultProgressBar.cshtml" />
+    <Content Include="Areas\Teacher\Views\Poll\PollResultPieChart.cshtml" />
+    <Content Include="Areas\Teacher\Views\Poll\StartPoll.cshtml" />
+    <Content Include="Areas\Teacher\Views\Quiz\PreviewQuizQuestionByQuestion.cshtml" />
     <None Include="Properties\PublishProfiles\InClassVoting - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\InClassVoting - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
@@ -386,6 +398,11 @@
     <Content Include="Scripts\Layout.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\more-option.js" />
+    <Content Include="Scripts\piechart.js" />
+    <Content Include="Scripts\preview.js" />
+    <Content Include="Scripts\processchart.js" />
+    <Content Include="Scripts\studentReport.js" />
+    <Content Include="Scripts\teacher.poll.countdown.js" />
     <Content Include="Scripts\teacher.quiz.js" />
     <Content Include="Scripts\sidebar.js" />
     <Content Include="Scripts\SlideQ.js" />
@@ -405,6 +422,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\teacher.chapter.js" />
     <Content Include="Views\HomeTotal\Home.cshtml" />
+    <Content Include="Scripts\student.poll.countdown.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\images\" />

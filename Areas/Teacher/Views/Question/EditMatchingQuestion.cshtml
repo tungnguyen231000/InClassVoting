@@ -3,88 +3,155 @@
     ViewBag.Title = "EditMatchingQuestion";
     Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
 }
-
+<link rel="stylesheet" type="text/css" href="~/Scripts/jqueryui/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css" />
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
 
     @using (Html.BeginForm("EditMatchingQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "matching-form" }))
     {
+        <input type="hidden" name="chid" value="@ViewBag.Matching.ChapterId" />
+        <input type="hidden" name="qid" value="@ViewBag.Matching.MID" />
+        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
         <div class="grid grid-cols-1 w-full ">
 
             <div class="w-full items-center bg-gray ">
                 <div class="text-center">
-                    <h1 class="h6">
+                    <h1 class="h4">
                         <span>Question Type:</span>
                         <span>Matching</span>
-                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
-                        <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
-                        <input type="hidden" name="qid" value="@ViewBag.Question.MID" />
                     </h1>
                 </div>
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span><b>Time:</b></span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Question.Time">
+                        <span>Time:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="Time" value="@ViewBag.Matching.Time">
                     </div>
                     <div class="m-6  ">
-                        <span><b>Mark:</b></span>
-                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Question.Mark">
+                        <span>Mark:</span>
+                        <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="Mark" value="@ViewBag.Matching.Mark">
                     </div>
                 </div>
             </div>
-            <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block border border-black-400">
 
-                <div>
-                    <table class="w-2/12 border-spacing-2">
-                        <tr>
-                            <td colspan="3"><div class="ms-error"></div></td>
-                        </tr>
-                        @{int countQuestion = 0;
-                            var columnA = ViewBag.ColumnA;
-                            var columnB = ViewBag.ColumnB;
-                        }
-                        @for (int i = 0; i < columnB.Length; i++)
-                        {
-                            countQuestion++;
-                            <tr>
-                                <td> &nbsp;@countQuestion.&nbsp;</td>
-                                @if (countQuestion <= columnA.Length)
-                                {
-                                    <td><input type="text" class="text-center" name="answerLeft" placeholder="left" value="@columnA[i]" /></td>
+            <div class="w-full bg-gray p-6">
+                <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
+                    <div class="w-full">
+                        <div class="flex items-center justify-center column-gap inline-block">
+                            <div class="text-center my-2 w-6/12 px-4" name="name">Left Matching</div>
+                            <div class="grid grid-cols-1 px-2 w-1/12">
+                                <span>Solution</span>
+                            </div>
+                            <div class="text-center my-2 w-6/12 px-4" name="name">Right Matching</div>
+                        </div>
+                        <ul id="table-matching" class="w-full">
 
-                                }
-                                else
-                                {
-                                    <td><input type="text" class="text-center" name="answerLeft" placeholder="left" /></td>
-                                }
+                            <li id="matching-option" class="w-full flex">
+                                <div class="my-2 w-6/12 px-4">
+                                    <!--Textarea bên trái-->
+                                    <textarea id="matching-left" style="white-space: pre-wrap" name="columnA" class="border w-full p-2 border-black-400 bg-blue-200" spellcheck="false" placeholder="...">@ViewBag.Matching.ColumnA</textarea>
+                                </div>
+                                <!--List input ở giữa-->
+                                <div id="table-solution" class="grid grid-cols-1 border border-black-400 mt-2 w-1/12 grid-rows-6">
+                                    @if (ViewBag.Solution.Count > 0)
+                                    {
+                                        foreach (var sol in ViewBag.Solution)
+                                        {
+                                            <input type="text" id="matching-solution" class="text-center" name="solution" value="@sol" readonly />
+                                        }
+                                    }
 
-                                <td>-</td>
-                                <td><input type="text" class="text-center" name="answerRight" placeholder="right" value="@columnB[i]" /></td>
-                            </tr>
-                        }
-                        @while (countQuestion < 6)
-                        {
-                            countQuestion++;
-                            <tr>
-                                <td> &nbsp;@countQuestion.&nbsp;</td>
-                                <td><input type="text" class="text-center" name="answerLeft" placeholder="left" /></td>
-                                <td>-</td>
-                                <td><input type="text" class="text-center" name="answerRight" placeholder="right" /></td>
-                            </tr>
-                        }
+                                </div>
+                                <div class="my-2 w-6/12 px-4">
+                                    <!--Textarea bên phải-->
+                                    <textarea id="matching-right" style="white-space: pre-wrap" class="border w-full p-2 border-black-400 bg-green-200" name="columnB" spellcheck="false" placeholder="...">@ViewBag.Matching.ColumnB</textarea>
+                                </div>
+                            </li>
 
-                    </table>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                    <span class="mx-2 w-1/12 text-center">Number:</span>
+                    <span class="mx-2 w-1/12 text-center">Letter:</span>
+                </div>
+                <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                    <input type="number" name="name" id="number" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
+                    <input type="text" name="name" id="letter" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
+                </div>
+                <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                    <a id="add-matching" class="btn bg-blue-200 mx-2  w-1/12" name="add">Add solution</a>
+                    <a id="remove-matching" class="btn bg-blue-200 mx-2 w-1/12" name="remove">Remove Solution</a>
                 </div>
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
+                <button type="button" id="previewMatching" class="btn btn-primary mr-6" data-toggle="modal" data-target="#matchingPreview">
+                    Preview
+                </button>
+                <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Submit">
             </div>
 
         </div>
 
     }
 </div>
+<!--Preview-->
+<div class="modal fade" id="matchingPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="w-9/12 mt-32 mx-auto" role="document">
+        <div class="modal-content ">
+            <div class="">
+                <button type="button" class="close float-right p-3" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="text-center" id="exampleModalLabel">Preview</h4>
+            </div>
+            <div id="matching-test" class=" w-full p-5">
+                <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
+                    <div class="w-full">
+                        <div class="flex items-center justify-center column-gap inline-block">
+                            <div class="text-center my-2 w-6/12 px-4" name="name">Left Matching</div>
+                            <div class="grid grid-cols-1 px-2 w-1/12">
+                                <span>Solution</span>
+                            </div>
+                            <div class="text-center my-2 w-6/12 px-4" name="name">Right Matching</div>
+                        </div>
+                        <ul id="table-matching" class="w-full">
+
+                            <li id="matching-option" class="w-full flex">
+                                <div class="my-2 w-6/12 px-4">
+                                    <!--Textarea bên trái-->
+                                    <textarea id="matching-left-preview" name="name" class="border w-full p-2 border-black-400 bg-blue-200" style="height:100px" rows="3" spellcheck="false" placeholder="Question here..." readonly></textarea>
+                                </div>
+                                <!--List input ở giữa-->
+                                <div id="table-solution-preview" class="grid grid-cols-1 border border-black-400 mt-2 w-1/12 grid-rows-6">
+                                </div>
+                                <div class="my-2 w-6/12 px-4">
+                                    <!--Textarea bên phải-->
+                                    <textarea id="matching-right-preview" class="border w-full p-2 border-black-400 bg-green-200" name="name" spellcheck="false" placeholder="Answer here..." readonly></textarea>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                    <span class="mx-2 w-1/12 text-center">Number:</span>
+                    <span class="mx-2 w-1/12 text-center">Letter:</span>
+                </div>
+                <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                    <input type="number" name="name" id="number" class="mx-2 w-1/12 border border-black-400 text-center" value="" disabled />
+                    <input type="text" name="name" id="letter" class="mx-2 w-1/12 border border-black-400 text-center" value="" disabled />
+                </div>
+                <!--Matching Q1 thay đổi để matching với button-->
+                <div id="matching-q1" class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                    <a id="add-matching" class="btn bg-blue-200 mx-2 " name="add" disabled>Add solution</a>
+                    <a id="remove-matching" class="btn bg-blue-200 mx-2 " name="remove" disabled>Remove Solution</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>*@
+    <script src="~/Scripts/jquery.validate.min.js"></script>*@
 @*<script src="~/Scripts/validate.js"></script>*@

@@ -5,6 +5,14 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="inclassvoting01Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Admin">
+          <Key>
+            <PropertyRef Name="AID" />
+          </Key>
+          <Property Name="AID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="100" />
+          <Property Name="Password" Type="varchar" MaxLength="100" />
+        </EntityType>
         <EntityType Name="Chapter">
           <Key>
             <PropertyRef Name="ChID" />
@@ -47,7 +55,7 @@
             <PropertyRef Name="M_DoneID" />
           </Key>
           <Property Name="M_DoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ChapterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ChapterID" Type="int" />
           <Property Name="ColumnA" Type="nvarchar(max)" />
           <Property Name="ColumnB" Type="nvarchar(max)" />
           <Property Name="Solution" Type="nvarchar(max)" />
@@ -70,7 +78,7 @@
             <PropertyRef Name="P_DoneID" />
           </Key>
           <Property Name="P_DoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ChapterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ChapterID" Type="int" />
           <Property Name="Text" Type="nvarchar(max)" />
           <Property Name="PassageImage" Type="varbinary(max)" />
         </EntityType>
@@ -82,8 +90,12 @@
           <Property Name="TeacherID" Type="int" Nullable="false" />
           <Property Name="Question" Type="nvarchar(max)" />
           <Property Name="Time" Type="int" />
-          <Property Name="IsDone" Type="bit" />
           <Property Name="TotalParticipian" Type="int" />
+          <Property Name="EndTime" Type="datetime" />
+          <Property Name="PollName" Type="nvarchar(max)" />
+          <Property Name="CreatedDate" Type="date" />
+          <Property Name="Polltype" Type="varchar" MaxLength="50" />
+          <Property Name="IsDoing" Type="bit" />
         </EntityType>
         <EntityType Name="Poll_Answer">
           <Key>
@@ -132,7 +144,7 @@
             <PropertyRef Name="Q_DoneID" />
           </Key>
           <Property Name="Q_DoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ChapterName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ChapterID" Type="int" />
           <Property Name="PassageID" Type="int" />
           <Property Name="Text" Type="nvarchar(max)" />
           <Property Name="Mark" Type="float" />
@@ -254,7 +266,7 @@
           <Property Name="Email" Type="varchar" MaxLength="200" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" />
         </EntityType>
-        <Association Name="FK__Chapter__CourseI__182C9B23">
+        <Association Name="FK__Chapter__CourseI__656C112C">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
           <End Role="Chapter" Type="Self.Chapter" Multiplicity="*" />
           <ReferentialConstraint>
@@ -266,7 +278,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Course__TeacherI__15502E78">
+        <Association Name="FK__Course__TeacherI__628FA481">
           <End Role="Teacher" Type="Self.Teacher" Multiplicity="0..1" />
           <End Role="Course" Type="Self.Course" Multiplicity="*" />
           <ReferentialConstraint>
@@ -278,7 +290,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__LearningO__Cours__4D94879B">
+        <Association Name="FK__LearningO__Cours__1DB06A4F">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
           <End Role="LearningOutcome" Type="Self.LearningOutcome" Multiplicity="*" />
           <ReferentialConstraint>
@@ -290,7 +302,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__MatchQues__Chapt__276EDEB3">
+        <Association Name="FK__MatchQues__Chapt__05D8E0BE">
+          <End Role="Chapter" Type="Self.Chapter" Multiplicity="0..1" />
+          <End Role="MatchQuestionDone" Type="Self.MatchQuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Chapter">
+              <PropertyRef Name="ChID" />
+            </Principal>
+            <Dependent Role="MatchQuestionDone">
+              <PropertyRef Name="ChapterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MatchQues__Chapt__74AE54BC">
           <End Role="Chapter" Type="Self.Chapter" Multiplicity="1" />
           <End Role="MatchQuestion" Type="Self.MatchQuestion" Multiplicity="*" />
           <ReferentialConstraint>
@@ -302,7 +326,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Passage__Chapter__1B0907CE">
+        <Association Name="FK__Passage__Chapter__68487DD7">
           <End Role="Chapter" Type="Self.Chapter" Multiplicity="0..1" />
           <End Role="Passage" Type="Self.Passage" Multiplicity="*" />
           <ReferentialConstraint>
@@ -314,7 +338,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Poll__TeacherID__440B1D61">
+        <Association Name="FK__Passage_D__Chapt__7A672E12">
+          <End Role="Chapter" Type="Self.Chapter" Multiplicity="0..1" />
+          <End Role="Passage_Done" Type="Self.Passage_Done" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Chapter">
+              <PropertyRef Name="ChID" />
+            </Principal>
+            <Dependent Role="Passage_Done">
+              <PropertyRef Name="ChapterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Poll__TeacherID__14270015">
           <End Role="Teacher" Type="Self.Teacher" Multiplicity="1" />
           <End Role="Poll" Type="Self.Poll" Multiplicity="*" />
           <ReferentialConstraint>
@@ -326,7 +362,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Poll_Answ__PollI__46E78A0C">
+        <Association Name="FK__Poll_Answ__PollI__17036CC0">
           <End Role="Poll" Type="Self.Poll" Multiplicity="1" />
           <End Role="Poll_Answer" Type="Self.Poll_Answer" Multiplicity="*" />
           <ReferentialConstraint>
@@ -338,7 +374,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Question__Chapte__1FCDBCEB">
+        <Association Name="FK__Question__Chapte__6D0D32F4">
           <End Role="Chapter" Type="Self.Chapter" Multiplicity="1" />
           <End Role="Question" Type="Self.Question" Multiplicity="*" />
           <ReferentialConstraint>
@@ -350,7 +386,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Question__Passag__20C1E124">
+        <Association Name="FK__Question__Passag__6E01572D">
           <End Role="Passage" Type="Self.Passage" Multiplicity="0..1" />
           <End Role="Question" Type="Self.Question" Multiplicity="*" />
           <ReferentialConstraint>
@@ -362,7 +398,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Question__Qtype__21B6055D">
+        <Association Name="FK__Question__Qtype__6EF57B66">
           <End Role="QuestionType" Type="Self.QuestionType" Multiplicity="1" />
           <End Role="Question" Type="Self.Question" Multiplicity="*" />
           <ReferentialConstraint>
@@ -374,19 +410,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionA__Quest__24927208">
-          <End Role="Question" Type="Self.Question" Multiplicity="1" />
-          <End Role="QuestionAnswer" Type="Self.QuestionAnswer" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Question">
-              <PropertyRef Name="QID" />
-            </Principal>
-            <Dependent Role="QuestionAnswer">
-              <PropertyRef Name="QuestionID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__QuestionA__Quest__38996AB5">
+        <Association Name="FK__QuestionA__Quest__08B54D69">
           <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="1" />
           <End Role="QuestionAnswerDone" Type="Self.QuestionAnswerDone" Multiplicity="*" />
           <ReferentialConstraint>
@@ -398,7 +422,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionD__Learn__5535A963">
+        <Association Name="FK__QuestionA__Quest__71D1E811">
+          <End Role="Question" Type="Self.Question" Multiplicity="1" />
+          <End Role="QuestionAnswer" Type="Self.QuestionAnswer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="QID" />
+            </Principal>
+            <Dependent Role="QuestionAnswer">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Chapt__01142BA1">
+          <End Role="Chapter" Type="Self.Chapter" Multiplicity="0..1" />
+          <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Chapter">
+              <PropertyRef Name="ChID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="ChapterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Learn__25518C17">
           <End Role="LearningOutcome" Type="Self.LearningOutcome" Multiplicity="1" />
           <End Role="QuestionDoneLO" Type="Self.QuestionDoneLO" Multiplicity="*" />
           <ReferentialConstraint>
@@ -410,7 +458,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionD__Passa__32E0915F">
+        <Association Name="FK__QuestionD__Passa__02084FDA">
           <End Role="Passage_Done" Type="Self.Passage_Done" Multiplicity="0..1" />
           <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="*" />
           <ReferentialConstraint>
@@ -422,7 +470,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionD__Qtype__33D4B598">
+        <Association Name="FK__QuestionD__Qtype__02FC7413">
           <End Role="QuestionType" Type="Self.QuestionType" Multiplicity="1" />
           <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="*" />
           <ReferentialConstraint>
@@ -434,7 +482,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionD__Qtype__5441852A">
+        <Association Name="FK__QuestionD__Qtype__245D67DE">
           <End Role="QuestionType" Type="Self.QuestionType" Multiplicity="1" />
           <End Role="QuestionDoneLO" Type="Self.QuestionDoneLO" Multiplicity="*" />
           <ReferentialConstraint>
@@ -446,7 +494,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionL__Learn__5165187F">
+        <Association Name="FK__QuestionL__Learn__2180FB33">
           <End Role="LearningOutcome" Type="Self.LearningOutcome" Multiplicity="1" />
           <End Role="QuestionLO" Type="Self.QuestionLO" Multiplicity="*" />
           <ReferentialConstraint>
@@ -458,7 +506,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionL__Qtype__5070F446">
+        <Association Name="FK__QuestionL__Qtype__208CD6FA">
           <End Role="QuestionType" Type="Self.QuestionType" Multiplicity="1" />
           <End Role="QuestionLO" Type="Self.QuestionLO" Multiplicity="*" />
           <ReferentialConstraint>
@@ -470,7 +518,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Quiz__CourseID__2A4B4B5E">
+        <Association Name="FK__Quiz__CourseID__778AC167">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
           <End Role="Quiz" Type="Self.Quiz" Multiplicity="*" />
           <ReferentialConstraint>
@@ -482,7 +530,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuizDone__Course__300424B4">
+        <Association Name="FK__QuizDone__Course__7E37BEF6">
           <End Role="Course" Type="Self.Course" Multiplicity="1" />
           <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="*" />
           <ReferentialConstraint>
@@ -494,7 +542,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuizDone__QuizID__2F10007B">
+        <Association Name="FK__QuizDone__QuizID__7D439ABD">
           <End Role="Quiz" Type="Self.Quiz" Multiplicity="0..1" />
           <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="*" />
           <ReferentialConstraint>
@@ -506,7 +554,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student_A__Qtype__412EB0B6">
+        <Association Name="FK__Student_A__Qtype__114A936A">
           <End Role="QuestionType" Type="Self.QuestionType" Multiplicity="1" />
           <End Role="Student_Answer" Type="Self.Student_Answer" Multiplicity="*" />
           <ReferentialConstraint>
@@ -518,7 +566,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student_A__QuizD__3F466844">
+        <Association Name="FK__Student_A__QuizD__0F624AF8">
           <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="1" />
           <End Role="Student_Answer" Type="Self.Student_Answer" Multiplicity="*" />
           <ReferentialConstraint>
@@ -530,7 +578,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student_A__Stude__403A8C7D">
+        <Association Name="FK__Student_A__Stude__10566F31">
           <End Role="Student" Type="Self.Student" Multiplicity="1" />
           <End Role="Student_Answer" Type="Self.Student_Answer" Multiplicity="*" />
           <ReferentialConstraint>
@@ -542,7 +590,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student_P__Poll___49C3F6B7">
+        <Association Name="FK__Student_P__Poll___19DFD96B">
           <End Role="Poll_Answer" Type="Self.Poll_Answer" Multiplicity="1" />
           <End Role="Student_PollAnswer" Type="Self.Student_PollAnswer" Multiplicity="*" />
           <ReferentialConstraint>
@@ -554,7 +602,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student_P__Stude__4AB81AF0">
+        <Association Name="FK__Student_P__Stude__1AD3FDA4">
           <End Role="Student" Type="Self.Student" Multiplicity="1" />
           <End Role="Student_PollAnswer" Type="Self.Student_PollAnswer" Multiplicity="*" />
           <ReferentialConstraint>
@@ -566,7 +614,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student_Q__QuizD__3C69FB99">
+        <Association Name="FK__Student_Q__QuizD__0C85DE4D">
           <End Role="QuizDone" Type="Self.QuizDone" Multiplicity="0..1" />
           <End Role="Student_QuizDone" Type="Self.Student_QuizDone" Multiplicity="*" />
           <ReferentialConstraint>
@@ -578,7 +626,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Student_Q__Stude__3B75D760">
+        <Association Name="FK__Student_Q__Stude__0B91BA14">
           <End Role="Student" Type="Self.Student" Multiplicity="0..1" />
           <End Role="Student_QuizDone" Type="Self.Student_QuizDone" Multiplicity="*" />
           <ReferentialConstraint>
@@ -591,6 +639,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="inclassvoting01ModelStoreContainer">
+          <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Chapter" EntityType="Self.Chapter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Course" EntityType="Self.Course" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LearningOutcome" EntityType="Self.LearningOutcome" Schema="dbo" store:Type="Tables" />
@@ -614,115 +663,127 @@
           <EntitySet Name="Student_PollAnswer" EntityType="Self.Student_PollAnswer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Student_QuizDone" EntityType="Self.Student_QuizDone" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Teacher" EntityType="Self.Teacher" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Chapter__CourseI__182C9B23" Association="Self.FK__Chapter__CourseI__182C9B23">
+          <AssociationSet Name="FK__Chapter__CourseI__656C112C" Association="Self.FK__Chapter__CourseI__656C112C">
             <End Role="Course" EntitySet="Course" />
             <End Role="Chapter" EntitySet="Chapter" />
           </AssociationSet>
-          <AssociationSet Name="FK__Course__TeacherI__15502E78" Association="Self.FK__Course__TeacherI__15502E78">
+          <AssociationSet Name="FK__Course__TeacherI__628FA481" Association="Self.FK__Course__TeacherI__628FA481">
             <End Role="Teacher" EntitySet="Teacher" />
             <End Role="Course" EntitySet="Course" />
           </AssociationSet>
-          <AssociationSet Name="FK__LearningO__Cours__4D94879B" Association="Self.FK__LearningO__Cours__4D94879B">
+          <AssociationSet Name="FK__LearningO__Cours__1DB06A4F" Association="Self.FK__LearningO__Cours__1DB06A4F">
             <End Role="Course" EntitySet="Course" />
             <End Role="LearningOutcome" EntitySet="LearningOutcome" />
           </AssociationSet>
-          <AssociationSet Name="FK__MatchQues__Chapt__276EDEB3" Association="Self.FK__MatchQues__Chapt__276EDEB3">
+          <AssociationSet Name="FK__MatchQues__Chapt__05D8E0BE" Association="Self.FK__MatchQues__Chapt__05D8E0BE">
+            <End Role="Chapter" EntitySet="Chapter" />
+            <End Role="MatchQuestionDone" EntitySet="MatchQuestionDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MatchQues__Chapt__74AE54BC" Association="Self.FK__MatchQues__Chapt__74AE54BC">
             <End Role="Chapter" EntitySet="Chapter" />
             <End Role="MatchQuestion" EntitySet="MatchQuestion" />
           </AssociationSet>
-          <AssociationSet Name="FK__Passage__Chapter__1B0907CE" Association="Self.FK__Passage__Chapter__1B0907CE">
+          <AssociationSet Name="FK__Passage__Chapter__68487DD7" Association="Self.FK__Passage__Chapter__68487DD7">
             <End Role="Chapter" EntitySet="Chapter" />
             <End Role="Passage" EntitySet="Passage" />
           </AssociationSet>
-          <AssociationSet Name="FK__Poll__TeacherID__440B1D61" Association="Self.FK__Poll__TeacherID__440B1D61">
+          <AssociationSet Name="FK__Passage_D__Chapt__7A672E12" Association="Self.FK__Passage_D__Chapt__7A672E12">
+            <End Role="Chapter" EntitySet="Chapter" />
+            <End Role="Passage_Done" EntitySet="Passage_Done" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Poll__TeacherID__14270015" Association="Self.FK__Poll__TeacherID__14270015">
             <End Role="Teacher" EntitySet="Teacher" />
             <End Role="Poll" EntitySet="Poll" />
           </AssociationSet>
-          <AssociationSet Name="FK__Poll_Answ__PollI__46E78A0C" Association="Self.FK__Poll_Answ__PollI__46E78A0C">
+          <AssociationSet Name="FK__Poll_Answ__PollI__17036CC0" Association="Self.FK__Poll_Answ__PollI__17036CC0">
             <End Role="Poll" EntitySet="Poll" />
             <End Role="Poll_Answer" EntitySet="Poll_Answer" />
           </AssociationSet>
-          <AssociationSet Name="FK__Question__Chapte__1FCDBCEB" Association="Self.FK__Question__Chapte__1FCDBCEB">
+          <AssociationSet Name="FK__Question__Chapte__6D0D32F4" Association="Self.FK__Question__Chapte__6D0D32F4">
             <End Role="Chapter" EntitySet="Chapter" />
             <End Role="Question" EntitySet="Question" />
           </AssociationSet>
-          <AssociationSet Name="FK__Question__Passag__20C1E124" Association="Self.FK__Question__Passag__20C1E124">
+          <AssociationSet Name="FK__Question__Passag__6E01572D" Association="Self.FK__Question__Passag__6E01572D">
             <End Role="Passage" EntitySet="Passage" />
             <End Role="Question" EntitySet="Question" />
           </AssociationSet>
-          <AssociationSet Name="FK__Question__Qtype__21B6055D" Association="Self.FK__Question__Qtype__21B6055D">
+          <AssociationSet Name="FK__Question__Qtype__6EF57B66" Association="Self.FK__Question__Qtype__6EF57B66">
             <End Role="QuestionType" EntitySet="QuestionType" />
             <End Role="Question" EntitySet="Question" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionA__Quest__24927208" Association="Self.FK__QuestionA__Quest__24927208">
-            <End Role="Question" EntitySet="Question" />
-            <End Role="QuestionAnswer" EntitySet="QuestionAnswer" />
-          </AssociationSet>
-          <AssociationSet Name="FK__QuestionA__Quest__38996AB5" Association="Self.FK__QuestionA__Quest__38996AB5">
+          <AssociationSet Name="FK__QuestionA__Quest__08B54D69" Association="Self.FK__QuestionA__Quest__08B54D69">
             <End Role="QuestionDone" EntitySet="QuestionDone" />
             <End Role="QuestionAnswerDone" EntitySet="QuestionAnswerDone" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionD__Learn__5535A963" Association="Self.FK__QuestionD__Learn__5535A963">
+          <AssociationSet Name="FK__QuestionA__Quest__71D1E811" Association="Self.FK__QuestionA__Quest__71D1E811">
+            <End Role="Question" EntitySet="Question" />
+            <End Role="QuestionAnswer" EntitySet="QuestionAnswer" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Chapt__01142BA1" Association="Self.FK__QuestionD__Chapt__01142BA1">
+            <End Role="Chapter" EntitySet="Chapter" />
+            <End Role="QuestionDone" EntitySet="QuestionDone" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Learn__25518C17" Association="Self.FK__QuestionD__Learn__25518C17">
             <End Role="LearningOutcome" EntitySet="LearningOutcome" />
             <End Role="QuestionDoneLO" EntitySet="QuestionDoneLO" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionD__Passa__32E0915F" Association="Self.FK__QuestionD__Passa__32E0915F">
+          <AssociationSet Name="FK__QuestionD__Passa__02084FDA" Association="Self.FK__QuestionD__Passa__02084FDA">
             <End Role="Passage_Done" EntitySet="Passage_Done" />
             <End Role="QuestionDone" EntitySet="QuestionDone" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionD__Qtype__33D4B598" Association="Self.FK__QuestionD__Qtype__33D4B598">
+          <AssociationSet Name="FK__QuestionD__Qtype__02FC7413" Association="Self.FK__QuestionD__Qtype__02FC7413">
             <End Role="QuestionType" EntitySet="QuestionType" />
             <End Role="QuestionDone" EntitySet="QuestionDone" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionD__Qtype__5441852A" Association="Self.FK__QuestionD__Qtype__5441852A">
+          <AssociationSet Name="FK__QuestionD__Qtype__245D67DE" Association="Self.FK__QuestionD__Qtype__245D67DE">
             <End Role="QuestionType" EntitySet="QuestionType" />
             <End Role="QuestionDoneLO" EntitySet="QuestionDoneLO" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionL__Learn__5165187F" Association="Self.FK__QuestionL__Learn__5165187F">
+          <AssociationSet Name="FK__QuestionL__Learn__2180FB33" Association="Self.FK__QuestionL__Learn__2180FB33">
             <End Role="LearningOutcome" EntitySet="LearningOutcome" />
             <End Role="QuestionLO" EntitySet="QuestionLO" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionL__Qtype__5070F446" Association="Self.FK__QuestionL__Qtype__5070F446">
+          <AssociationSet Name="FK__QuestionL__Qtype__208CD6FA" Association="Self.FK__QuestionL__Qtype__208CD6FA">
             <End Role="QuestionType" EntitySet="QuestionType" />
             <End Role="QuestionLO" EntitySet="QuestionLO" />
           </AssociationSet>
-          <AssociationSet Name="FK__Quiz__CourseID__2A4B4B5E" Association="Self.FK__Quiz__CourseID__2A4B4B5E">
+          <AssociationSet Name="FK__Quiz__CourseID__778AC167" Association="Self.FK__Quiz__CourseID__778AC167">
             <End Role="Course" EntitySet="Course" />
             <End Role="Quiz" EntitySet="Quiz" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuizDone__Course__300424B4" Association="Self.FK__QuizDone__Course__300424B4">
+          <AssociationSet Name="FK__QuizDone__Course__7E37BEF6" Association="Self.FK__QuizDone__Course__7E37BEF6">
             <End Role="Course" EntitySet="Course" />
             <End Role="QuizDone" EntitySet="QuizDone" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuizDone__QuizID__2F10007B" Association="Self.FK__QuizDone__QuizID__2F10007B">
+          <AssociationSet Name="FK__QuizDone__QuizID__7D439ABD" Association="Self.FK__QuizDone__QuizID__7D439ABD">
             <End Role="Quiz" EntitySet="Quiz" />
             <End Role="QuizDone" EntitySet="QuizDone" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student_A__Qtype__412EB0B6" Association="Self.FK__Student_A__Qtype__412EB0B6">
+          <AssociationSet Name="FK__Student_A__Qtype__114A936A" Association="Self.FK__Student_A__Qtype__114A936A">
             <End Role="QuestionType" EntitySet="QuestionType" />
             <End Role="Student_Answer" EntitySet="Student_Answer" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student_A__QuizD__3F466844" Association="Self.FK__Student_A__QuizD__3F466844">
+          <AssociationSet Name="FK__Student_A__QuizD__0F624AF8" Association="Self.FK__Student_A__QuizD__0F624AF8">
             <End Role="QuizDone" EntitySet="QuizDone" />
             <End Role="Student_Answer" EntitySet="Student_Answer" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student_A__Stude__403A8C7D" Association="Self.FK__Student_A__Stude__403A8C7D">
+          <AssociationSet Name="FK__Student_A__Stude__10566F31" Association="Self.FK__Student_A__Stude__10566F31">
             <End Role="Student" EntitySet="Student" />
             <End Role="Student_Answer" EntitySet="Student_Answer" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student_P__Poll___49C3F6B7" Association="Self.FK__Student_P__Poll___49C3F6B7">
+          <AssociationSet Name="FK__Student_P__Poll___19DFD96B" Association="Self.FK__Student_P__Poll___19DFD96B">
             <End Role="Poll_Answer" EntitySet="Poll_Answer" />
             <End Role="Student_PollAnswer" EntitySet="Student_PollAnswer" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student_P__Stude__4AB81AF0" Association="Self.FK__Student_P__Stude__4AB81AF0">
+          <AssociationSet Name="FK__Student_P__Stude__1AD3FDA4" Association="Self.FK__Student_P__Stude__1AD3FDA4">
             <End Role="Student" EntitySet="Student" />
             <End Role="Student_PollAnswer" EntitySet="Student_PollAnswer" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student_Q__QuizD__3C69FB99" Association="Self.FK__Student_Q__QuizD__3C69FB99">
+          <AssociationSet Name="FK__Student_Q__QuizD__0C85DE4D" Association="Self.FK__Student_Q__QuizD__0C85DE4D">
             <End Role="QuizDone" EntitySet="QuizDone" />
             <End Role="Student_QuizDone" EntitySet="Student_QuizDone" />
           </AssociationSet>
-          <AssociationSet Name="FK__Student_Q__Stude__3B75D760" Association="Self.FK__Student_Q__Stude__3B75D760">
+          <AssociationSet Name="FK__Student_Q__Stude__0B91BA14" Association="Self.FK__Student_Q__Stude__0B91BA14">
             <End Role="Student" EntitySet="Student" />
             <End Role="Student_QuizDone" EntitySet="Student_QuizDone" />
           </AssociationSet>
@@ -742,6 +803,9 @@
           <NavigationProperty Name="MatchQuestions" Relationship="Self.FK__MatchQues__Chapt__276EDEB3" FromRole="Chapter" ToRole="MatchQuestion" />
           <NavigationProperty Name="Passages" Relationship="Self.FK__Passage__Chapter__1B0907CE" FromRole="Chapter" ToRole="Passage" />
           <NavigationProperty Name="Questions" Relationship="Self.FK__Question__Chapte__1FCDBCEB" FromRole="Chapter" ToRole="Question" />
+          <NavigationProperty Name="MatchQuestionDones" Relationship="inclassvoting01Model.FK__MatchQues__Chapt__03F0984C" FromRole="Chapter" ToRole="MatchQuestionDone" />
+          <NavigationProperty Name="QuestionDones" Relationship="inclassvoting01Model.FK__QuestionD__Chapt__7F2BE32F" FromRole="Chapter" ToRole="QuestionDone" />
+          <NavigationProperty Name="Passage_Done" Relationship="inclassvoting01Model.FK__Passage_D__Chapt__2E1BDC42" FromRole="Chapter" ToRole="Passage_Done" />
         </EntityType>
         <EntityType Name="Course">
           <Key>
@@ -781,20 +845,6 @@
           <Property Name="Mark" Type="Double" />
           <NavigationProperty Name="Chapter" Relationship="Self.FK__MatchQues__Chapt__276EDEB3" FromRole="MatchQuestion" ToRole="Chapter" />
         </EntityType>
-        <EntityType Name="MatchQuestionDone">
-          <Key>
-            <PropertyRef Name="M_DoneID" />
-          </Key>
-          <Property Name="M_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChapterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="ColumnA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ColumnB" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Solution" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Mark" Type="Double" />
-          <Property Name="Time" Type="Int32" />
-          <Property Name="StudentReceive" Type="Int32" />
-          <Property Name="CorrectNumber" Type="Int32" />
-        </EntityType>
         <EntityType Name="Passage">
           <Key>
             <PropertyRef Name="PID" />
@@ -806,16 +856,6 @@
           <NavigationProperty Name="Chapter" Relationship="Self.FK__Passage__Chapter__1B0907CE" FromRole="Passage" ToRole="Chapter" />
           <NavigationProperty Name="Questions" Relationship="Self.FK__Question__Passag__20C1E124" FromRole="Passage" ToRole="Question" />
         </EntityType>
-        <EntityType Name="Passage_Done">
-          <Key>
-            <PropertyRef Name="P_DoneID" />
-          </Key>
-          <Property Name="P_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChapterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="PassageImage" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <NavigationProperty Name="QuestionDones" Relationship="Self.FK__QuestionD__Passa__32E0915F" FromRole="Passage_Done" ToRole="QuestionDone" />
-        </EntityType>
         <EntityType Name="Poll">
           <Key>
             <PropertyRef Name="PollID" />
@@ -824,10 +864,14 @@
           <Property Name="TeacherID" Type="Int32" Nullable="false" />
           <Property Name="Question" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Time" Type="Int32" />
-          <Property Name="IsDone" Type="Boolean" />
           <Property Name="TotalParticipian" Type="Int32" />
           <NavigationProperty Name="Teacher" Relationship="Self.FK__Poll__TeacherID__440B1D61" FromRole="Poll" ToRole="Teacher" />
           <NavigationProperty Name="Poll_Answer" Relationship="Self.FK__Poll_Answ__PollI__46E78A0C" FromRole="Poll" ToRole="Poll_Answer" />
+          <Property Name="EndTime" Type="DateTime" Precision="3" />
+          <Property Name="PollName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="0" />
+          <Property Name="Polltype" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDoing" Type="Boolean" />
         </EntityType>
         <EntityType Name="Poll_Answer">
           <Key>
@@ -877,27 +921,7 @@
           <Property Name="QuestionID" Type="Int32" Nullable="false" />
           <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsCorrect" Type="Boolean" />
-          <NavigationProperty Name="QuestionDone" Relationship="Self.FK__QuestionA__Quest__38996AB5" FromRole="QuestionAnswerDone" ToRole="QuestionDone" />
-        </EntityType>
-        <EntityType Name="QuestionDone">
-          <Key>
-            <PropertyRef Name="Q_DoneID" />
-          </Key>
-          <Property Name="Q_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ChapterName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="PassageID" Type="Int32" />
-          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Mark" Type="Double" />
-          <Property Name="Time" Type="Int32" />
-          <Property Name="Qtype" Type="Int32" Nullable="false" />
-          <Property Name="MixChoice" Type="Boolean" />
-          <Property Name="GivenWord" Type="Boolean" />
-          <Property Name="ImageData" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="StudentReceive" Type="Int32" />
-          <Property Name="CorrectNumber" Type="Int32" />
-          <NavigationProperty Name="Passage_Done" Relationship="Self.FK__QuestionD__Passa__32E0915F" FromRole="QuestionDone" ToRole="Passage_Done" />
-          <NavigationProperty Name="QuestionAnswerDones" Relationship="Self.FK__QuestionA__Quest__38996AB5" FromRole="QuestionDone" ToRole="QuestionAnswerDone" />
-          <NavigationProperty Name="QuestionType" Relationship="Self.FK__QuestionD__Qtype__33D4B598" FromRole="QuestionDone" ToRole="QuestionType" />
+          <NavigationProperty Name="QuestionDone" Relationship="inclassvoting01Model.FK__QuestionA__Quest__06CD04F7" FromRole="QuestionAnswerDone" ToRole="QuestionDone" />
         </EntityType>
         <EntityType Name="QuestionDoneLO">
           <Key>
@@ -928,10 +952,10 @@
           <Property Name="QTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Questions" Relationship="Self.FK__Question__Qtype__21B6055D" FromRole="QuestionType" ToRole="Question" />
-          <NavigationProperty Name="QuestionDones" Relationship="Self.FK__QuestionD__Qtype__33D4B598" FromRole="QuestionType" ToRole="QuestionDone" />
           <NavigationProperty Name="QuestionDoneLOes" Relationship="Self.FK__QuestionD__Qtype__5441852A" FromRole="QuestionType" ToRole="QuestionDoneLO" />
           <NavigationProperty Name="QuestionLOes" Relationship="Self.FK__QuestionL__Qtype__5070F446" FromRole="QuestionType" ToRole="QuestionLO" />
           <NavigationProperty Name="Student_Answer" Relationship="Self.FK__Student_A__Qtype__412EB0B6" FromRole="QuestionType" ToRole="Student_Answer" />
+          <NavigationProperty Name="QuestionDones" Relationship="inclassvoting01Model.FK__QuestionD__Qtype__01142BA1" FromRole="QuestionType" ToRole="QuestionDone" />
         </EntityType>
         <EntityType Name="Quiz">
           <Key>
@@ -1168,18 +1192,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__QuestionD__Passa__32E0915F">
-          <End Role="Passage_Done" Type="Self.Passage_Done" Multiplicity="0..1" />
-          <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Passage_Done">
-              <PropertyRef Name="P_DoneID" />
-            </Principal>
-            <Dependent Role="QuestionDone">
-              <PropertyRef Name="PassageID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Poll__TeacherID__440B1D61">
           <End Role="Teacher" Type="Self.Teacher" Multiplicity="1" />
           <End Role="Poll" Type="Self.Poll" Multiplicity="*" />
@@ -1237,30 +1249,6 @@
             </Principal>
             <Dependent Role="QuestionAnswer">
               <PropertyRef Name="QuestionID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__QuestionA__Quest__38996AB5">
-          <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="1" />
-          <End Role="QuestionAnswerDone" Type="Self.QuestionAnswerDone" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="QuestionDone">
-              <PropertyRef Name="Q_DoneID" />
-            </Principal>
-            <Dependent Role="QuestionAnswerDone">
-              <PropertyRef Name="QuestionID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__QuestionD__Qtype__33D4B598">
-          <End Role="QuestionType" Type="Self.QuestionType" Multiplicity="1" />
-          <End Role="QuestionDone" Type="Self.QuestionDone" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="QuestionType">
-              <PropertyRef Name="QTypeID" />
-            </Principal>
-            <Dependent Role="QuestionDone">
-              <PropertyRef Name="Qtype" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1377,15 +1365,12 @@
           <EntitySet Name="Courses" EntityType="Self.Course" />
           <EntitySet Name="LearningOutcomes" EntityType="Self.LearningOutcome" />
           <EntitySet Name="MatchQuestions" EntityType="Self.MatchQuestion" />
-          <EntitySet Name="MatchQuestionDones" EntityType="Self.MatchQuestionDone" />
           <EntitySet Name="Passages" EntityType="Self.Passage" />
-          <EntitySet Name="Passage_Done" EntityType="Self.Passage_Done" />
           <EntitySet Name="Polls" EntityType="Self.Poll" />
           <EntitySet Name="Poll_Answer" EntityType="Self.Poll_Answer" />
           <EntitySet Name="Questions" EntityType="Self.Question" />
           <EntitySet Name="QuestionAnswers" EntityType="Self.QuestionAnswer" />
           <EntitySet Name="QuestionAnswerDones" EntityType="Self.QuestionAnswerDone" />
-          <EntitySet Name="QuestionDones" EntityType="Self.QuestionDone" />
           <EntitySet Name="QuestionDoneLOes" EntityType="Self.QuestionDoneLO" />
           <EntitySet Name="QuestionLOes" EntityType="Self.QuestionLO" />
           <EntitySet Name="QuestionTypes" EntityType="Self.QuestionType" />
@@ -1440,10 +1425,6 @@
             <End Role="Passage" EntitySet="Passages" />
             <End Role="Question" EntitySet="Questions" />
           </AssociationSet>
-          <AssociationSet Name="FK__QuestionD__Passa__32E0915F" Association="Self.FK__QuestionD__Passa__32E0915F">
-            <End Role="Passage_Done" EntitySet="Passage_Done" />
-            <End Role="QuestionDone" EntitySet="QuestionDones" />
-          </AssociationSet>
           <AssociationSet Name="FK__Poll__TeacherID__440B1D61" Association="Self.FK__Poll__TeacherID__440B1D61">
             <End Role="Teacher" EntitySet="Teachers" />
             <End Role="Poll" EntitySet="Polls" />
@@ -1463,14 +1444,6 @@
           <AssociationSet Name="FK__QuestionA__Quest__24927208" Association="Self.FK__QuestionA__Quest__24927208">
             <End Role="Question" EntitySet="Questions" />
             <End Role="QuestionAnswer" EntitySet="QuestionAnswers" />
-          </AssociationSet>
-          <AssociationSet Name="FK__QuestionA__Quest__38996AB5" Association="Self.FK__QuestionA__Quest__38996AB5">
-            <End Role="QuestionDone" EntitySet="QuestionDones" />
-            <End Role="QuestionAnswerDone" EntitySet="QuestionAnswerDones" />
-          </AssociationSet>
-          <AssociationSet Name="FK__QuestionD__Qtype__33D4B598" Association="Self.FK__QuestionD__Qtype__33D4B598">
-            <End Role="QuestionType" EntitySet="QuestionTypes" />
-            <End Role="QuestionDone" EntitySet="QuestionDones" />
           </AssociationSet>
           <AssociationSet Name="FK__QuestionD__Qtype__5441852A" Association="Self.FK__QuestionD__Qtype__5441852A">
             <End Role="QuestionType" EntitySet="QuestionTypes" />
@@ -1508,7 +1481,162 @@
             <End Role="Student" EntitySet="Students" />
             <End Role="Student_QuizDone" EntitySet="Student_QuizDone" />
           </AssociationSet>
+          <EntitySet Name="MatchQuestionDones" EntityType="inclassvoting01Model.MatchQuestionDone" />
+          <EntitySet Name="QuestionDones" EntityType="inclassvoting01Model.QuestionDone" />
+          <AssociationSet Name="FK__MatchQues__Chapt__03F0984C" Association="inclassvoting01Model.FK__MatchQues__Chapt__03F0984C">
+            <End Role="Chapter" EntitySet="Chapters" />
+            <End Role="MatchQuestionDone" EntitySet="MatchQuestionDones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Chapt__7F2BE32F" Association="inclassvoting01Model.FK__QuestionD__Chapt__7F2BE32F">
+            <End Role="Chapter" EntitySet="Chapters" />
+            <End Role="QuestionDone" EntitySet="QuestionDones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionA__Quest__06CD04F7" Association="inclassvoting01Model.FK__QuestionA__Quest__06CD04F7">
+            <End Role="QuestionDone" EntitySet="QuestionDones" />
+            <End Role="QuestionAnswerDone" EntitySet="QuestionAnswerDones" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Qtype__01142BA1" Association="inclassvoting01Model.FK__QuestionD__Qtype__01142BA1">
+            <End Role="QuestionType" EntitySet="QuestionTypes" />
+            <End Role="QuestionDone" EntitySet="QuestionDones" />
+          </AssociationSet>
+          <EntitySet Name="Admins" EntityType="inclassvoting01Model.Admin" />
+          <EntitySet Name="Passage_Done" EntityType="inclassvoting01Model.Passage_Done" />
+          <AssociationSet Name="FK__Passage_D__Chapt__2E1BDC42" Association="inclassvoting01Model.FK__Passage_D__Chapt__2E1BDC42">
+            <End Role="Chapter" EntitySet="Chapters" />
+            <End Role="Passage_Done" EntitySet="Passage_Done" />
+          </AssociationSet>
+          <AssociationSet Name="FK__QuestionD__Passa__35BCFE0A" Association="inclassvoting01Model.FK__QuestionD__Passa__35BCFE0A">
+            <End Role="Passage_Done" EntitySet="Passage_Done" />
+            <End Role="QuestionDone" EntitySet="QuestionDones" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="MatchQuestionDone">
+          <Key>
+            <PropertyRef Name="M_DoneID" />
+          </Key>
+          <Property Name="M_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChapterID" Type="Int32" />
+          <Property Name="ColumnA" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ColumnB" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Solution" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="Time" Type="Int32" />
+          <Property Name="StudentReceive" Type="Int32" />
+          <Property Name="CorrectNumber" Type="Int32" />
+          <NavigationProperty Name="Chapter" Relationship="inclassvoting01Model.FK__MatchQues__Chapt__03F0984C" FromRole="MatchQuestionDone" ToRole="Chapter" />
+        </EntityType>
+        <EntityType Name="QuestionDone">
+          <Key>
+            <PropertyRef Name="Q_DoneID" />
+          </Key>
+          <Property Name="Q_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChapterID" Type="Int32" />
+          <Property Name="PassageID" Type="Int32" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Mark" Type="Double" />
+          <Property Name="Time" Type="Int32" />
+          <Property Name="Qtype" Type="Int32" Nullable="false" />
+          <Property Name="MixChoice" Type="Boolean" />
+          <Property Name="GivenWord" Type="Boolean" />
+          <Property Name="ImageData" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="StudentReceive" Type="Int32" />
+          <Property Name="CorrectNumber" Type="Int32" />
+          <NavigationProperty Name="Chapter" Relationship="inclassvoting01Model.FK__QuestionD__Chapt__7F2BE32F" FromRole="QuestionDone" ToRole="Chapter" />
+          <NavigationProperty Name="QuestionAnswerDones" Relationship="inclassvoting01Model.FK__QuestionA__Quest__06CD04F7" FromRole="QuestionDone" ToRole="QuestionAnswerDone" />
+          <NavigationProperty Name="QuestionType" Relationship="inclassvoting01Model.FK__QuestionD__Qtype__01142BA1" FromRole="QuestionDone" ToRole="QuestionType" />
+          <NavigationProperty Name="Passage_Done" Relationship="inclassvoting01Model.FK__QuestionD__Passa__35BCFE0A" FromRole="QuestionDone" ToRole="Passage_Done" />
+        </EntityType>
+        <Association Name="FK__MatchQues__Chapt__03F0984C">
+          <End Type="inclassvoting01Model.Chapter" Role="Chapter" Multiplicity="0..1" />
+          <End Type="inclassvoting01Model.MatchQuestionDone" Role="MatchQuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Chapter">
+              <PropertyRef Name="ChID" />
+            </Principal>
+            <Dependent Role="MatchQuestionDone">
+              <PropertyRef Name="ChapterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Chapt__7F2BE32F">
+          <End Type="inclassvoting01Model.Chapter" Role="Chapter" Multiplicity="0..1" />
+          <End Type="inclassvoting01Model.QuestionDone" Role="QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Chapter">
+              <PropertyRef Name="ChID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="ChapterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionA__Quest__06CD04F7">
+          <End Type="inclassvoting01Model.QuestionDone" Role="QuestionDone" Multiplicity="1" />
+          <End Type="inclassvoting01Model.QuestionAnswerDone" Role="QuestionAnswerDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuestionDone">
+              <PropertyRef Name="Q_DoneID" />
+            </Principal>
+            <Dependent Role="QuestionAnswerDone">
+              <PropertyRef Name="QuestionID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Qtype__01142BA1">
+          <End Type="inclassvoting01Model.QuestionType" Role="QuestionType" Multiplicity="1" />
+          <End Type="inclassvoting01Model.QuestionDone" Role="QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuestionType">
+              <PropertyRef Name="QTypeID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="Qtype" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Admin">
+          <Key>
+            <PropertyRef Name="AID" />
+          </Key>
+          <Property Name="Username" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="AID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Passage_Done">
+          <Key>
+            <PropertyRef Name="P_DoneID" />
+          </Key>
+          <Property Name="P_DoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChapterID" Type="Int32" />
+          <Property Name="Text" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PassageImage" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Chapter" Relationship="inclassvoting01Model.FK__Passage_D__Chapt__2E1BDC42" FromRole="Passage_Done" ToRole="Chapter" />
+          <NavigationProperty Name="QuestionDones" Relationship="inclassvoting01Model.FK__QuestionD__Passa__35BCFE0A" FromRole="Passage_Done" ToRole="QuestionDone" />
+        </EntityType>
+        <Association Name="FK__Passage_D__Chapt__2E1BDC42">
+          <End Type="inclassvoting01Model.Chapter" Role="Chapter" Multiplicity="0..1" />
+          <End Type="inclassvoting01Model.Passage_Done" Role="Passage_Done" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Chapter">
+              <PropertyRef Name="ChID" />
+            </Principal>
+            <Dependent Role="Passage_Done">
+              <PropertyRef Name="ChapterID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__QuestionD__Passa__35BCFE0A">
+          <End Type="inclassvoting01Model.Passage_Done" Role="Passage_Done" Multiplicity="0..1" />
+          <End Type="inclassvoting01Model.QuestionDone" Role="QuestionDone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Passage_Done">
+              <PropertyRef Name="P_DoneID" />
+            </Principal>
+            <Dependent Role="QuestionDone">
+              <PropertyRef Name="PassageID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1556,21 +1684,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="MatchQuestionDones">
-            <EntityTypeMapping TypeName="inclassvoting01Model.MatchQuestionDone">
-              <MappingFragment StoreEntitySet="MatchQuestionDone">
-                <ScalarProperty Name="M_DoneID" ColumnName="M_DoneID" />
-                <ScalarProperty Name="ChapterName" ColumnName="ChapterName" />
-                <ScalarProperty Name="ColumnA" ColumnName="ColumnA" />
-                <ScalarProperty Name="ColumnB" ColumnName="ColumnB" />
-                <ScalarProperty Name="Solution" ColumnName="Solution" />
-                <ScalarProperty Name="Mark" ColumnName="Mark" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="StudentReceive" ColumnName="StudentReceive" />
-                <ScalarProperty Name="CorrectNumber" ColumnName="CorrectNumber" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Passages">
             <EntityTypeMapping TypeName="inclassvoting01Model.Passage">
               <MappingFragment StoreEntitySet="Passage">
@@ -1581,24 +1694,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Passage_Done">
-            <EntityTypeMapping TypeName="inclassvoting01Model.Passage_Done">
-              <MappingFragment StoreEntitySet="Passage_Done">
-                <ScalarProperty Name="P_DoneID" ColumnName="P_DoneID" />
-                <ScalarProperty Name="ChapterName" ColumnName="ChapterName" />
-                <ScalarProperty Name="Text" ColumnName="Text" />
-                <ScalarProperty Name="PassageImage" ColumnName="PassageImage" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Polls">
             <EntityTypeMapping TypeName="inclassvoting01Model.Poll">
               <MappingFragment StoreEntitySet="Poll">
+                <ScalarProperty Name="IsDoing" ColumnName="IsDoing" />
+                <ScalarProperty Name="Polltype" ColumnName="Polltype" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="PollName" ColumnName="PollName" />
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
                 <ScalarProperty Name="PollID" ColumnName="PollID" />
                 <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
                 <ScalarProperty Name="Question" ColumnName="Question" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="IsDone" ColumnName="IsDone" />
                 <ScalarProperty Name="TotalParticipian" ColumnName="TotalParticipian" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1646,24 +1753,6 @@
                 <ScalarProperty Name="QuestionID" ColumnName="QuestionID" />
                 <ScalarProperty Name="Text" ColumnName="Text" />
                 <ScalarProperty Name="IsCorrect" ColumnName="IsCorrect" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="QuestionDones">
-            <EntityTypeMapping TypeName="inclassvoting01Model.QuestionDone">
-              <MappingFragment StoreEntitySet="QuestionDone">
-                <ScalarProperty Name="Q_DoneID" ColumnName="Q_DoneID" />
-                <ScalarProperty Name="ChapterName" ColumnName="ChapterName" />
-                <ScalarProperty Name="PassageID" ColumnName="PassageID" />
-                <ScalarProperty Name="Text" ColumnName="Text" />
-                <ScalarProperty Name="Mark" ColumnName="Mark" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-                <ScalarProperty Name="Qtype" ColumnName="Qtype" />
-                <ScalarProperty Name="MixChoice" ColumnName="MixChoice" />
-                <ScalarProperty Name="GivenWord" ColumnName="GivenWord" />
-                <ScalarProperty Name="ImageData" ColumnName="ImageData" />
-                <ScalarProperty Name="StudentReceive" ColumnName="StudentReceive" />
-                <ScalarProperty Name="CorrectNumber" ColumnName="CorrectNumber" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1784,6 +1873,58 @@
                 <ScalarProperty Name="TID" ColumnName="TID" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MatchQuestionDones">
+            <EntityTypeMapping TypeName="inclassvoting01Model.MatchQuestionDone">
+              <MappingFragment StoreEntitySet="MatchQuestionDone">
+                <ScalarProperty Name="CorrectNumber" ColumnName="CorrectNumber" />
+                <ScalarProperty Name="StudentReceive" ColumnName="StudentReceive" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="Solution" ColumnName="Solution" />
+                <ScalarProperty Name="ColumnB" ColumnName="ColumnB" />
+                <ScalarProperty Name="ColumnA" ColumnName="ColumnA" />
+                <ScalarProperty Name="ChapterID" ColumnName="ChapterID" />
+                <ScalarProperty Name="M_DoneID" ColumnName="M_DoneID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuestionDones">
+            <EntityTypeMapping TypeName="inclassvoting01Model.QuestionDone">
+              <MappingFragment StoreEntitySet="QuestionDone">
+                <ScalarProperty Name="CorrectNumber" ColumnName="CorrectNumber" />
+                <ScalarProperty Name="StudentReceive" ColumnName="StudentReceive" />
+                <ScalarProperty Name="ImageData" ColumnName="ImageData" />
+                <ScalarProperty Name="GivenWord" ColumnName="GivenWord" />
+                <ScalarProperty Name="MixChoice" ColumnName="MixChoice" />
+                <ScalarProperty Name="Qtype" ColumnName="Qtype" />
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Mark" ColumnName="Mark" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="PassageID" ColumnName="PassageID" />
+                <ScalarProperty Name="ChapterID" ColumnName="ChapterID" />
+                <ScalarProperty Name="Q_DoneID" ColumnName="Q_DoneID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Admins">
+            <EntityTypeMapping TypeName="inclassvoting01Model.Admin">
+              <MappingFragment StoreEntitySet="Admin">
+                <ScalarProperty Name="AID" ColumnName="AID" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Passage_Done">
+            <EntityTypeMapping TypeName="inclassvoting01Model.Passage_Done">
+              <MappingFragment StoreEntitySet="Passage_Done">
+                <ScalarProperty Name="PassageImage" ColumnName="PassageImage" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="ChapterID" ColumnName="ChapterID" />
+                <ScalarProperty Name="P_DoneID" ColumnName="P_DoneID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

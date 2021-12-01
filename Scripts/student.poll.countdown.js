@@ -30,8 +30,8 @@
         if (distance <= 0) {
             clearInterval(x);
             document.getElementById("time").innerHTML = "EXPIRED";
-            document.getElementById("btnSubmit").disabled = true;
-            document.getElementById("formPaperQuiz").submit();
+            /*document.getElementById("btnSubmit").disabled = true;*/
+            document.getElementById("formSubmitPoll").submit();
         }
     }, 1000);
 
@@ -44,12 +44,3 @@
         }
     }
 };
-
-function submitPaper() {
-    console.log("bye");
-    var time = document.getElementById("time");
-    time.setAttribute('data-time', 0);
-    document.getElementById("time").innerHTML = "EXPIRED";
-    document.getElementById("btnSubmit").disabled = true;
-    document.getElementById("formPaperQuiz").submit();
-}

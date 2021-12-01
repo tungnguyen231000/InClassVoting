@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
-    console.log('Active');
-    /*======= Start Test Dialog ===========*/
+   /* console.log('Active');
+   // ======= Start Test Dialog ===========
     $('.start-test').click(function () {
 
         //phần tử ".delete-dialog"
@@ -23,21 +23,24 @@
         });
         return false;
     });
-    /*======= End Start Test Dialog =========*/
+   // ======= End Start Test Dialog =========
 
 
-    /*Check radio buton 1 time*/
+   // Check radio buton 1 time
         console.log('Active2');
-        /*Check radio buton 1 time*/
+        //Check radio buton 1 time
         $('input[type="radio"]').on('change', function () {
             $('input[type="radio"]').not(this).prop('checked', false);
         });
-    /*End Check radio buton 1 time*/
-
+   // End Check radio buton 1 time
+*/
 });
 
-/*Copy Link function*/
-(function () {
+
+
+
+//Copy Link function
+/*(function () {
     var copyButton = document.querySelector('.copy button');
     var copyInput = document.querySelector('.copy input');
 
@@ -52,5 +55,14 @@
     });
 
 })();
-/*End Copy Link function*/
+//End Copy Link function
 
+
+
+function copyLink() {
+    var copyText = document.getElementById("quizLink");
+
+    copyText.select();
+    navigator.clipboard.writeText(copyText.value);
+
+}*/

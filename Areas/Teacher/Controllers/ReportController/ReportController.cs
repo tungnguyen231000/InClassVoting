@@ -147,11 +147,11 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             int type = int.Parse(searchType);
             if (type == 1)
             {
-                return RedirectToAction("ReportByStudent", new { @qzid = qzid, @searchText = searchText });
+                return RedirectToAction("ReportByStudent", new { qzid = qzid, searchText = searchText });
             }
             else
             {
-                return RedirectToAction("ReportByQuestion", new { @qzid = qzid, @searchText = searchText });
+                return RedirectToAction("ReportByQuestion", new { qzid = qzid, searchText = searchText });
             }
         }
 
@@ -173,10 +173,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
 
             //get student answer
             var student_Answers = db.Student_Answer.Where(sa => sa.QuizDoneID == student_quiz.QuizDoneID).ToList();
-            foreach (var st in student_Answers)
-            {
-                Debug.WriteLine(st.StudentID + "==" + st.QuestionDoneID + "===" + st.Answer + "==" + st.IsCorrect);
-            }
+           
 
             Dictionary<int, string> questionSet = new Dictionary<int, string>();
             Dictionary<int, string> matchingSet = new Dictionary<int, string>();
@@ -186,6 +183,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             List<QuestionDone> shortAnswerQuestionsList = new List<QuestionDone>();
             List<QuestionDone> indicateMistakeQuestionsList = new List<QuestionDone>();
             List<MatchQuestionDone> matchQuestionsList = new List<MatchQuestionDone>();
+            List<Passage_Done> passageList = new List<Passage_Done>();
 
             //get question that student received
             foreach (string questions in questionReceived)
@@ -217,8 +215,23 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 }
                 else if (quest.Qtype == 2)
                 {
-
                     readingQuestionsList.Add(quest);
+                    //add passage to a list
+                    var passage = quest.Passage_Done;
+                    bool existed = false;
+                    foreach (var p in passageList)
+                    {
+                        if (passage.P_DoneID == p.P_DoneID)
+                        {
+                            existed = true;
+
+                        }
+
+                    }
+                    if (!existed)
+                    {
+                        passageList.Add(passage);
+                    }
                 }
                 else if (quest.Qtype == 3)
                 {
@@ -251,6 +264,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             ViewBag.ShortAnswerQuestion = shortAnswerQuestionsList;
             ViewBag.IndicateMistakeQuestion = indicateMistakeQuestionsList;
             ViewBag.ReadingQuestion = readingQuestionsList;
+            ViewBag.PassageList = passageList;
             ViewBag.MatchingQuestion = matchQuestionsList;
             ViewBag.Percentage = percentage;
             ViewBag.StudentAnswer = student_Answers;

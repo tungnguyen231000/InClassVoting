@@ -1,10 +1,12 @@
-﻿@*
-    @using System.Web.Mvc;*@
+﻿
 @using System.Text.RegularExpressions;
 @{
     ViewBag.Title = "DoQuizPaperTest";
     Layout = "~/Areas/Student/Views/Shared/_Layout.cshtml";
 }
+
+
+<link type="text/css" href="~/Content/sidebar.css" rel="stylesheet" />
 
 <!-- sidebar content -->
 <div id="sideBar" class="relative flex flex-col flex-wrap bg-white border-r border-gray-300 p-6 flex-none w-64 animated faster">
@@ -114,7 +116,7 @@
                     {
                         qCount++;
                         string dataOpt = "match-" + qCount;
-                        <div class="grid-item"><button data-option="@dataOpt" class="btn bg-gray-200 w-full">qCount</button></div>
+                        <div class="grid-item"><button data-option="@dataOpt" class="btn bg-gray-200 w-full">@qCount</button></div>
                     }
                 </div>
             </div>
@@ -174,7 +176,7 @@
                     {
                         countMultipleQuestion++;
                         <div class="w-full items-center bg-gray p-6 ">
-                            <span>
+                            <span class="question-num">
                                 Question @countMultipleQuestion:
                             </span>
                             <span></span>
@@ -254,88 +256,105 @@
                 </div>
 
                 <div class="w-full bg-gray p-6 border border-black-400">
+
                     @{ int countReadingQuestion = 0;
+                        int countPassage = 0;
                     }
-                    @foreach (var question in ViewBag.ReadingQuestion)
+                    @foreach (var passage in ViewBag.PassageList)
                     {
-                        countReadingQuestion++;
-                        <div>
-                            <div class="w-full items-center bg-gray p-6">
-                                <span>Question @countReadingQuestion:</span>
-                            </div>
-
-                            <div class="w-full items-center bg-gray  ">
-                                @if (question.PassageID != null)
-                                {
-                                    <div>
-                                        <div contenteditable="false" class="w-full items-center bg-gray p-6 ">
-                                            @question.Passage_Done.Text
-
-                                        </div>
-                                    </div>
-                                }
-                                @if (question.ImageData != null)
-                                {
-                                    var base64 = Convert.ToBase64String(question.ImageData);
-                                    var imgSrc = string.Format("data:image/png;base64,{0}", base64);
-                                    <div class="w-full bg-gray p-6">
-                                        <img src="@imgSrc" class="block ml-auto mr-auto" alt="pic" />
-                                    </div>
-                                }
-                            </div>
-                            <div class="w-full items-center bg-gray ">
-                                <div class="">
-                                    <div contenteditable="false" class="w-full items-center bg-gray p-6 font-sans font-semibold ">
-                                        @question.Text
-                                    </div>
-
-                                    <input type="hidden" name="qid" value="@question.Q_DoneID" />
-                                    <input type="hidden" name="qtype" value="2" />
-                                </div>
-
-                            </div>
-
-                            <div class="w-full items-center bg-gray ">
-                                <table class="w-full border-spacing-2">
-                                    @{
-                                        int countAnswer = 0;
-                                    }
-                                    @foreach (var answers in question.QuestionAnswerDones)
-                                    {
-                                        countAnswer++;
-                                        string dataOpt = "reading-" + countReadingQuestion;
-                                        <tr>
-                                            <td class="w-2">
-                                                @*<input type="hidden" name="numberOfAnswer" value="@countAnswer">*@
-                                                <input type="checkbox" id="@dataOpt" name="cbReadingOption" value="@answers.QA_DoneID">
-                                            </td>
-                                            <td>
-                                                @if (countAnswer == 1)
-                                                {<label>A.</label>}
-                                                else if (countAnswer == 2)
-                                                {<label>B.</label>}
-                                                else if (countAnswer == 3)
-                                                {<label>C.</label>}
-                                                else if (countAnswer == 4)
-                                                {<label>D.</label>}
-                                                else if (countAnswer == 5)
-                                                {<label>E.</label>}
-                                                else if (countAnswer == 6)
-                                                {<label>F.</label>}
-                                                &nbsp;
-                                                <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="readingOption" value="@answers.Text" readonly>
-                                            </td>
-                                        </tr>
-                                    }
-                                </table>
-                            </div>
-                            @if (countReadingQuestion < ViewBag.ReadingQuestion.Count)
+                        countPassage++;
+                        <div class="w-full items-center bg-gray p-6">
+                            <span class="h6">Passage @countPassage:</span>
+                        </div>
+                        <div class="w-full items-center bg-gray  ">
+                            @if (passage.Text != null && !passage.Text.Equals(""))
                             {
-                                <hr />
+                                <div>
+                                    <div contenteditable="false" class="w-full items-center bg-gray p-6 ">
+                                        @passage.Text
+
+                                    </div>
+                                </div>
+                            }
+                            @if (passage.PassageImage != null)
+                            {
+                                var base64 = Convert.ToBase64String(passage.PassageImage);
+                                var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                                <div class="w-full bg-gray p-6">
+                                    <img src="@imgSrc" class="block ml-auto mr-auto" alt="pic" />
+                                </div>
+                            }
+                        </div>
+
+                        foreach (var question in ViewBag.ReadingQuestion)
+                        {
+                            if (question.PassageID == passage.P_DoneID)
+                            {
+                                countReadingQuestion++;
+                                <div>
+                                    <div class="w-full items-center bg-gray p-6">
+                                        <span class="question-num">Question @countReadingQuestion:</span>
+                                    </div>
+
+                                    <div class="w-full items-center bg-gray ">
+                                        <div class="">
+                                            <div contenteditable="false" class="w-full items-center bg-gray p-6 font-sans font-semibold ">
+                                                @question.Text
+                                            </div>
+
+                                            <input type="hidden" name="qid" value="@question.Q_DoneID" />
+                                            <input type="hidden" name="qtype" value="2" />
+                                        </div>
+
+                                    </div>
+
+                                    <div class="w-full items-center bg-gray ">
+                                        <table class="w-full border-spacing-2">
+                                            @{
+                                                int countAnswer = 0;
+                                            }
+                                            @foreach (var answers in question.QuestionAnswerDones)
+                                            {
+                                                countAnswer++;
+                                                string dataOpt = "reading-" + countReadingQuestion;
+                                                <tr>
+                                                    <td class="w-2">
+                                                        @*<input type="hidden" name="numberOfAnswer" value="@countAnswer">*@
+                                                        <input type="checkbox" id="@dataOpt" name="cbReadingOption" value="@answers.QA_DoneID">
+                                                    </td>
+                                                    <td>
+                                                        @if (countAnswer == 1)
+                                                        {<label>A.</label>}
+                                                        else if (countAnswer == 2)
+                                                        {<label>B.</label>}
+                                                        else if (countAnswer == 3)
+                                                        {<label>C.</label>}
+                                                        else if (countAnswer == 4)
+                                                        {<label>D.</label>}
+                                                        else if (countAnswer == 5)
+                                                        {<label>E.</label>}
+                                                        else if (countAnswer == 6)
+                                                        {<label>F.</label>}
+                                                        &nbsp;
+                                                        <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="readingOption" value="@answers.Text" readonly>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </table>
+                                    </div>
+
+
+                                </div>
                             }
 
-                        </div>
+                        }
+                        if (countPassage < ViewBag.PassageList.Count)
+                        {
+                            <hr />
+                        }
+
                     }
+
                 </div>
             }
 
@@ -359,10 +378,9 @@
                         countFillBlankQuestion++;
                         string dataOpt = "fillblank-" + countFillBlankQuestion;
                         <div class="w-full items-center bg-gray p-6 ">
-                            <span>
+                            <span class="question-num">
                                 Question @countFillBlankQuestion:
                             </span>
-                            <span></span>
                         </div>
                         <input type="hidden" name="qid" value="@question.Q_DoneID" />
                         <input type="hidden" name="qtype" value="3" />
@@ -375,7 +393,7 @@
                                     <span>@questionSplit[i]</span>
                                     if (i < questionSplit.Length - 1)
                                     {
-                                        <input type="text" id="@dataOpt" value="" style="width: 15%; color:blue"  class="fill-input" name="fillBankNotGivenAnswer" placeholder="...">
+                                        <input type="text" id="@dataOpt" value="" style="width: 15%; color:blue" class="fill-input" name="fillBankNotGivenAnswer" placeholder="...">
                                     }
 
                                 }
@@ -399,7 +417,7 @@
                                     if (i < questionSplit.Length - 1)
                                     {
                                         <select id="@dataOpt" style="width:15%;color:blue" name="fillBankGivenAnswer" class="fillblank-question fill-input">
-                                            <option label=""></option>
+                                            <option value="" label="" selected></option>
                                             @{
                                                 string[] options = answerList[i].Split(new char[] { '~' });
                                             }
@@ -455,8 +473,9 @@
                         string dataOpt = "short-" + countShortAnsQuestion;
                         <div>
                             <div class="w-full items-center bg-gray p-6 ">
-                                <span>
-                                    Question @countShortAnsQuestion: <span />
+                                <span class="question-num">
+                                    Question @countShortAnsQuestion:
+                                </span>
                             </div>
                             <div class="w-full items-center bg-gray ">
                                 <div>
@@ -502,51 +521,74 @@
             <!--=======End Short Answer=======-->
 
             <!--======Matching=======-->
-            <div>
-                @*<div class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
-                        <div class="">
-                            <span class="h6">Matching</span>
-                        </div>
+            if (ViewBag.MatchingQuestion.Count != 0)
+            {
+                <div id="matching-test" class="w-full items-center bg-gray p-6 mt-6 border border-black-400 bg-gray-200">
+                    <div class="">
+                        <span class="h6">Matching</span>
                     </div>
+                </div>
 
-                    <div class="block border border-black-400 p-6">
-                        <div id="matching-test" class="w-full items-center bg-gray p-6 ">
-                            <span>
-                                Question 1:  <span />
-                                <span>Matching each of following card:</span>
+                <div class="block border border-black-400 p-6">
+                    @{ int countMatchQuestion = 0;
+                    }
+                    @foreach (var question in ViewBag.MatchingQuestion)
+                    {
+                        countMatchQuestion++;
+                        string dataOpt = "match-" + countMatchQuestion;
+                        <input type="hidden" name="mid" value="@question.M_DoneID" />
+                        <div class="w-full items-center bg-gray p-6 ">
+                            <span class="question-num">
+                                Question @countMatchQuestion:
+                            </span>
                         </div>
                         <div class="w-full bg-gray p-6">
                             <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
                                 <div class="w-full">
-                                    <ul class="w-1/2 float-left">
+                                    <div class="flex items-center justify-center column-gap inline-block">
+                                        <div class="grid grid-cols-1 px-2 w-1/12">
+                                            <span>Solution</span>
+                                        </div>
+                                    </div>
+                                    <ul id="table-matching" class="w-full">
 
-                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your name?" /></li>
-
-                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How old are you?" /></li>
-
-                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="What is your favorite?" /></li>
-
-                                        <li><input type="text" class="text-center my-2 py-2 w-full  border border-black-400 bg-blue-200 pointer-events-none" name="name" value="How much?" /></li>
-
-                                    </ul>
-
-                                    <ul id="matching-change-table" class="w-1/2 float-right">
-
-                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="10000$" /></li>
-
-                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="Playing Game" /></li>
-
-                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="Thắng" /></li>
-
-                                        <li id="matching-1"><input type="text" class="text-center my-2 py-2 w-full ui-state-default border border-black-400 bg-green-200 pointer-events-none" name="name" value="16" /></li>
-
+                                        <li id="matching-option" class="w-full flex">
+                                            <div class="my-2 w-6/12 px-4">
+                                                <!--Textarea bên trái-->
+                                                <textarea id="matching-left" name="name" class="border w-full p-2 border-black-400 bg-white" spellcheck="false" readonly>@question.ColumnA</textarea>
+                                            </div>
+                                            <!--List input ở giữa-->
+                                            <div id="table-solution" class="grid grid-cols-1 border border-black-400 mt-2 w-1/12 grid-rows-6">
+                                            </div>
+                                            <div class="my-2 w-6/12 px-4">
+                                                <!--Textarea bên phải-->
+                                                <textarea id="matching-right" class="border w-full p-2 border-black-400 bg-white" name="name" spellcheck="false" readonly>@question.ColumnB</textarea>
+                                            </div>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
+                            <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                                <span class="mx-2 w-1/12 text-center">Number:</span>
+                                <span class="mx-2 w-1/12 text-center">Letter:</span>
+                            </div>
+                            <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                                <input type="number" name="name" id="number" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
+                                <input type="text" name="name" id="letter" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
+                            </div>
+                            <div id="@dataOpt" class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                                <a id="add-matching" class="btn bg-blue-200 mx-2 w-1/12" name="add">Add solution</a>
+                                <a id="remove-matching" class="btn bg-blue-200 mx-2 w-1/12" name="remove">Remove Solution</a>
+                            </div>
+                            @if (countMatchQuestion < ViewBag.MatchingQuestion.Count)
+                            {
+                                <input type="hidden" name="solution" value="|" />
+                                <hr />
+                            }
                         </div>
-                    </div>
-                *@
-            </div>
+                    }
+                </div>
+            }
             <!--=======End Matching=======-->
 
             <!--=======Indicate Mistake=======-->
@@ -564,7 +606,7 @@
                     {
                         countIndicateQuestion++;
                         <div class="w-full items-center bg-gray p-6 ">
-                            <span>Question @countIndicateQuestion:<span />
+                            <span class="question-num">Question @countIndicateQuestion:</span>
                         </div>
                         <div class="w-full items-center bg-gray  ">
                             <div>
@@ -646,6 +688,5 @@
 <script src="~/Scripts/jqueryui/jquery-ui.min.js"></script>
 <script src="~/Scripts/countdown.js"></script>
 <script src="~/Scripts/sidebar.js"></script>
-<script src="~/Scripts/more-option.js"></script>
 
 

@@ -1,0 +1,466 @@
+﻿@using System.Text.RegularExpressions;
+@{
+    ViewBag.Title = "PreviewQuizQuestionByQuestion";
+    Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/Test.css">
+<link rel="stylesheet" type="text/css" href="~/Content/Slide.css">
+
+<div class="bg-gray-100 flex-1 p-6 md:mt-16">
+    <div class="grid grid-cols-1 w-full ">
+        <div class="topcontent w-full items-center bg-gray p-6 ">
+            <h1 class="h4 text-center">@ViewBag.Quiz.QuizName</h1>
+        </div>
+
+
+        <!--Form Test-->
+        <div class="container">
+            <form action="/" method="post" id="formOrder">
+                <div class="navigation">
+                    <input type="button" id="previousOrder" class="float-left btn btn-bs-primary inline-block mt-4 previous" name="name" value="Previous" />
+                    <input type="button" id="nextOrder" class="float-right btn btn-bs-primary next inline-block mt-4" name="name" value="Next" />
+                </div>
+                <div class="sarousel-container" style="">
+                    @{
+                        int countQuestion = 0;
+                    }
+                    @if (ViewBag.QuestionList.Count != 0)
+                    {
+                        foreach (var question in ViewBag.QuestionList)
+                        {
+                            countQuestion++;
+                            <div class="image-fade fade">
+                                <div class="w-full items-center bg-gray p-6 border border-black-400 rounded-l">
+                                    <div class="w-full items-center bg-gray p-6 mb-6">
+                                        <div class="float-left">
+                                            <span class="question-num">Question @countQuestion </span>
+                                        </div>
+
+                                        <!--Time CountDown-->
+                                        @{
+                                            int? time = question.Time;
+                                            string second = "00";
+                                            string minute = "00";
+                                            if ((time % 60) != 0)
+                                            {
+                                                if (time % 60 < 10)
+                                                {
+                                                    second = "0" + (time % 60);
+                                                }
+                                                else
+                                                {
+                                                    second = (time % 60).ToString();
+                                                }
+                                            }
+                                            if ((time / 60) != 0)
+                                            {
+                                                if (time / 60 < 10)
+                                                {
+                                                    minute = "0" + (time / 60);
+                                                }
+                                                else
+                                                {
+                                                    minute = (time / 60).ToString();
+                                                }
+                                            }
+                                            string timeDisplay = minute + ":" + second;
+                                        }
+                                        <div class=" float-right">
+                                            <span class="bg-gray-100 h5 pl-3 mt-2">Time:</span>
+
+                                            <span class="h4 pl-3 w-auto count-time" size="3" type="text" id="timeDemo" name="time" placeholder="Time">@timeDisplay</span>
+                                        </div>
+                                        <!--End Time CountDown-->
+
+                                    </div>
+                                    <!--Mutiple Question-->
+                                    @if (question.Qtype == 1)
+                                    {
+                                        <div class="w-full items-center bg-gray  ">
+                                            <div>
+                                                <div contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold">
+                                                    @question.Text
+                                                </div>
+                                                @if (question.ImageData != null)
+                                                {
+                                                    var base64 = Convert.ToBase64String(question.ImageData);
+                                                    var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                                                    <div class="w-full bg-gray p-6">
+                                                        <img src="@imgSrc" class="block ml-auto mr-auto" alt="pic" />
+                                                    </div>
+                                                }
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="w-full items-center bg-gray" style="margin-bottom:30px">
+                                            <table class="w-full border-spacing-2">
+                                                @{
+                                                    int countAnswer = 0;
+                                                }
+                                                @foreach (var answers in question.QuestionAnswers)
+                                                {
+                                                    countAnswer++;
+                                                    <tr>
+                                                        <td class="w-2">
+                                                            <input type="checkbox" name="cbMultipleOption">
+                                                        </td>
+                                                        <td>
+                                                            @if (countAnswer == 1)
+                                                            {<label>A.</label>}
+                                                            else if (countAnswer == 2)
+                                                            {<label>B.</label>}
+                                                            else if (countAnswer == 3)
+                                                            {<label>C.</label>}
+                                                            else if (countAnswer == 4)
+                                                            {<label>D.</label>}
+                                                            else if (countAnswer == 5)
+                                                            {<label>E.</label>}
+                                                            else if (countAnswer == 6)
+                                                            {<label>F.</label>}
+                                                            &nbsp;
+                                                            <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="multipleOption" value="@answers.Text" readonly>
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                            </table>
+                                        </div>
+                                    }
+                                    else if (question.Qtype == 2)
+                                    {
+                                        <div class="w-full items-center bg-gray p-6">
+                                            <span class="h6">Passage:</span>
+                                        </div>
+                                        <div class="w-full items-center bg-gray  ">
+                                            @if (question.Passage.Text != null && !question.Passage.Text.Equals(""))
+                                            {
+                                                <div>
+                                                    <div contenteditable="false" class="w-full items-center bg-gray p-6 ">
+                                                        @question.Passage.Text
+
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (question.Passage.PassageImage != null)
+                                            {
+                                                var base64 = Convert.ToBase64String(question.Passage.PassageImage);
+                                                var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                                                <div class="w-full bg-gray p-6">
+                                                    <img src="@imgSrc" class="block ml-auto mr-auto" alt="pic" />
+                                                </div>
+                                            }
+                                        </div>
+                                        <div>
+                                            <div class="w-full items-center bg-gray p-6">
+                                            </div>
+                                            <div class="w-full items-center bg-gray ">
+                                                <div class="">
+                                                    <div contenteditable="false" class="w-full items-center bg-gray p-6 font-sans font-semibold ">
+                                                        @question.Text
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="w-full items-center bg-gray ">
+                                                <table class="w-full border-spacing-2">
+                                                    @{
+                                                        int countAnswer = 0;
+                                                    }
+                                                    @foreach (var answers in question.QuestionAnswers)
+                                                    {
+                                                        countAnswer++;
+                                                        <tr>
+                                                            <td class="w-2">
+
+                                                                <input type="checkbox" name="cbReadingOption">
+                                                            </td>
+                                                            <td>
+                                                                @if (countAnswer == 1)
+                                                                {<label>A.</label>}
+                                                                else if (countAnswer == 2)
+                                                                {<label>B.</label>}
+                                                                else if (countAnswer == 3)
+                                                                {<label>C.</label>}
+                                                                else if (countAnswer == 4)
+                                                                {<label>D.</label>}
+                                                                else if (countAnswer == 5)
+                                                                {<label>E.</label>}
+                                                                else if (countAnswer == 6)
+                                                                {<label>F.</label>}
+                                                                &nbsp;
+                                                                <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="readingOption" value="@answers.Text" readonly>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </table>
+                                            </div>
+
+                                        </div>
+
+                                    }
+                                    else if (question.Qtype == 3)
+                                    {
+                                        if (question.GivenWord == false)
+                                        {
+                                            string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
+                                            <div contenteditable="false" id="fill-content" class="w-full items-center bg-gray p-6 ">
+                                                @for (int i = 0; i < questionSplit.Length; i++)
+                                                {
+                                                    <span>@questionSplit[i]</span>
+                                                    if (i < questionSplit.Length - 1)
+                                                    {
+                                                        <input type="text" value="" style="width: 15%; color:blue" class="fill-input" name="fillBankNotGivenAnswer" placeholder="...">
+                                                    }
+
+                                                }
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            List<string> answerList = new List<string>();
+                                            Regex regex = new Regex(@"\(([^()]+)\)*");
+                                            foreach (Match match in regex.Matches(question.Text))
+                                            {
+                                                string ansList = match.Value;
+                                                string choices = ansList.Trim().Substring(2, ansList.Length - 3);
+                                                answerList.Add(choices);
+                                            }
+                                            string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
+                                            <div contenteditable="false" id="fill-content" class="w-full items-center bg-gray p-6 ">
+                                                @for (int i = 0; i < questionSplit.Length; i++)
+                                                {
+                                                    <span>@questionSplit[i]</span>
+                                                    if (i < questionSplit.Length - 1)
+                                                    {
+                                                        <select style="width:15%;color:blue" name="fillBankGivenAnswer" class="fillblank-question fill-input">
+                                                            <option label=""></option>
+                                                            @{
+                                                                string[] options = answerList[i].Split(new char[] { '~' });
+                                                            }
+                                                            @foreach (string option in options)
+                                                            {
+                                                                if (option.Contains("="))
+                                                                {
+                                                                    string newOpt = option.Substring(1, option.Length - 1);
+                                                                    <option value="@newOpt">@newOpt</option>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <option value="@option">@option</option>
+                                                                }
+
+                                                            }
+                                                        </select>
+                                                    }
+
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    else if (question.Qtype == 4)
+                                    {
+                                        <div class="w-full items-center bg-gray ">
+                                            <div>
+                                                <div class="w-full items-center p-6 ">
+                                                    <div contenteditable="false" class="w-full items-center bg-gray font-semibold">
+                                                        @question.Text
+                                                    </div>
+
+                                                </div>
+                                                @if (question.ImageData != null)
+                                                {
+                                                    var base64 = Convert.ToBase64String(question.ImageData);
+                                                    var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                                                    <div class="w-full bg-gray p-6">
+                                                        <img src="@imgSrc" class="block ml-auto mr-auto" alt="pic" />
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full items-center bg-gray ">
+                                            <table class="w-full border-spacing-2">
+                                                <tr>
+                                                    <td>Answer: &nbsp;<input type="text" style="width:90%" class="txt w-full pl-3" name="txtshortAnswer" placeholder="..."></td>
+                                                </tr>
+
+                                            </table>
+                                        </div>
+                                    }
+                                    else if (question.Qtype == 6)
+                                    {
+                                        <div class="w-full items-center bg-gray  ">
+                                            <div>
+                                                <div contenteditable="false" id="indicate-content" class="w-full items-center bg-gray p-6 ">
+                                                    @{
+                                                        string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
+                                                        List<string> letterRepresent = new List<string>();
+                                                        List<string> underLineWords = new List<string>();
+                                                        Regex regex = new Regex(@"\(([^()]+)\)*");
+                                                        foreach (Match match in regex.Matches(question.Text))
+                                                        {
+                                                            string ansList = match.Value;
+                                                            string choices = ansList.Trim().Substring(1, ansList.Length - 2);
+                                                            string[] letterAndAnswer = choices.Split(new char[] { '-' });
+                                                            letterRepresent.Add(letterAndAnswer[0].Trim());
+                                                            underLineWords.Add(letterAndAnswer[1].Trim());
+                                                        }
+                                                    }
+                                                    @for (int i = 0; i < questionSplit.Length; i++)
+                                                    {
+                                                        <span>@questionSplit[i]</span>
+                                                        if (i < questionSplit.Length - 1)
+                                                        {
+                                                            string letter = "(" + letterRepresent[i] + ")";
+                                                            <span style="color:blue">@letter</span> <u>@underLineWords[i]</u>
+                                                        }
+
+                                                    }
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="w-full items-center bg-gray">
+                                            <table class="w-full border-spacing-2">
+                                                @{
+                                                    int countAnswer = 0;
+                                                }
+                                                @foreach (var answers in question.QuestionAnswers)
+                                                {
+                                                    countAnswer++;
+                                                    <tr>
+                                                        <td class="w-2">
+                                                            <input type="checkbox" name="cbIndicateOption">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="w-full pl-3 bg-gray-100" name="indicateOption" value="@answers.Text" readonly>
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                            </table>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    @if (ViewBag.MatchingQuestion.Count != 0)
+                    {
+                        foreach (var question in ViewBag.MatchingQuestion)
+                        {
+                            countQuestion++;
+                            <div class="image-fade fade">
+                                <div class="w-full items-center bg-gray p-6 border border-black-400 rounded-l">
+                                    <div class="w-full items-center bg-gray p-6 mb-6">
+                                        <div class="float-left">
+                                            <span class="question-num">Question @countQuestion </span>
+                                        </div>
+
+                                        <!--Time CountDown-->
+                                        @{
+                                            int? time = question.Time;
+                                            string second = "00";
+                                            string minute = "00";
+                                            if ((time % 60) != 0)
+                                            {
+                                                if (time % 60 < 10)
+                                                {
+                                                    second = "0" + (time % 60);
+                                                }
+                                                else
+                                                {
+                                                    second = (time % 60).ToString();
+                                                }
+                                            }
+                                            if ((time / 60) != 0)
+                                            {
+                                                if (time / 60 < 10)
+                                                {
+                                                    minute = "0" + (time / 60);
+                                                }
+                                                else
+                                                {
+                                                    minute = (time / 60).ToString();
+                                                }
+                                            }
+                                            string timeDisplay = minute + ":" + second;
+                                        }
+                                        <div class=" float-right">
+                                            <span class="bg-gray-100 h5 pl-3 mt-2">Time:</span>
+
+                                            <span class="h4 pl-3 w-auto count-time" size="3" type="text" id="timeDemo" name="time" placeholder="Time">@timeDisplay</span>
+                                        </div>
+                                        <!--End Time CountDown-->
+
+                                    </div>
+                                    <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
+                                        <div class="w-full">
+                                            <div class="flex items-center justify-center column-gap inline-block">
+                                                <div class="grid grid-cols-1 px-2 w-1/12">
+                                                    <span>Solution</span>
+                                                </div>
+                                            </div>
+                                            <ul id="table-matching" class="w-full">
+
+                                                <li id="matching-option" class="w-full flex">
+                                                    <div class="my-2 w-6/12 px-4">
+                                                        <!--Textarea bên trái-->
+                                                        <textarea id="matching-left" name="name" class="border w-full p-2 border-black-400 bg-blue-200" spellcheck="false" readonly>@question.ColumnA</textarea>
+                                                    </div>
+                                                    <!--List input ở giữa-->
+                                                    <div id="table-solution" class="grid grid-cols-1 border border-black-400 mt-2 w-1/12 grid-rows-6">
+                                                    </div>
+                                                    <div class="my-2 w-6/12 px-4">
+                                                        <!--Textarea bên phải-->
+                                                        <textarea id="matching-right" class="border w-full p-2 border-black-400 bg-green-200" name="name" spellcheck="false" readonly>@question.ColumnB</textarea>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                                        <span class="mx-2 w-1/12 text-center">Number:</span>
+                                        <span class="mx-2 w-1/12 text-center">Letter:</span>
+                                    </div>
+                                    <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                                        <input type="number" name="name" id="number" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
+                                        <input type="text" name="name" id="letter" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
+                                    </div>
+                                    <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                                        <a id="add-matching" class="btn bg-blue-200 mx-2 w-1/12" name="add">Add solution</a>
+                                        <a id="remove-matching" class="btn bg-blue-200 mx-2 w-1/12" name="remove">Remove Solution</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+
+                </div>
+            </form>
+        </div>
+        <br>
+
+        <!-- The dots/circles in buttom -->
+        <div id="center-dot" style="text-align:center">
+        </div>
+
+
+        <!--End Form Test-->
+
+
+
+    </div>
+
+</div>
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/jqueryui/jquery-ui.min.js"></script>*@

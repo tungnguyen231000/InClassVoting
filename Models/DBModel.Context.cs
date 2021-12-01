@@ -29,15 +29,12 @@ namespace InClassVoting.Models
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<LearningOutcome> LearningOutcomes { get; set; }
         public virtual DbSet<MatchQuestion> MatchQuestions { get; set; }
-        public virtual DbSet<MatchQuestionDone> MatchQuestionDones { get; set; }
         public virtual DbSet<Passage> Passages { get; set; }
-        public virtual DbSet<Passage_Done> Passage_Done { get; set; }
         public virtual DbSet<Poll> Polls { get; set; }
         public virtual DbSet<Poll_Answer> Poll_Answer { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<QuestionAnswer> QuestionAnswers { get; set; }
         public virtual DbSet<QuestionAnswerDone> QuestionAnswerDones { get; set; }
-        public virtual DbSet<QuestionDone> QuestionDones { get; set; }
         public virtual DbSet<QuestionDoneLO> QuestionDoneLOes { get; set; }
         public virtual DbSet<QuestionLO> QuestionLOes { get; set; }
         public virtual DbSet<QuestionType> QuestionTypes { get; set; }
@@ -48,5 +45,9 @@ namespace InClassVoting.Models
         public virtual DbSet<Student_PollAnswer> Student_PollAnswer { get; set; }
         public virtual DbSet<Student_QuizDone> Student_QuizDone { get; set; }
         public virtual DbSet<Teacher> Teachers { get; set; }
+        public virtual DbSet<MatchQuestionDone> MatchQuestionDones { get; set; }
+        public virtual DbSet<QuestionDone> QuestionDones { get; set; }
+        public virtual DbSet<Admin> Admins { get; set; }
+        public virtual DbSet<Passage_Done> Passage_Done { get; set; }
     }
 }

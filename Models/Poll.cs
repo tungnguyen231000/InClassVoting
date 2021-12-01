@@ -24,8 +24,12 @@ namespace InClassVoting.Models
         public int TeacherID { get; set; }
         public string Question { get; set; }
         public Nullable<int> Time { get; set; }
-        public Nullable<bool> IsDone { get; set; }
         public Nullable<int> TotalParticipian { get; set; }
+        public Nullable<System.DateTime> EndTime { get; set; }
+        public string PollName { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public string Polltype { get; set; }
+        public Nullable<bool> IsDoing { get; set; }
     
         public virtual Teacher Teacher { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

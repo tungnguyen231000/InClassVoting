@@ -1,4 +1,7 @@
-﻿@model dynamic
+﻿@model IPagedList<InClassVoting.Models.Question>
+@using PagedList.Mvc;
+@using PagedList;
+
 
 @{
     ViewBag.Title = "CreateNewQuiz";
@@ -118,38 +121,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @{ int countQuestion = 0;}
-                        @if (Model.Questions != null)
+                        @if (Model.Count() != 0)
                         {
-                            foreach (var question in Model.Questions)
-                            {
-                                countQuestion++;
-                                <tr>
-                                    <th scope="row">@countQuestion</th>
-                                    <td><a href="#" type="button">@question.Text </a></td>
-                                    <td>@question.QuestionType.Name</td>
-                                    <td>@question.Mark</td>
-                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@question.QID&qtype=@question.QuestionType.QTypeID&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID&tempName=@ViewBag.TempName" class="fas fa-trash-alt"></a></td>
-                                </tr>
-                            }
-                        }
-                        @if (Model.Matchings != null)
-                        {
-                            foreach (var match in Model.Matchings)
-                            {
-                                countQuestion++;
-                                <tr>
-                                    <th scope="row">@countQuestion</th>
-                                    <td><a href="#" type="button">@match.ColumnA  @match.ColumnB </a></td>
-                                    <td>Matching</td>
-                                    <td>@match.Mark</td>
-                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@match.MID&qtype=5&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID&tempName=@ViewBag.TempName" class="fas fa-trash-alt"></a></td>
-                                </tr>
-                            }
-                        }
 
+                            foreach (var question in Model)
+                            {
+                                ViewBag.QuestionNo = ViewBag.QuestionNo + 1;
+                                <tr>
+                                    <th scope="row"> @ViewBag.QuestionNo</th>
+                                    <td><a href="#" type="button">@question.Text </a></td>
+                                    <td>
+                                        @if (question.Qtype == 5)
+                                        {
+                                            <span>Matching</span> }
+                                        else
+                                        {
+                                            @question.QuestionType.Name}
+                                    </td>
+                                    <td>@question.Mark</td>
+                                    <td>
+                                        <a href="~/Teacher/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@question.QID&qtype=@question.QuestionType.QTypeID&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID&tempName=@ViewBag.TempName&i=@ViewBag.Page"
+                                           class="fas fa-trash-alt"></a>
+                                    </td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
+                <div class="paging">
+                    @Html.PagedListPager(Model, i => Url.Action("CreateNewQuiz", "Quiz", new { i, cid = ViewBag.Course.CID, questions = ViewBag.Questions, tempName = Request.QueryString["tempName"] }))
+                </div>
             </div>
             <div style="display: flex; margin-left: auto; margin-bottom:20px">
                 <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
@@ -221,7 +222,7 @@
 <script src="~/Scripts/teacher.quiz.js"></script>
 <script type="text/javascript">
 
-  @*  function reloadModalShowQuestion() {
+    function reloadModalShowQuestion() {
         var chid = document.getElementById("ddlChapter").value;
         var cid = document.getElementById("cidAddModal").value;
         var questions = document.getElementById("questSet").value;
@@ -232,7 +233,7 @@
             '?chid=' + chid + '&cid=' + cid + '&qtype=' + qtype + '&searchText=' + searchText + '&questions=' + questions);
     }
 
-    function getQuizName() {
+    @*function getQuizName() {
         var newName = document.getElementById("newName").value;
         document.getElementById("quizName").value = newName;
     }

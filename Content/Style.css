@@ -1,4 +1,15 @@
-﻿.quiz-option {
+﻿.div-rd-question{
+	margin-top:2px;
+	margin-left:15px;
+}
+
+.save-change-a {
+	margin-top: 5px;
+	color: blue;
+	text-decoration: underline;
+	font-size: 14px;
+}
+.quiz-option {
 	display: flex; 
 	margin-right:20px;
 }
@@ -64,6 +75,12 @@
 	font-size: 17px;
 }
 
+.label-mode-4 {
+	margin-top: 2px;
+	font-weight: 600;
+	font-size: 17px;
+}
+
 .label-mode-2 {
 	margin-top: 2px;
 	font-weight: 600;
@@ -79,9 +96,11 @@
 	margin-right: 20px;
 }
 .label-preview {
-	margin-left: 20px;
-	color:blue;
-	text-decoration:underline;
+	margin-top: 18px;
+	margin-left: 18px;
+	color: blue;
+	text-decoration: underline;
+	font-size: 19px;
 }
 
 .label-mode-content-2 {
@@ -91,9 +110,17 @@
 }
 
 .mode-rdb {
-	margin-top: 5px;
-	margin-left: 20px;
+	margin-top: 25px;
+	margin-left: 30px;
 	margin-right:5px;
+	width:17px;
+	height:17px;
+}
+
+.label-mode-content-3 {
+	margin-top: 20px;
+	margin-right: 20px;
+	font-size: 19px;
 }
 
 .mode-rdb2 {
