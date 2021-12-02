@@ -86,7 +86,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
         {
             int pollID = int.Parse(poid);
             var poll = db.Polls.Find(pollID);
-            ViewBag.PollLink = "https://inclassvoting.azurewebsites.net/Student/Poll/DoPoll?poid=" + pollID;
+            ViewBag.PollLink = "https://localhost:44350/Student/Poll/DoPoll?poid=" + pollID;
 
 
             ViewBag.Poll = poll;

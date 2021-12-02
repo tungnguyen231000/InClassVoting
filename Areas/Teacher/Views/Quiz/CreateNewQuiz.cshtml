@@ -165,10 +165,10 @@
                 <input type="hidden" name="quizName" id="quizName">
                 <input type="hidden" name="questions" value="@ViewBag.Questions">
                 <input type="hidden" name="cid" value="@ViewBag.Course.CID">
-                <h1 class="quiz-lable">Optionals</h1>
+                <h1 class="quiz-lable">Quiz attributes</h1>
                 <div style="display: flex; margin-top: 20px">
                     <div style="display:flex">
-                        <input type="checkbox" name="cbMixQuestions" class="form-check-input" id="cbMixQuestions" value="1" />
+                        <input type="checkbox" name="cbMixQuestions" class="form-check-input" id="cbMixQuestions" value="1" checked />
                         <input type="hidden" name="cbMixQuestions" value="0" />
                         <h4 class="label-mode">Shuffle Question</h4>
                     </div>
@@ -195,10 +195,10 @@
                     </div>
                 </div>
 
-                <h4 style="margin-top: 20px" class="label-mode">Review options</h4>
+                <h4 style="margin-top: 20px" class="label-mode">Show to students after quiz</h4>
                 <div style="margin-top: 10px;margin-bottom:20px;">
                     <div class="div-mode">
-                        <input id="checkBoxMask" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" />
+                        <input id="checkBoxMask" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark"checked />
                         <input type="hidden" name="cbPublishMark" value="0" />
                         <h4 class="label-mode-content-2">Mark</h4>
                         <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />

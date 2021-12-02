@@ -84,6 +84,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 q.Qtype = 5;
                 q.Mark = m.Mark;
                 q.QID = m.MID;
+                q.CreatedDate = m.CreatedDate;
                 qList.Add(q);
             }
 
@@ -103,6 +104,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             ViewBag.CourseName = chapter.Course.Name;
             ViewBag.Chapter = chapter;
             ViewBag.QuestionType = db.QuestionTypes.ToList();
+
+            //return page after delete and add
             if (i == null)
             {
                 i = 1;
@@ -122,6 +125,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             ViewBag.QuestCount = (i - 1) * 10;
             ViewBag.Page = i;
+            qList = qList.OrderBy(q => q.CreatedDate).ToList();
 
             return View(qList.ToPagedList(i ?? 1, 10));
         }
@@ -256,6 +260,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             Chapter chapter = db.Chapters.Find(chapID);
             question.ChapterID = chapter.ChID;
             question.Text = questionText;
+            question.CreatedDate = DateTime.Now;
             question.Qtype = 1;
             //check if mark is null
             if (!mark.Trim().Equals(""))
@@ -272,8 +277,20 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             if (imgfile != null && imgfile.ContentLength > 0)
             {
                 var fileName = Path.GetFileName(imgfile.FileName);
-                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
-                imgfile.SaveAs(path);
+                var newPath = Server.MapPath("~/Images");
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
+                else
+                {
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
+
+                
 
 
                 question.ImageData = new byte[imgfile.ContentLength];
@@ -327,15 +344,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 }
             }
             db.SaveChanges();
-            int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
-            }
-            else
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
-            }
+            int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
         }
@@ -377,9 +386,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             //change image
             if (imgfile != null && imgfile.ContentLength > 0)
             {
+               /* var fileName = Path.GetFileName(imgfile.FileName);
+                var path = Path.Combine(Server.MapPath("~/Content/User_Images"), fileName);
+                imgfile.SaveAs(path);*/
+
                 var fileName = Path.GetFileName(imgfile.FileName);
-                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
-                imgfile.SaveAs(path);
+                var newPath = Server.MapPath("~/Images");
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
+                else
+                {
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
                 question.ImageData = new byte[imgfile.ContentLength];
                 imgfile.InputStream.Read(question.ImageData, 0, imgfile.ContentLength);
                 /*Debug.WriteLine("======" + question.ImageData);*/
@@ -398,7 +421,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             foreach (var quiz in quizContainQuestions)
             {
-               updateQuizTimeAndMark(quiz);
+                updateQuizTimeAndMark(quiz);
             }
 
 
@@ -445,8 +468,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             ViewBag.Previous = Request.UrlReferrer.ToString();
             return View();
         }
-        
-        
+
+
 
         //add new reading question
         [HttpPost]
@@ -463,8 +486,18 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             if (imgfile != null && imgfile.ContentLength > 0)
             {
                 var fileName = Path.GetFileName(imgfile.FileName);
-                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
-                imgfile.SaveAs(path);
+                var newPath = Server.MapPath("~/Images");
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
+                else
+                {
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
 
 
                 passage.PassageImage = new byte[imgfile.ContentLength];
@@ -498,6 +531,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 question.PassageID = pid;
                 question.Text = questionList[i];
                 question.Qtype = 2;
+                question.CreatedDate = DateTime.Now;
                 question.Mark = float.Parse(markList[i]);
                 question.Time = int.Parse(timeList[i]);
                 //get mixchoice checkbox
@@ -563,15 +597,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             }
             db.SaveChanges();
 
-            int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
-            }
-            else
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
-            }
+            int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
 
@@ -618,8 +644,18 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             if (imgfile != null && imgfile.ContentLength > 0)
             {
                 var fileName = Path.GetFileName(imgfile.FileName);
-                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
-                imgfile.SaveAs(path);
+                var newPath = Server.MapPath("~/Images");
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
+                else
+                {
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
                 passage.PassageImage = new byte[imgfile.ContentLength];
                 imgfile.InputStream.Read(passage.PassageImage, 0, imgfile.ContentLength);
             }
@@ -754,7 +790,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                                 newSet = newSet + qIdAndType + ";";
                             }
                         }
-                        
+
                         if (newSet != "")
                         {
                             quiz.Questions = newSet.Substring(0, newSet.Length - 1);
@@ -867,6 +903,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             Chapter chapter = db.Chapters.Find(chapID);
             question.ChapterID = chapter.ChID;
             question.Text = questionText;
+            question.CreatedDate = DateTime.Now;
             question.Qtype = 4;
             //check if mark is null
             if (!mark.Trim().Equals(""))
@@ -883,9 +920,18 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             if (imgfile != null && imgfile.ContentLength > 0)
             {
                 var fileName = Path.GetFileName(imgfile.FileName);
-                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
-                imgfile.SaveAs(path);
-
+                var newPath = Server.MapPath("~/Images");
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
+                else
+                {
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
 
                 question.ImageData = new byte[imgfile.ContentLength];
                 imgfile.InputStream.Read(question.ImageData, 0, imgfile.ContentLength);
@@ -911,15 +957,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
 
             db.SaveChanges();
-            int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
-            }
-            else
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
-            }
+            int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
 
@@ -944,7 +982,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
-            
+
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
@@ -952,8 +990,18 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             if (imgfile != null && imgfile.ContentLength > 0)
             {
                 var fileName = Path.GetFileName(imgfile.FileName);
-                var path = Path.Combine(Server.MapPath("~/App_Data/images"), fileName);
-                imgfile.SaveAs(path);
+                var newPath = Server.MapPath("~/Images");
+                if (!Directory.Exists(newPath))
+                {
+                    Directory.CreateDirectory(newPath);
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
+                else
+                {
+                    var path = Path.Combine(newPath, fileName);
+                    imgfile.SaveAs(path);
+                }
                 question.ImageData = new byte[imgfile.ContentLength];
                 imgfile.InputStream.Read(question.ImageData, 0, imgfile.ContentLength);
                 /*Debug.WriteLine("======" + question.ImageData);*/
@@ -1033,7 +1081,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             matching.ColumnA = columnA;
             matching.ColumnB = columnB;
             matching.Solution = solution;
-
+            matching.CreatedDate = DateTime.Now;
             db.MatchQuestions.Add(matching);
             db.SaveChanges();
 
@@ -1103,8 +1151,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             Chapter chapter = db.Chapters.Find(chapID);
             question.ChapterID = chapter.ChID;
             question.Text = questionText;
+            question.CreatedDate = DateTime.Now;
             question.Qtype = 6;
-            
+
             //check if mark is null
             if (!mark.Trim().Equals(""))
             {
@@ -1168,15 +1217,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             db.SaveChanges();
 
-            int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
-            }
-            else
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
-            }
+            int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
 
@@ -1200,7 +1241,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
-            
+
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
@@ -1285,6 +1326,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             Chapter chapter = db.Chapters.Find(chapID);
             question.ChapterID = chapter.ChID;
             question.Text = questionText;
+            question.CreatedDate = DateTime.Now;
             question.Qtype = 3;
             //check if mark is null
             if (!mark.Trim().Equals(""))
@@ -1377,15 +1419,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
             db.SaveChanges();
 
-            int lastPage = 0;
-            if (db.Questions.Count(q => q.ChapterID == chapID) % 10 == 0)
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10);
-            }
-            else
-            {
-                lastPage = (db.Questions.Count(q => q.ChapterID == chapID) / 10 + 1);
-            }
+            int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
 
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
 
@@ -1409,7 +1443,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
-            
+
             question.Text = questionText;
             question.Mark = float.Parse(mark);
             question.Time = int.Parse(time);
@@ -1562,7 +1596,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             quiz.Time = newTime;
             quiz.NumOfQuestion = newNumQuest;
             db.Entry(quiz).State = EntityState.Modified;
-            Debug.WriteLine("hehehe" + quiz.QuizID);
+            /*Debug.WriteLine("hehehe" + quiz.QuizID);*/
             db.SaveChanges();
         }
     }

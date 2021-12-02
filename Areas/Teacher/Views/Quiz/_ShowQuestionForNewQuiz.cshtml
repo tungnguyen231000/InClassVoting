@@ -23,16 +23,24 @@
             foreach (var questions in ViewBag.Questions)
             {
                 countQuestion++;
-                <tr>
-                    <th scope="row">@countQuestion</th>
-                    <td><input type="checkbox" class="form-check-input" id="exampleCheck1" name="qID" value="@questions.QID"></td>
-                    <td><a href="#" type="button">@questions.Text</a></td>
-                    <td>@questions.QuestionType.Name</td>
-                    <td>@questions.Mark</td>
-                </tr>
+        <tr>
+            <th scope="row">@countQuestion</th>
+            @{ string idAndType = questions.QID + "-" + questions.Qtype; }
+            <td><input type="checkbox" class="form-check-input" id="exampleCheck1" name="qIDAndType" value="@idAndType"></td>
+            <td><a href="#" type="button">@questions.Text</a></td>
+            <td>
+                @if (questions.Qtype == 5)
+                {
+                    <span>Matching</span> }
+                else
+                {
+                    @questions.QuestionType.Name}
+            </td>
+            <td>@questions.Mark</td>
+        </tr>
             }
         }
-        @if (ViewBag.Matchings != null)
+       @* @if (ViewBag.Matchings != null)
         {
             foreach (var matching in ViewBag.Matchings)
             {
@@ -45,7 +53,7 @@
                     <td>@matching.Mark</td>
                 </tr>
             }
-        }
+        }*@
     </tbody>
 </table>
 
