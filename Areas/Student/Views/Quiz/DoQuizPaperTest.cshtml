@@ -157,7 +157,7 @@
         <!--Form Test-->
         @using (Html.BeginForm("SubmitQuiz", "Quiz", FormMethod.Post, new { id = "formPaperQuiz" }))
         {
-            <input type="hidden" style="width:95%" class="w-full pl-3" name="qDoneID" value="@ViewBag.Quiz.QuizDoneID" />
+            <input type="hidden" name="qDoneID" value="@ViewBag.Quiz.QuizDoneID" />
             <input type="hidden" name="studentID" value="1" />
             <!--======Multiple Test=======-->
             if (ViewBag.MultipleQuestion.Count != 0)
@@ -212,7 +212,6 @@
                                     string dataOpt = "multiple-" + countMultipleQuestion;
                                     <tr>
                                         <td class="w-2">
-                                            @*<input type="hidden" name="numberOfAnswer" value="@countAnswer">*@
                                             <input type="checkbox" id="@dataOpt" name="cbMultipleOption" value="@answers.QA_DoneID">
                                         </td>
                                         <td>
@@ -319,7 +318,6 @@
                                                 string dataOpt = "reading-" + countReadingQuestion;
                                                 <tr>
                                                     <td class="w-2">
-                                                        @*<input type="hidden" name="numberOfAnswer" value="@countAnswer">*@
                                                         <input type="checkbox" id="@dataOpt" name="cbReadingOption" value="@answers.QA_DoneID">
                                                     </td>
                                                     <td>
@@ -410,7 +408,7 @@
                                 answerList.Add(choices);
                             }
                             string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
-                            <div contenteditable="false" id="fill-content" class="w-full items-center bg-gray p-6 ">
+                            <div contenteditable="false" id="fill-content-given" class="w-full items-center bg-gray p-6 ">
                                 @for (int i = 0; i < questionSplit.Length; i++)
                                 {
                                     <span>@questionSplit[i]</span>
@@ -502,7 +500,7 @@
                             <div class="w-full items-center bg-gray ">
                                 <table class="w-full border-spacing-2">
                                     <tr>
-                                        <td>Answer: &nbsp;<input type="text" style="width:90%" class="txt w-full pl-3" id="@dataOpt" name="txtshortAnswer" placeholder="..."></td>
+                                        <td>Answer: &nbsp;<input type="text" style="width:90%" class="txt w-full pl-3 fill-input" id="@dataOpt" name="txtshortAnswer" placeholder="..."></td>
                                     </tr>
 
                                 </table>

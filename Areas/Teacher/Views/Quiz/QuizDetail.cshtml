@@ -1,8 +1,6 @@
-﻿@*@model dynamic*@
-@model IPagedList<InClassVoting.Models.Question>
+﻿@model IPagedList<InClassVoting.Models.Question>
 @using PagedList.Mvc;
 @using PagedList;
-
 @{
     ViewBag.Title = "QuizDetail";
     Layout = "~/Areas/teacher/Views/Shared/_QuizLibraryLayout.cshtml";
@@ -146,7 +144,7 @@
     </div>
 
     <div style="display:flex">
-        <h1 style="margin-top:auto;margin-bottom:auto" class="h5">@ViewBag.Quiz.QuizName  </h1>
+        <h1 style="margin-top:auto;margin-bottom:auto" class="h5">@ViewBag.Quiz.QuizName</h1>
         <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
             <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
 
@@ -156,7 +154,7 @@
 
             </ul>
         </div>
-        @*<i style="margin-left:20px;margin-top:auto;margin-bottom:auto" class="fas fa-marker"></i>*@
+
     </div>
     @if (ViewBag.CountQuest == 0)
     {
@@ -177,10 +175,10 @@
                 <div style="display:flex;margin-top:20px">
                     <div style="display:flex">
                         <h1 class="quiz-lable">Quiz Mode: </h1>
-                        <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" />
-                        <h4 class="label-mode-content-3">Paper test</h4>
+                        <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" checked />
+                        <h4 class="label-mode-content-3">Show all question</h4>
                         <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" name="rdPreview" type="radio" value="0" />
-                        <h4 class="label-mode-content-3"> Question by question</h4>
+                        <h4 class="label-mode-content-3"> Show question by question</h4>
                         <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizID" />
                         <button type="submit" style="width: 177px;" class="label-preview"><i class="fas fa-eye" style="margin-right:5px"></i>Preview</button>
 
@@ -193,6 +191,43 @@
                         <p class="linkquiz-lable" style="margin: auto; margin-left: 10px;" id="linkQ">@ViewBag.QuizLink</p>
                         <input type="hidden" id="quizLink" value="@ViewBag.QuizLink" />
                         <a style="background-color:aquamarine;margin-left:20px;margin-right:10px" class="btn " onclick="copyLink()">Copy</a>
+                    </div>
+                </div>
+                <div style="display:flex;margin-top:20px">
+
+                    <div style="display:flex">
+                        <h1 style="margin: auto" class="quiz-lable2">Total Mark: </h1>
+                        <h4 class="label-mode-content-2" style="margin-left:5px">@ViewBag.Quiz.Mark</h4>
+                        <h1 style="margin: auto" class="quiz-lable2">Total Time: </h1>
+                        @{
+                            int? time = ViewBag.Quiz.Time;
+                            string second = "00";
+                            string minute = "00";
+                            if ((time % 60) != 0)
+                            {
+                                if (time % 60 < 10)
+                                {
+                                    second = "0" + (time % 60);
+                                }
+                                else
+                                {
+                                    second = (time % 60).ToString();
+                                }
+                            }
+                            if ((time / 60) != 0)
+                            {
+                                if (time / 60 < 10)
+                                {
+                                    minute = "0" + (time / 60);
+                                }
+                                else
+                                {
+                                    minute = (time / 60).ToString();
+                                }
+                            }
+                            string timeDisplay = minute + ":" + second;
+                        }
+                        <h4 class="label-mode-content-2" style="margin-left:5px">@timeDisplay</h4>
                     </div>
                 </div>
             }
@@ -248,7 +283,7 @@
             @using (Html.BeginForm("SaveQuizOption", "Quiz", FormMethod.Post))
             {
                 <input type="hidden" name="qzID" value="@ViewBag.Quiz.QuizID" />
-                <h1 class="quiz-lable">Other options</h1>
+                <h1 class="quiz-lable">Quiz attributes</h1>
                 <div style="display: flex; margin-top: 20px">
                     <div style="display:flex">
                         @if (ViewBag.Shuffle == 1)
@@ -299,7 +334,7 @@
                                 <div style="display:flex">
                                     <h4 class="label-mode-content-2">Number of random question :</h4>
                                     <span>
-                                        <input name="rdQuestionNum" onchange="saveChanges()" type="number" min="1" max="@ViewBag.CountQuest" value="@ViewBag.RandomQuestionNum" />
+                                        <input name="rdQuestionNum" onclick="saveChanges()" type="number" min="1" max="@ViewBag.CountQuest" value="@ViewBag.RandomQuestionNum" />
                                     </span>
 
                                 </div>
@@ -308,7 +343,7 @@
                     </div>
                 }
 
-                <h4 style="margin-top: 20px" class="label-mode-4">Review options</h4>
+                <h4 style="margin-top: 20px" class="label-mode-4">Show to students after quiz </h4>
                 <div style="margin-top: 10px;margin-bottom:20px;">
                     <div class="div-mode">
                         @if (ViewBag.PublishMark == 1)
@@ -334,11 +369,11 @@
                             <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />
                             <input type="hidden" name="cbPublishAnswer" value="0" />
                         }
-                        <h4 class="label-mode-content-2">Question's answers</h4>
+                        <h4 class="label-mode-content-2">Questions and answers</h4>
                     </div>
                 </div>
                 <div style="margin-top: 10px;margin-bottom:20px;">
-                    <button type="submit" id="saveOption" hidden class="save-change-a">Save Changes</button>
+                    <button type="submit" id="saveOption" hidden class="btn-indigo mg_btn">Save Changes</button>
                 </div>
             }
         </div>

@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using PagedList.Mvc;
 using PagedList;
 using System.Diagnostics;
+using System.Data.Entity;
 
 namespace InClassVoting.Areas.Teacher.Controllers.ReportController
 {
@@ -41,71 +42,116 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 quizzes = listQuizDone;
                 Debug.WriteLine("hjhihi" + searchText);
             }
-            ViewBag.QuizCount = (i - 1) * 3;
+            ViewBag.QuizCount = (i - 1) * 10;
             ViewBag.Course = course;
             ViewBag.Search = searchText;
-            return View(quizzes.ToPagedList(i ?? 1, 3));
+            return View(quizzes.ToPagedList(i ?? 1, 10));
         }
 
         public ActionResult ReportByQuestion(string qzid, string searchText)
         {
             int quizDoneID = int.Parse(qzid);
             var qzDone = db.QuizDones.Find(quizDoneID);
-
             List<QuestionDone> questionsList = new List<QuestionDone>();
-            List<MatchQuestionDone> matchQuestionsList = new List<MatchQuestionDone>();
+            List<Chapter> chapterList = new List<Chapter>();
             //get question
             if (qzDone.Questions != null && !qzDone.Questions.Equals(""))
             {
                 List<string> questSet = qzDone.Questions.Split(new char[] { ';' }).ToList();
+                /*Dictionary<int, string> questionSet = new Dictionary<int, string>();
+                Dictionary<int, string> matchingSet = new Dictionary<int, string>();*/
 
-                Dictionary<int, string> questionSet = new Dictionary<int, string>();
-                Dictionary<int, string> matchingSet = new Dictionary<int, string>();
+                //get question in report
                 foreach (string questions in questSet)
                 {
                     string[] questAndType = questions.Split(new char[] { '-' });
                     int qType = int.Parse(questAndType[1]);
+                    //if question is matching
                     if (qType == 5)
                     {
                         int mID = int.Parse(questAndType[0]);
-                        matchingSet.Add(mID, questAndType[1]);
+                        var matchQuest = db.MatchQuestionDones.Find(mID);
+                        QuestionDone matching = new QuestionDone();
+                        matching.Q_DoneID = mID;
+                        Debug.WriteLine("--2--" + matchQuest.Chapter.ChID);
+                        if (matchQuest.Chapter != null)
+                        {
+                            bool isExisted = false;
+                            foreach (Chapter c in chapterList)
+                            {
+                                if (matchQuest.ChapterID == c.ChID)
+                                {
+                                    isExisted = true;
+                                    Debug.WriteLine("--3--" + matchQuest.Chapter.ChID);
+
+                                }
+                            }
+                            if (isExisted == false)
+                            {
+                                chapterList.Add(matchQuest.Chapter);
+                            }
+
+                        }
+
+                        matching.Text = matchQuest.ColumnA + "//" + matchQuest.ColumnB;
+                        matching.Time = matchQuest.Time;
+                        matching.StudentReceive = matchQuest.StudentReceive;
+                        matching.CorrectNumber = matchQuest.CorrectNumber;
+                        matching.Qtype = 5;
+                        questionsList.Add(matching);
                     }
                     else
                     {
                         int qID = int.Parse(questAndType[0]);
-                        questionSet.Add(qID, questAndType[1]);
+                        QuestionDone question = db.QuestionDones.Find(qID);
+
+                        Debug.WriteLine("--0--" + question.Chapter.ChID);
+                        if (question.Chapter != null)
+                        {
+                            bool isExisted = false;
+                            foreach (Chapter c in chapterList)
+                            {
+                                if (question.ChapterID == c.ChID)
+                                {
+                                    isExisted = true;
+                                    Debug.WriteLine("--1--" + question.Chapter.ChID);
+                                }
+                            }
+                            if (isExisted == false)
+                            {
+                                chapterList.Add(question.Chapter);
+                            }
+
+
+                        }
+
+                        questionsList.Add(question);
                     }
                 }
 
-                foreach (KeyValuePair<int, string> keyValuePair in questionSet)
-                {
-                    var quest = db.QuestionDones.Find(keyValuePair.Key);
-                    questionsList.Add(quest);
-                }
 
-                foreach (KeyValuePair<int, string> keyValuePair in matchingSet)
-                {
-                    var matchQuest = db.MatchQuestionDones.Find(keyValuePair.Key);
-                    matchQuestionsList.Add(matchQuest);
+            }
 
-                }
+            foreach (Chapter c in chapterList)
+            {
+                Debug.WriteLine("jijiji" + c.ChID);
             }
 
             if (searchText != null && !searchText.Trim().Equals(""))
             {
                 questionsList = questionsList.Where(ql => ql.Text.Trim().ToLower().Contains(searchText.ToLower())).ToList();
-                matchQuestionsList = matchQuestionsList.Where(ml => ml.ColumnA.Trim().ToLower().Contains(searchText.ToLower()) ||
-                 ml.ColumnB.Trim().ToLower().Contains(searchText.ToLower())).ToList();
+                /*matchQuestionsList = matchQuestionsList.Where(ml => ml.ColumnA.Trim().ToLower().Contains(searchText.ToLower()) ||
+                 ml.ColumnB.Trim().ToLower().Contains(searchText.ToLower())).ToList();*/
             }
 
             var studentDoneTest = db.Student_QuizDone.Where(stq => stq.QuizDoneID == quizDoneID).ToList();
 
             ViewBag.Quiz = qzDone;
             ViewBag.QuestionList = questionsList;
-            ViewBag.MatchingList = matchQuestionsList;
-            ViewBag.QuestCount = questionsList.Count + matchQuestionsList.Count;
+            ViewBag.QuestCount = questionsList.Count;
             ViewBag.StudentCount = studentDoneTest.Count;
             ViewBag.Search = searchText;
+            ViewBag.ChapterList = chapterList.OrderBy(c=>c.ChID);
 
             return View();
         }
@@ -155,8 +201,6 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             }
         }
 
-
-
         public ActionResult ReportStudentQuiz(string qzid, string stid)
         {
             if (stid == null)
@@ -173,7 +217,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
 
             //get student answer
             var student_Answers = db.Student_Answer.Where(sa => sa.QuizDoneID == student_quiz.QuizDoneID).ToList();
-           
+
 
             Dictionary<int, string> questionSet = new Dictionary<int, string>();
             Dictionary<int, string> matchingSet = new Dictionary<int, string>();
@@ -272,6 +316,44 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             ViewBag.Student = db.Students.Find(studentId);
 
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult SaveReportOption(string qzID, string currentPage, string searchText, string cbPublishMark, string cbPublishAnswer)
+        {
+            int quizDoneID = int.Parse(qzID);
+            var qzDone = db.QuizDones.Find(quizDoneID);
+
+            if (cbPublishMark != null)
+            {
+                qzDone.PublicResult = true;
+            }
+            else
+            {
+                qzDone.PublicResult = false;
+            }
+
+            if (cbPublishAnswer != null)
+            {
+                qzDone.PublicAnswer = true;
+            }
+            else
+            {
+                qzDone.PublicAnswer = false;
+            }
+
+            db.Entry(qzDone).State = EntityState.Modified;
+            db.SaveChanges();
+
+            int page = int.Parse(currentPage);
+            if (page == 1)
+            {
+                return Redirect("~/Teacher/Report/ReportByQuestion?qzid=" + quizDoneID + "&searchText=" + searchText);
+            }
+            else
+            {
+                return Redirect("~/Teacher/Report/ReportByStudent?qzid=" + quizDoneID + "&searchText=" + searchText);
+            }
         }
     }
 }

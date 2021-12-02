@@ -34,39 +34,55 @@
         });
     }
 
-    $('#add-matching').click(function () {
-        if ($('#number').val() != '' && $('#letter').val() != '') {
-            $('#number').val();
-            $('#letter').val();
-            var txtLine = '<input type="text" id="matching-solution" class="text-center" name="solution" value="' + $('#number').val() + '-' + $('#letter').val() + '" readonly/>';
-            $('#table-solution').append(txtLine);
-            var txtLine2 = '<input type="text" id="matching-solution-preview" class="text-center" name="solution" value="' + $('#number').val() + '-' + $('#letter').val() + '" readonly/>';
-            $('#table-solution-preview').append(txtLine2);
-            $('#number').val('');
-            $('#letter').val('');
+    var matchingleft = document.querySelectorAll("#matching-left");
+    var matchingright = document.querySelectorAll("#matching-right");
+    matchingleft.forEach((item) => { $(item).height(300); });
+    matchingright.forEach((item) => { $(item).height(300); });
+
+    if ($("#matching-test").length == 0) {
+    var addMatching = document.querySelectorAll('#add-matching');
+    var numberMatching = document.querySelectorAll('#number');
+    var letterMatching = document.querySelectorAll('#letter');
+    var tableSolution = document.querySelectorAll('#table-solution');
+    var removeMatching = document.querySelectorAll('#remove-matching');
+    addMatching.forEach((item) => {
+        $(item).click(function (e) {
+            var z = e.target;
+
+            var index = Array.prototype.indexOf.call(addMatching, z);
+
+            if (numberMatching[index].value != '' && letterMatching[index].value != '') {
+                var txtLine = '<input type="text" id="matching-solution" class="text-center" name="solution" value="' + numberMatching[index].value + '-' + letterMatching[index].value + '" readonly/>';
+
+                $(tableSolution[index]).append(txtLine);
+
+                if ($("#table-solution-preview").length != 0) {
+                    $("#table-solution-preview").append(txtLine);
+                }
+            }
+
+           
+
+            var listSolution = $(tableSolution[index]).children();
 
 
-            var listSolution = document.querySelectorAll('#matching-solution');
+            for (var z = 0; z < listSolution.length; z++) {
+                listSolution[z].addEventListener('click', function (event) {
 
-            listSolution.forEach((item) => {
-
-                $(item).click(function (event) {
-
-
-                    $('#remove-matching').removeAttr("disabled");
-                    $('#remove-matching').click(function () {
+                    $(removeMatching[index]).click(function (e) {
                         event.target.remove();
-                        $('#remove-matching').attr("disabled", true);
+                        if ($("#table-solution-preview").length != 0) {
+                            var listSolution = $("#table-solution-preview").children();
+                            $(listSolution[z]).remove();
+                        }
                     });
 
                 });
+            };
 
-
-            });
-        }
+        });
     });
-
-    $('#remove-matching').attr("disabled", true);
+    }
 
     //===============Phần Poll====================
     $('.option-btn').click(function () {

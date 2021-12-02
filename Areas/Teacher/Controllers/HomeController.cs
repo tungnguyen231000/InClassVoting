@@ -12,6 +12,7 @@ namespace InClassVoting.Areas.teacher.Controllers
         // GET: teacher/Home
         public ActionResult Home()
         {
+            
             return View();
         }
     }

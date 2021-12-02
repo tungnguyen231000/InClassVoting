@@ -22,11 +22,12 @@ if (quizLink.indexOf("DoQuizPaperTest") == -1) {
 
 function changeLinkqQuiz() {
     let link = document.getElementById("linkQ").innerHTML;
-    document.getElementById("linkQ").innerHTML = link.replace("DoQuizPaperTest", "DoQuestionByQTest");
+    document.getElementById("linkQ").innerHTML = link.replace("DoQuizPaperTest", "DoQuizQuestionByQuestion");
+    document.getElementById("quizLink").value = link.replace("DoQuizPaperTest", "DoQuizQuestionByQuestion");
 }
 function changeLinkpQuiz() {
     let link = document.getElementById("linkQ").innerHTML;
-    document.getElementById("linkQ").innerHTML = link.replace("DoQuestionByQTest", "DoQuizPaperTest");
+    document.getElementById("quizLink").value = link.replace("DoQuestionByQTest", "DoQuizPaperTest");
 }
 
 

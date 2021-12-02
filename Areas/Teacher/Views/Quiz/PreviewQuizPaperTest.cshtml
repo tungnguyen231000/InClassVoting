@@ -18,7 +18,35 @@
                     <span class="h4 pl-3 w-auto count-time ">TIME</span>
                 </div>
                 <div class="text-center">
-                    <span class="h4 pl-3 w-auto count-time" size="3" type="text" id="time" name="create-question-time">@ViewBag.Time</span>
+                    @{
+                        int? time = ViewBag.Quiz.Time;
+                        string second = "00";
+                        string minute = "00";
+                        if ((time % 60) != 0)
+                        {
+                            if (time % 60 < 10)
+                            {
+                                second = "0" + (time % 60);
+                            }
+                            else
+                            {
+                                second = (time % 60).ToString();
+                            }
+                        }
+                        if ((time / 60) != 0)
+                        {
+                            if (time / 60 < 10)
+                            {
+                                minute = "0" + (time / 60);
+                            }
+                            else
+                            {
+                                minute = (time / 60).ToString();
+                            }
+                        }
+                        string timeDisplay = minute + ":" + second;
+                    }
+                    <span class="h4 pl-3 w-auto count-time" size="3" type="text" id="timeDemo" name="create-question-time">@timeDisplay</span>
                 </div>
 
             </div>
@@ -392,7 +420,7 @@
                             answerList.Add(choices);
                         }
                         string[] questionSplit = Regex.Split(question.Text, @"\(.*?\)");
-                        <div contenteditable="false" id="fill-content" class="w-full items-center bg-gray p-6 ">
+                        <div contenteditable="false" id="fill-content-given" class="w-full items-center bg-gray p-6 ">
                             @for (int i = 0; i < questionSplit.Length; i++)
                             {
                                 <span>@questionSplit[i]</span>
@@ -650,7 +678,7 @@
 
         <!--End Form Test-->
     </div>
-
+    
 </div>
 
 <script src="~/Scripts/jquery-3.4.1.min.js"></script>

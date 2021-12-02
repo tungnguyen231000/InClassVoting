@@ -21,6 +21,7 @@ namespace InClassVoting.Models
         public string Solution { get; set; }
         public Nullable<int> Time { get; set; }
         public Nullable<double> Mark { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
     
         public virtual Chapter Chapter { get; set; }
     }

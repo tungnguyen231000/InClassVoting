@@ -30,6 +30,7 @@ namespace InClassVoting.Models
         public Nullable<bool> GivenWord { get; set; }
         public Nullable<int> Time { get; set; }
         public byte[] ImageData { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
     
         public virtual Chapter Chapter { get; set; }
         public virtual Passage Passage { get; set; }

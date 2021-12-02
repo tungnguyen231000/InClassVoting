@@ -9,58 +9,65 @@
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     <div class="grid grid-cols-1 w-full ">
         <div class="topcontent w-auto flex flex-row justify-center bg-gray p-6">
-            <div class=" w-full py-6 w-9/12 flex flex-row">
-                <h1 class="h4 pl-6 w-5/12">@ViewBag.Quiz.Quiz_Name</h1>
-                <div class="w-7/12 w-full">
-                    @using (Html.BeginForm("Search", "Report", FormMethod.Get))
-                    {
-                        <div class="w-10/12 flex">
-                            Search:&nbsp; <input type="text" name="searchText" class="pl-2 w-7/12 txt-report" placeholder="..." value="@ViewBag.Search" />
-                            <button type="submit" class="btn btn-report"><i class="fad fa-search"></i></button>
-                            <div class="w-5/12 pt-2">
-                                <span class="ms-error"></span>
-                            </div>
-                        </div>
-                        <div class="w-7/12 flex py-2">
-                            <div class="w-4/12">
-                                <input type="radio" name="searchType" value="0" checked />
-                                <label for="radio-question">Question</label>
-                            </div>
-                            <div class="w-4/12">
-                                <input type="radio" name="searchType" value="1" />
-                                <label for="radio-student">Student</label>
-                            </div>
+            <div class="py-6 w-4/12 ">
+                <h1 class="h4 pl-6 w-3/12 ">@ViewBag.Quiz.Quiz_Name</h1>
+                <div>
+                    <span class="">Finished Date: @ViewBag.Quiz.CreatedDate.ToString("dd-MM-yyyy") </span>
+                </div>
 
+            </div>
+            <div class="w-7/12 w-full">
+                @using (Html.BeginForm("Search", "Report", FormMethod.Get))
+                {
+                    <div class="w-10/12 flex">
+                        Search:&nbsp; <input type="text" name="searchText" class="pl-2 w-7/12 txt-report" placeholder="..." value="@ViewBag.Search" />
+                        <button type="submit" class="btn btn-report"><i class="fad fa-search"></i></button>
+                        <div class="w-5/12 pt-2">
+                            <span class="ms-error"></span>
                         </div>
-                        <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizDoneID" />
+                    </div>
+                    <div class="w-7/12 flex py-2">
+                        <div class="w-4/12">
+                            <input type="radio" name="searchType" value="0" />
+                            <label for="radio-question">Question</label>
+                        </div>
+                        <div class="w-4/12">
+                            <input type="radio" name="searchType" value="1" checked />
+                            <label for="radio-student">Student</label>
+                        </div>
+
+                    </div>
+                    <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizDoneID" />
+                }
+            </div>
+
+        </div>
+
+        <hr />
+
+        <div class="p-6">
+            <div style="display: flex; margin-top: 10px; margin-bottom: 40px">
+                <div>
+                    <h1 class="label-mode-4">Chapter covered</h1>
+                    @foreach (var chapter in ViewBag.ChapterList)
+                    {
+                        <h4 class="label-mode-content-2">@chapter.Name</h4>
                     }
                 </div>
-
-            </div>
-
-
-
-            <div class=" p-6 w-3/12">
                 <div>
-                    <span class="">Done Date: @ViewBag.Quiz.CreatedDate.ToString("dd-MM-yyyy") </span>
+                    <h1 class="label-mode-4">Learning outcome covered</h1>
+
+                    <h4 class="label-mode-content-2">LO 1</h4>
+                    <h4 class="label-mode-content-2">LO 2</h4>
+
                 </div>
             </div>
-        </div>
-        <hr />
-        <div class="p-6">
-            <div style="margin-bottom: 40px;">
-                <div>
-                    <h2 class="h6">Publish option:</h2>
-                    <label>Mark</label>&nbsp;<input id="checkBoxMask" name="cbMark" onchange="publishChange()" class="mode-rdb" type="checkbox" />&nbsp;&nbsp;
-                    <label>Answers</label>&nbsp;<input id="checkBoxAnswer" onchange="checkAnswer()" name="cbMark" class="mode-rdb" type="checkbox" /><br/>
-                    <a href="#" id="savePublish" hidden style="margin-top:5px;color: blue; text-decoration: underline; font-size:14px">Save Changes</a>
-                </div>
-            </div>
+
+
             <div class="text-center flex flex-wrap column-gap inline-block">
                 <a href="~/Teacher/Report/ReportByQuestion?qzid=@ViewBag.Quiz.QuizDoneID" class="p-2 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Question (<span>@ViewBag.QuestCount</span>)</a>
                 <a href="~/Teacher/Report/ReportByStudent?qzid=@ViewBag.Quiz.QuizDoneID" class="p-2 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Student (<span>@ViewBag.StudentCount</span>)</a>
             </div>
-
 
             <!--Report-->
             <div class="w-full bg-gray p-6 border border-black-400">
@@ -73,6 +80,7 @@
                                 <th class="w-1/12 ">STT</th>
                                 <th class="w-5/12 ">Question</th>
                                 <th class="w-2/12 ">Type</th>
+                                <th class="w-2/12 ">LO</th>
                                 <th class="w-2/12 ">Correct/Total</th>
                             </tr>
                         </thead>
@@ -85,7 +93,15 @@
                             <tr class="hover:bg-gray-200">
                                 <td class="w-1/12">@countQ</td>
                                 <td class="w-5/12"><span class="data-row">@question.Text </span></td>
-                                <td class="w-2/12">@question.QuestionType.Name</td>
+                                <td class="w-2/12">
+                                    @if (question.Qtype == 5)
+                                    {
+                                        <span>Matching</span> }
+                                    else
+                                    {
+                                        @question.QuestionType.Name}
+                                </td>
+                                <td class="w-2/12">LO1,LO2</td>
                                 <td class="w-2/12">@question.CorrectNumber/@question.StudentReceive</td>
                             </tr>
                         }
@@ -98,6 +114,40 @@
                 }
             </div>
 
+            <div style="margin-bottom: 40px;">
+                @using (Html.BeginForm("SaveReportOption", "Report", FormMethod.Post))
+                {
+                    <input type="hidden" name="qzID" value="@ViewBag.Quiz.QuizDoneID" />
+                    <input type="hidden" name="currentPage" value="1" />
+                    <input type="hidden" name="searchText" value="@ViewBag.Search" />
+                    <h4 style="margin-top: 20px" class="label-mode-4">Show to students </h4><div style="margin-top: 10px;margin-bottom:20px;display:flex">
+                        @if (@ViewBag.Quiz.PublicResult == true)
+                        {
+                            <input id="checkBoxMask" onchange="checkMark()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" checked />
+
+                        }
+                        else
+                        {
+                            <input id="checkBoxMask" onchange="checkMark()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" />
+                        }
+
+                        <h4 class="label-mode-content-2">Mark</h4>
+                        @if (@ViewBag.Quiz.PublicAnswer == true)
+                        {
+                            <input onchange="checkAnswer()" id="checkBoxAnswer" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" checked />
+                        }
+                        else
+                        {
+                            <input onchange="checkAnswer()" id="checkBoxAnswer" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />
+                        }
+
+                        <h4 class="label-mode-content-2">Questions and answers</h4>
+                    </div>
+                    <div style="margin-top: 10px;margin-bottom:20px;">
+                        <button type="submit" id="savePublish" hidden class="btn-indigo mg_btn">Save Changes</button>
+                    </div>
+                }
+            </div>
         </div>
         <!--End Report-->
 
@@ -108,17 +158,26 @@
 
 </div>
 
-<script src="~/Scripts/jquery-3.4.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/validate.js"></script>
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/validate.js"></script>*@
 <script type="text/javascript">
     function checkAnswer() {
         if (document.getElementById("checkBoxAnswer").checked) {
-            document.getElementById("checkBoxMask").checked = "true";
+            document.getElementById("checkBoxMask").checked = true;
         }
         console.log("hihi2");
-        document.getElementById("savePublish").hidden = false;
+        publishChange();
     }
+    function checkMark() {
+        if (document.getElementById("checkBoxMask").checked == false) {
+            document.getElementById("checkBoxAnswer").checked = false;
+            console.log("hihi4");
+        }
+        console.log("hihi3");
+        publishChange();
+    }
+
     function publishChange() {
         console.log("hihi");
         document.getElementById("savePublish").hidden = false;

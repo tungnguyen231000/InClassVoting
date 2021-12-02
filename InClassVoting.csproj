@@ -372,6 +372,7 @@
     <Content Include="Areas\Teacher\Views\Poll\PollResultPieChart.cshtml" />
     <Content Include="Areas\Teacher\Views\Poll\StartPoll.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\PreviewQuizQuestionByQuestion.cshtml" />
+    <Content Include="Areas\Student\Views\Quiz\DoQuizQuestionByQuestion.cshtml" />
     <None Include="Properties\PublishProfiles\InClassVoting - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\InClassVoting - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
@@ -430,6 +431,7 @@
     <Folder Include="Areas\Student\Views\Default\" />
     <Folder Include="Areas\Teacher\Data\" />
     <Folder Include="Areas\Teacher\Views\Chapter\" />
+    <Folder Include="Content\User_Images\" />
     <Folder Include="Views\Default\" />
   </ItemGroup>
   <ItemGroup>
