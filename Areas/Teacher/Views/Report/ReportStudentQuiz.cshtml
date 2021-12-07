@@ -490,7 +490,14 @@
                                             <span>@questionSplit[i] </span>
                                             if (i < questionSplit.Length - 1)
                                             {
-                                                <input type="text" style="width: 15%" name="fillBankNotGivenAnswer" class="true-answer fill-input" value="@answerChoses[i]" disabled>
+                                                if (answerChoses.Count == 0)
+                                                {
+                                                    <input type="text" style="width: 15%" name="fillBankNotGivenAnswer" class="true-answer fill-input" value="" disabled>
+                                                }
+                                                else
+                                                {
+                                                    <input type="text" style="width: 15%" name="fillBankNotGivenAnswer" class="true-answer fill-input" value="@answerChoses[i]" disabled>
+                                                }
                                             }
 
                                         }
@@ -505,13 +512,20 @@
                                             <span>@questionSplit[i]</span>
                                             if (i < questionSplit.Length - 1)
                                             {
-                                                if (!answerChoses[i].Equals("") && answerChoses[i] != null)
+                                                if (answerChoses.Count == 0)
                                                 {
-                                                    <input type="text" style="width: 15% " class="false-answer fill-input" value="@answerChoses[i]" disabled>
+                                                    <input type="text" style="width: 15%" name="fillBankNotGivenAnswer" class=" fill-input" value="" disabled>
                                                 }
                                                 else
                                                 {
-                                                    <input type="text" style="width: 15%" class="fill-input" value="@answerChoses[i]" disabled>
+                                                    if (!answerChoses[i].Equals("") && answerChoses[i] != null)
+                                                    {
+                                                        <input type="text" style="width: 15% " class="false-answer fill-input" value="@answerChoses[i]" disabled>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="text" style="width: 15%" class="fill-input" value="@answerChoses[i]" disabled>
+                                                    }
                                                 }
                                             }
 
@@ -770,22 +784,22 @@
                                         </div>*@
                                 @if (!isCorrect)
                                 {
-                                <div class="w-full items-center bg-gray correct-background">
-                                    <div class="p-0">
-                                        <div contenteditable="false" class=" bg-gray p-4 ">
-                                            <span class="font-sans">Correct answer: </span>
-                                            @{
-                                                string[] correctAnswers = question.Solution.Split(new char[] { ';' });
+                                    <div class="w-full items-center bg-gray correct-background">
+                                        <div class="p-0">
+                                            <div contenteditable="false" class=" bg-gray p-4 ">
+                                                <span class="font-sans">Correct answer: </span>
+                                                @{
+                                                    string[] correctAnswers = question.Solution.Split(new char[] { ';' });
                                                 }
-                                            @foreach (string solution in correctAnswers)
-                                            {
-                                                string[] numAndLetter = solution.Split(new char[] { '-' });
-                                                <span>@numAndLetter[0]-</span> <span class="quest-answer">@numAndLetter[1] &nbsp;</span>
-                                            }
+                                                @foreach (string solution in correctAnswers)
+                                                {
+                                                    string[] numAndLetter = solution.Split(new char[] { '-' });
+                                                    <span>@numAndLetter[0]-</span> <span class="quest-answer">@numAndLetter[1] &nbsp;</span>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                                }
+                                }
                                 @if (countMatchQuestion < ViewBag.MatchingQuestion.Count)
                                 {
                                     <hr />

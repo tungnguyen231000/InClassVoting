@@ -4,6 +4,8 @@
     const colorX = document.querySelectorAll('#data-color');
 
     var arrColor = [];
+    var colorIndex = [];
+
     var arrStuff = [];
     var arrString = [];
     var background = '';
@@ -19,20 +21,52 @@
         return color;
     }
 
-    for (var i = 0; i < stuff.length; i++) {
+    for (let i = 0; i < stuff.length; i++) {
         arrColor.push(getRandomColor());
+        colorIndex.push();
     }
+
+    for (let i = 0; i < arrColor.length; i++) {
+
+        colorIndex.push(arrColor[i]);
+    }
+
+
 
     stuff.forEach((item) => {
         arrStuff.push(item.textContent);
     });
+
+    //Phương án index
+    var len = arrStuff.length;
+    var indices = new Array(len);
+    for (let i = 0; i < len; ++i) indices[i] = i;
+    indices.sort(function (a, b) { return arrStuff[a] < arrStuff[b] ? -1 : arrStuff[a] > arrStuff[b] ? 1 : 0; });
+    console.log(indices);
+
     string.forEach((item) => {
         arrString.push(item.textContent);
     });
-    for (var i = 0; i < colorX.length; i++) {
+
+    for (let i = 0; i < colorX.length; i++) {
         colorX[i].style.color = arrColor[i];
     }
-    
+
+    //Sort
+    arrStuff.sort(function (a, b) {
+        return a - b;
+    });
+
+    for (let i = 0; i < colorX.length; i++) {
+        let x = indices[i];
+        arrColor[i] = colorIndex[x];
+        console.log(arrColor[i]);
+        console.log(colorIndex[x]);
+    }
+
+
+
+
 
     background = 'radial-gradient(circle closest-side, transparent 51%, white 0), conic-gradient( ';
 

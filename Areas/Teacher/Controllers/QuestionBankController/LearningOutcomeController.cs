@@ -1,4 +1,5 @@
-﻿using InClassVoting.Models;
+﻿using InClassVoting.Filter;
+using InClassVoting.Models;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -10,46 +11,90 @@ using System.Web.Mvc;
 
 namespace InClassVoting.Areas.Teacher.Controllers.QuestionBankController
 {
+    [AccessAuthenticationFilter]
+    [UserAuthorizeFilter("Teacher")]
     public class LearningOutcomeController : Controller
     {
         private DBModel db = new DBModel();
 
-        // Create New LO
-        public ActionResult ViewLearningOutcome(string cid, string searchText, int? i)
+        private bool checkCourserIdAvailbile(string cid)
         {
-            int courseID = int.Parse(cid);
-            Course course = db.Courses.Find(courseID);
-
-            var loList = db.LearningOutcomes.Where(lo => lo.CourseID == courseID).ToList();
-
-            if (searchText != null && !searchText.Trim().Equals(""))
+            bool check = true;
+            int courseId;
+            bool isInt = int.TryParse(cid, out courseId);
+            //check if chapter id is int
+            if (isInt == false)
             {
-                loList = loList.Where(lo => lo.LO_Description.ToLower().Trim().Contains(searchText.ToLower().Trim()) ||
-                lo.LO_Name.ToLower().Trim().Contains(searchText.ToLower().Trim())).ToList();
-            }
-            int totalLo = db.LearningOutcomes.Count(lo => lo.CourseID == courseID);
-            ViewBag.Course = course;
-            ViewBag.CountLO = totalLo;
-            ViewBag.Search = searchText;
-            //if there is no page number return
-            if (i == null)
-            {
-                i = 1;
+                check = false;
             }
             else
             {
-                if (totalLo % 10 == 0)
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var course = db.Courses.Find(courseId);
+                //check if chapter exist in db
+                if (course == null)
                 {
-                    if (i > (totalLo / 10))
+                    check = false;
+                }
+                else
+                {
+                    //check if chapter belong to teacher
+                    if (course.TeacherID != teacherId)
                     {
-                        i = totalLo / 10;
+                        check = false;
                     }
                 }
-
             }
+            return (check);
+        }
+        // Create New LO
 
-            ViewBag.LONo = (i - 1) * 10;
-            return View(loList.ToPagedList(i ?? 1, 10));
+        public ActionResult ViewLearningOutcome(string cid, string searchText, int? i)
+        {
+            //check if course is availble
+            if (checkCourserIdAvailbile(cid) == false)
+            {
+                return Redirect("~/Teacher/Question/QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int courseID = int.Parse(cid);
+                Course course = db.Courses.Find(courseID);
+
+                var loList = db.LearningOutcomes.Where(lo => lo.CourseID == courseID).ToList();
+
+                if (searchText != null && !searchText.Trim().Equals(""))
+                {
+                    loList = loList.Where(lo => lo.LO_Description.ToLower().Trim().Contains(searchText.ToLower().Trim()) ||
+                    lo.LO_Name.ToLower().Trim().Contains(searchText.ToLower().Trim())).ToList();
+                }
+                int totalLo = db.LearningOutcomes.Count(lo => lo.CourseID == courseID);
+                ViewBag.Course = course;
+                ViewBag.CountLO = totalLo;
+                ViewBag.Search = searchText;
+                //if there is no page number return
+                if (i == null)
+                {
+                    i = 1;
+                }
+                else
+                {
+                    if (totalLo % 10 == 0)
+                    {
+                        if (i > (totalLo / 10))
+                        {
+                            i = totalLo / 10;
+                        }
+                    }
+
+                }
+
+                ViewBag.LONo = (i - 1) * 10;
+                return View(loList.ToPagedList(i ?? 1, 10));
+            }
         }
 
         //Update LO
@@ -90,6 +135,9 @@ namespace InClassVoting.Areas.Teacher.Controllers.QuestionBankController
 
         public ActionResult DeleteLearningOutcome(string cid, FormCollection collection)
         {
+            
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             int courseID = int.Parse(cid);
             var loListSelected = collection["loid"];
             if (loListSelected == null)

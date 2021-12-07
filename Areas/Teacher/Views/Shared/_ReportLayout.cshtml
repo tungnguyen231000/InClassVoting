@@ -18,10 +18,9 @@
     <link rel="stylesheet" type="text/css" href="~/Content/Layout.css">
     <link rel="stylesheet" type="text/css" href="~/Content/Style.css">
     <link rel="stylesheet" type="text/css" href="~/Content/Test.css">
-
     <link rel="stylesheet" type="text/css" href="~/Content/PagedList.css">
-
-
+    <meta name="google-signin-client_id" content="816925739984-c3a18qnso09fra877b75gc1h8jgjg4dn.apps.googleusercontent.com">
+    
 </head>
 <body>
     <!-- start navbar -->
@@ -64,11 +63,11 @@
 
                     <button class="menu-btn focus:outline-none focus:shadow-outline flex flex-wrap items-center">
                         <div class="w-8 h-8 overflow-hidden rounded-full">
-                            <img class="w-full h-full object-cover" src="~/Content/img/user.svg">
+                            <img class="w-full h-full object-cover" src="@ViewBag.ImageURL">
                         </div>
 
                         <div class="ml-2 capitalize flex ">
-                            <h1 class="text-sm text-gray-800 font-semibold m-0 p-0 leading-none">ThắngNQ</h1>
+                            <h1 class="text-sm text-gray-800 font-semibold m-0 p-0 leading-none">@ViewBag.UserName</h1>
                             <i class="fad fa-chevron-down ml-2 text-xs leading-none"></i>
                         </div>
                     </button>
@@ -77,9 +76,9 @@
 
                     <div class="text-gray-500 menu hidden md:mt-10 md:w-full rounded bg-white shadow-md absolute z-20 right-0 w-40 mt-5 py-2 animated faster">
                         <!-- item -->
-                        <a class="px-4 py-2 block capitalize font-medium text-sm tracking-wide bg-white hover:bg-gray-200 hover:text-gray-900 transition-all duration-300 ease-in-out" href="#">
+                        <a class="px-4 py-2 block capitalize font-medium text-sm tracking-wide bg-white hover:bg-gray-200 hover:text-gray-900 transition-all duration-300 ease-in-out" href="~/" onclick="signOut();">
                             <i class="fad fa-user-times text-xs mr-1"></i>
-                            Log out
+                            log out
                         </a>
                         <!-- end item -->
 
@@ -119,10 +118,15 @@
     <!-- End General Report -->
     <!-- end wrapper -->
     <!-- script -->
-    <script src="~/Scripts/jquery-3.4.1.js"></script>
-    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    @*<script src="~/Scripts/jquery-3.4.1.js"></script>
+        <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+        <script src="~/Scripts/Layout.js"></script>*@
+
+    
+    <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
     <script src="~/Scripts/Layout.js"></script>
-    @*<script src="~/Scripts/TestJS.js"></script>*@
+    <script src="~/Scripts/Login.js"></script>
+
     <!-- end script -->
 
 </body>

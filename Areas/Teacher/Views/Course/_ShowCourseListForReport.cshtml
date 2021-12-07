@@ -37,7 +37,12 @@
                             }
                             @foreach (var quiz in course.QuizDones)
                             {
-                                coutnQuiz++;
+
+                                if (quiz.Student_QuizDone.Count != 0)
+                                {
+                                    coutnQuiz++;
+                                }
+
                             }
                             @course.Name (@coutnQuiz Report)
                         </a>

@@ -31,6 +31,7 @@
             $("#matching-right-preview").val($("#matching-right").val());
             $("#matching-right-preview").height(300);
 
+            $("#table-solution-preview").html($("#table-solution").html());
         });
     }
 
@@ -89,7 +90,7 @@
 
         var txtLine2 = '<tr id="poll-option">' +
             '<td><span></span></td>' +
-            '<td class="w-full"><input type="text" class="w-full p-3 mt-2 option" name="option" placeholder="text..."></td>' +
+            '<td class="w-full"><input type="text" id="txtPoll" class="w-full p-3 mt-2 option" name="option" placeholder="text..."></td>' +
             '<td class="w-2"><i id="remove-option-poll" class="far fa-times-circle my-3 p-2"></i></td>' +
             '</tr>';
         $('#table-poll').append(txtLine2);
@@ -98,21 +99,69 @@
 
         var remove = document.querySelectorAll('#remove-option-poll');
 
-        remove.forEach((item) => {
-            item.addEventListener('click', function () {
-                var list = document.querySelectorAll('#poll-option');
+        //Không cho xóa dưới 1
+        if (remove.length == 1) {
+            $('#remove-option-poll').hide();
+        } else {
+            $('#remove-option-poll').show();
+        }
 
-                for (var index = 0; index < list.length; index++) {
-                    list[index].querySelector("#remove-option-poll").addEventListener("click",
-                        function () {
-                            this.closest("#poll-option").remove();
-                            note2();
-                        });
-                }
+        
+        remove[remove.length-1].addEventListener("click",function (e) {
+            var z = e.target;
+            var list = document.querySelectorAll('#poll-option');
+            remove = document.querySelectorAll('#remove-option-poll');
 
-            });
+            var index = Array.prototype.indexOf.call(remove, z);
+                
+            console.log(index);
+
+            list[index].remove();
+            note2();
+
+            console.log(index);
+
+            remove = document.querySelectorAll('#remove-option-poll');
+
+            //Không cho xóa dưới 1
+            var removecheck = document.querySelectorAll('#remove-option-poll');
+            if (removecheck.length <= 1) {
+            $('#remove-option-poll').hide();
+            } else {
+            $('#remove-option-poll').show();
+            }
+        });
+        
+    });
+    //Xóa Poll ban đầu
+    var remove = document.querySelectorAll('#remove-option-poll');
+
+    remove.forEach((item) => {
+         item.addEventListener("click", function (e) {
+            var z = e.target;
+            var list = document.querySelectorAll('#poll-option');
+
+            var index = Array.prototype.indexOf.call(remove, z);
+
+             console.log(index);
+            
+            list[index].remove();
+
+            note2();
+
+            remove = document.querySelectorAll('#remove-option-poll');
+
+            //Không cho xóa dưới 1
+            var removecheck = document.querySelectorAll('#remove-option-poll');
+            if (removecheck.length <= 1) {
+                $('#remove-option-poll').hide();
+            } else {
+                $('#remove-option-poll').show();
+            }
+
         });
     });
+    //===============End Phần Poll====================
 
     //===============Phần Reading====================
     $('#more-question-reading').click(function () {
@@ -120,7 +169,7 @@
         var txtLine4 = '<div id="reading-question" class="w-full items-center bg-gray p-6 border border-black-400">' +
             '<div class="ms-error"></div>' +
             '<div class="m-2">' +
-            '<i id="remove-question-reading" class="fas fa-times h4 delete float-right"></i>' +
+            '<i id="remove-question-reading" class=" h4 delete float-right">x</i>' +
             '</div>' +
             '<div class="m-4">' +
             '<span id="reading-note" class="question-num-2" style="margin-right:20px"></span>' +
@@ -180,15 +229,16 @@
         //Remove Question sau khi add thêm
         var removeQuestion = document.querySelectorAll('#remove-question-reading');
         removeQuestion.forEach((item) => {
-            item.addEventListener('click', function () {
+            item.addEventListener('click', function (e) {
+                var z = e.target;
                 var list = document.querySelectorAll('#reading-question');
-                for (var index = 0; index < list.length; index++) {
-                    list[index].querySelector("#remove-question-reading").addEventListener("click",
-                        function () {
-                            this.closest("#reading-question").remove();
-                            note3();
-                        });
-                }
+                 removeQuestion = document.querySelectorAll('#remove-question-reading');
+
+                var index = Array.prototype.indexOf.call(removeQuestion, z);
+
+                list[index].remove();
+
+                note3();
 
             });
         });
@@ -197,47 +247,19 @@
 
     if ($('#reading-form').length != 0) {
 
-        var moreOptionReading = document.querySelectorAll('#more-option-reading');
-        //Thêm option trước khi add thêm
-        moreOptionReading[moreOptionReading.length - 1].addEventListener('click', function () {
-
-            var txtLine3 = '<tr  id="reading-option">' +
-                '<td class="w-2"><input type="checkbox" id="optionReading-checkbox" id="cb-option" name="cb-option"></td>' +
-                '<td><input type="text" id="optionReading-text" class="w-full pl-3" name="option" placeholder="Option"></td>' +
-                '<td class="w-2"><i id="remove-option-reading" class="far fa-times-circle p-2"></i></td>' +
-                '</tr>';
-
-            $(this).closest('#reading-question').find('#table-reading > tbody').append(txtLine3);
-
-
-            var removeOption = document.querySelectorAll('#remove-option-reading');
-            removeOption.forEach((item) => {
-                item.addEventListener('click', function () {
-                    var list = document.querySelectorAll('#reading-option');
-
-                    for (var index = 0; index < list.length; index++) {
-                        list[index].querySelector("#remove-option-reading").addEventListener("click",
-                            function () {
-                                this.closest("#reading-option").remove();
-                            });
-                    }
-
-                });
-            });
-        });
-
         //Xoá Câu Hỏi Ban dau
         var removeQuestion = document.querySelectorAll('#remove-question-reading');
         removeQuestion.forEach((item) => {
-            item.addEventListener('click', function () {
+            item.addEventListener('click', function (e) {
+                var z = e.target;
                 var list = document.querySelectorAll('#reading-question');
-                for (var index = 0; index < list.length; index++) {
-                    list[index].querySelector("#remove-question-reading").addEventListener("click",
-                        function () {
-                            this.closest("#reading-question").remove();
-                            note3();
-                        });
-                }
+                removeQuestion = document.querySelectorAll('#remove-question-reading');
+
+                var index = Array.prototype.indexOf.call(removeQuestion, z);
+
+                list[index].remove();
+
+                note3();
 
             });
         });

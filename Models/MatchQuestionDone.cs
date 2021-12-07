@@ -19,10 +19,10 @@ namespace InClassVoting.Models
         public string ColumnA { get; set; }
         public string ColumnB { get; set; }
         public string Solution { get; set; }
-        public Nullable<double> Mark { get; set; }
-        public Nullable<int> Time { get; set; }
-        public Nullable<int> StudentReceive { get; set; }
-        public Nullable<int> CorrectNumber { get; set; }
+        public double Mark { get; set; }
+        public int Time { get; set; }
+        public int StudentReceive { get; set; }
+        public int CorrectNumber { get; set; }
     
         public virtual Chapter Chapter { get; set; }
     }

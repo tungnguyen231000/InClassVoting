@@ -129,7 +129,21 @@
                                 ViewBag.QuestionNo = ViewBag.QuestionNo + 1;
                                 <tr>
                                     <th scope="row"> @ViewBag.QuestionNo</th>
-                                    <td><a href="#" type="button">@question.Text </a></td>
+                                    <td>
+                                        @*<a href="#" type="button" class="text_overflow-2">@question.Text </a>*@
+                                        @if (question.Text != null && !question.Text.Equals(""))
+                                        {
+                                            <a href="#" type="button" class="text_overflow-2">@question.Text </a>
+                                        }
+                                        @if (question.ImageData != null)
+                                        {
+                                            var base64 = Convert.ToBase64String(question.ImageData);
+                                            var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                                            <a href="~/Teacher/Question/EditQuestion?qid=@question.QID&&qtype=@question.Qtype" type="button">
+                                                <img src="@imgSrc" alt="pic" class="img-fix" />
+                                            </a>
+                                        }
+                                    </td>
                                     <td>
                                         @if (question.Qtype == 5)
                                         {
@@ -140,7 +154,7 @@
                                     </td>
                                     <td>@question.Mark</td>
                                     <td>
-                                        <a href="~/Teacher/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@question.QID&qtype=@question.QuestionType.QTypeID&questSet=@ViewBag.Questions&cid=@ViewBag.Course.CID&tempName=@ViewBag.TempName&i=@ViewBag.Page"
+                                        <a href="~/Teacher/Quiz/DeleteQuestionsInsideTemporaryQuiz?qid=@question.QID&qtype=@question.Qtype&cid=@ViewBag.Course.CID&tempName=@ViewBag.TempName&i=@ViewBag.Page"
                                            class="fas fa-trash-alt"></a>
                                     </td>
                                 </tr>
@@ -148,8 +162,13 @@
                         }
                     </tbody>
                 </table>
+                @* <input type="hidden" name="questionList" value="@ViewBag.Questions" />*@
                 <div class="paging">
-                    @Html.PagedListPager(Model, i => Url.Action("CreateNewQuiz", "Quiz", new { i, cid = ViewBag.Course.CID, questions = ViewBag.Questions, tempName = Request.QueryString["tempName"] }))
+                    @Html.PagedListPager(Model, i => Url.Action("CreateNewQuiz", "Quiz", new
+                    {
+                        i,
+                        cid = ViewBag.Course.CID,@*questions = ViewBag.Questions,*@ tempName = Request.QueryString["tempName"]
+                    }))
                 </div>
             </div>
             <div style="display: flex; margin-left: auto; margin-bottom:20px">
@@ -198,7 +217,7 @@
                 <h4 style="margin-top: 20px" class="label-mode">Show to students after quiz</h4>
                 <div style="margin-top: 10px;margin-bottom:20px;">
                     <div class="div-mode">
-                        <input id="checkBoxMask" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark"checked />
+                        <input id="checkBoxMask" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" checked />
                         <input type="hidden" name="cbPublishMark" value="0" />
                         <h4 class="label-mode-content-2">Mark</h4>
                         <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />
@@ -220,17 +239,20 @@
 <!-- End General Report -->
 
 <script src="~/Scripts/teacher.quiz.js"></script>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jqueryui/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
     function reloadModalShowQuestion() {
         var chid = document.getElementById("ddlChapter").value;
         var cid = document.getElementById("cidAddModal").value;
-        var questions = document.getElementById("questSet").value;
+        @*var questions = document.getElementById("questSet").value;*@
         var qtype = document.getElementById("ddlQtype").value;
         var searchText = document.getElementById("searchString").value;
-        console.log("jhhh" + chid + cid + questions + qtype);
+        console.log("jhhh" + chid + cid + qtype);
         $("#divShowQuestionsForNewQuiz").load('@Url.Action("ShowQuestionForNewQuiz", "Quiz")' +
-            '?chid=' + chid + '&cid=' + cid + '&qtype=' + qtype + '&searchText=' + searchText + '&questions=' + questions);
+            '?chid=' + chid + '&cid=' + cid + '&qtype=' + qtype + '&searchText=' + searchText@* + '&questions=' + questions*@);
     }
 
     @*function getQuizName() {

@@ -21,7 +21,7 @@ namespace InClassVoting.Models
         }
     
         public int PID { get; set; }
-        public Nullable<int> ChapterID { get; set; }
+        public int ChapterID { get; set; }
         public string Text { get; set; }
         public byte[] PassageImage { get; set; }
     

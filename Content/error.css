@@ -1,5 +1,6 @@
-﻿label.error{
-    color:red;
+﻿label.error {
+    color: red;
+    font-weight:bold;
 }
 
 .true-answer {

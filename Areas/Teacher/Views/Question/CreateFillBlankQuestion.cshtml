@@ -4,19 +4,37 @@
     Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
 }
 
+<link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css" />
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     @using (Html.BeginForm("CreateFillBlankQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "fillblank-form" }))
     {
         <div class="grid grid-cols-1 w-full ">
-
             <div class="w-full items-center bg-gray">
                 <div class="text-center">
-                    <h1 class="h6">
+                    <h1 class="h3">
                         <span>Question Type:</span>
                         <span>Fill Blank</span>
-                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
+
                         <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
                     </h1>
+                </div>
+                <div class="md:mx-16">
+                    <div class="m-6">
+                        <span class="label-mode-4">Learning outcome</span>
+                    </div>
+                    <div class="m-6">
+                        @if (ViewBag.LoList != null)
+                        {
+                            foreach (var lo in ViewBag.LoList)
+                            {
+                                <div style="display:flex">
+                                    <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" />
+                                    <h4 class="label-mode-content-2">@lo.LO_Name</h4>
+                                </div>
+                            }
+                        }
+
+                    </div>
                 </div>
 
                 <div class="flex md:mx-16">
@@ -29,8 +47,8 @@
                         <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="...">
                     </div>
                     <div class="m-6">
-                        <input type="checkbox" name="givenword" value="true">
-                        <label for="givenword"><b>Given Word:</b></label>
+                        <input type="checkbox" name="givenword" id="givenFill" value="true">
+                        <label for="givenword" class="label-mode-4">Given Word</label>
                     </div>
                 </div>
             </div>
@@ -39,11 +57,14 @@
                     <span><b>Question:</b> </span>
                 </div>
                 <div class="w-10/12  float-left mt-3">
-                    <textarea class="p-2 w-full" name="questionText" rows="4" id="questionText" placeholder="..."></textarea>
+                    <textarea class="p-2 w-full" name="questionText" rows="4" id="questionFill" placeholder="..."></textarea>
                 </div>
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <button type="button" id="previewFill" class="btn btn-primary mr-6" data-toggle="modal" data-target="#fillPreview">
+                    Preview
+                </button>
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
             </div>
 
@@ -90,9 +111,34 @@
         A single waterproof hat with a brim will do the <span style="background-color:lightgreen">(role)</span> adequately in most conditions
 
     </div>
+
+    <!--Thêm Dialog Paper Preview-->
+    <div class="modal fade" id="fillPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content ">
+                <div class="">
+                    <button type="button" class="close float-right p-3" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="text-center" id="exampleModalLabel">Preview</h4>
+                </div>
+                <div id="multiple-test" class="p-5">
+                    <div class="w-full items-center bg-gray  ">
+                        <div>
+                            <div id="questionFill-preview" contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+
 @*
-<script src="~/Scripts/jquery-3.4.1.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>*@
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>*@
 @*<script src="~/Scripts/validate.js"></script>*@

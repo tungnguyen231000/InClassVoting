@@ -19,7 +19,7 @@
                 </div>
                 <div class="text-center">
                     @{
-                        int? time = ViewBag.Quiz.Time;
+                        int time = ViewBag.Quiz.Time;
                         string second = "00";
                         string minute = "00";
                         if ((time % 60) != 0)
@@ -673,7 +673,7 @@
 
 
         <div class=" inline-block mt-4">
-            <input type="button" class="float-right btn btn-bs-primary" id="btnSubmit" name="name" value="Finish Quiz" />
+            <input type="button" class="float-right btn btn-bs-primary" id="btnSubmit" name="name" value="Finish Quiz"  disabled/>
         </div>
 
         <!--End Form Test-->

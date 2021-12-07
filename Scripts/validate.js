@@ -16,6 +16,138 @@ $(document).ready(function () {
 		}
 	});
 
+	//===============Validate Image ================
+	if ($(".drag-content").length != 0) {
+		$(".file-input").change(function () {
+			let files = $(".file-input").prop('files');
+			if (files.length > 0) {
+				if (files[0].size > 2 * 1024 * 1024) {
+					if ($('.image-error').length == 0) {
+						$(".file-input").after('<div class="image-error">*Image size exceeds 2MB</div>');
+						$('.image-error').css("color", "red");
+						$('.image-error').css("font-weight", "bold");
+					}
+					$(".file-input").val(null);
+					return false;
+				} else {
+					$('.image-error').remove();
+				}
+			}
+		});
+	}
+	//===============End Validate Image ================
+
+	//===============Validate FillBlank - Done ================
+	$("#fillblank-form").validate({
+		onfocusout: false,
+		onkeyup: false,
+		onclick: false,
+		rules: {
+			"time": {
+				required: true
+			},
+			"mark": {
+				required: true
+			}
+		},
+		messages: {
+			"time": {
+				required: "*Time is required"
+			},
+			"mark": {
+				required: "*Mark is required"
+			}
+		}
+	});
+	if ($("#fillblank-form").length != 0) {
+		$("#fillblank-form").submit(function () {
+
+			if ($('#questionFill').val().trim() == '') {
+				if ($('.question-error').length == 0) {
+					$('#questionFill').after('<div class="question-error">*Question is required</div>');
+					$('.question-error').css("color", "red");
+					$('.question-error').css("font-weight", "bold");
+				}
+				return false;
+			} else {
+				$('.question-error').remove();
+			}
+
+			const regexGroup = /\(\~[^\(\)]+\)/g;
+			var fillText = $("#questionFill").val();
+			var arrGroup = fillText.match(regexGroup);
+
+			if ($("#givenFill").prop("checked") == true) {
+				if (arrGroup != null) {
+					$('.question-error').remove();
+					for (var i = 0; i < arrGroup.length; i++) {
+						arrGroup[i] = arrGroup[i].replace("(", "");
+						arrGroup[i] = arrGroup[i].replace(")", "");
+						var listOption = arrGroup[i].match(/\~[^,. ][aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890,. ]+/g);
+						var listAnswer = arrGroup[i].match(/\~=[^,. ][aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890,. ]+/g);
+						if (listOption == null) {
+							if ($('.question-error').length == 0) {
+								$('#questionFill').after('<div class="question-error">*Option ' + (i + 1) + ' invalid (at least 1 option) </div>');
+								$('.question-error').css("color", "red");
+								$('.question-error').css("font-weight", "bold");
+								return false;
+							}
+						} else {
+							$('.question-error').remove();
+						}
+
+						if (listAnswer == null) {
+							if ($('.question-error').length == 0) {
+								$('#questionFill').after('<div class="question-error">*Answer ' + (i + 1) + ' invalid (at least 1 answer) </div>');
+								$('.question-error').css("color", "red");
+								$('.question-error').css("font-weight", "bold");
+								return false;
+							}
+						} else {
+							$('.question-error').remove();
+						}
+					}
+				} else {
+					if ($('.question-error').length == 0) {
+						$('#questionFill').after('<div class="question-error">*Require at least 1 option</div>');
+						$('.question-error').css("color", "red");
+						$('.question-error').css("font-weight", "bold");
+						return false;
+					}
+				}
+			}
+			if ($("#givenFill").prop("checked") == false) {
+
+				const regexGroup2 = /\([^\(\)]+\)/g;
+				var arrGroup = fillText.match(regexGroup2);
+
+				if (arrGroup == null) {
+					if ($('.question-error').length == 0) {
+						$('#questionFill').after('<div class="question-error">*Require at least 1 option.</div>');
+						$('.question-error').css("color", "red");
+						$('.question-error').css("font-weight", "bold");
+						return false;
+					}
+				} else {
+					$('.question-error').remove();
+                }
+			}
+
+			if ($('#answerFill').val().trim() == '') {
+				if ($('.question-error').length == 0) {
+					$('#answerFill').after('<div class="question-error">*Answer is required</div>');
+					$('.question-error').css("color", "red");
+					$('.question-error').css("font-weight", "bold");
+				}
+				return false;
+			} else {
+				$('.question-error').remove();
+			}
+
+		});
+	}
+	//===============End Validate FillBlank - Done================
+
 	//===============Validate Multiple Choice - Done ================
 	$('#multiple-form').validate({
 		onfocusout: false,
@@ -177,6 +309,7 @@ $(document).ready(function () {
 			} else {
 				$('.para-error').remove();
 			}
+
 			for (var i = 0; i < listQuestion.length; i++) {
 				if ($(listQuestion[i]).val().trim() == '') {
 					if ($('.question-error').length == 0) {
@@ -186,7 +319,8 @@ $(document).ready(function () {
 					}
 					checkValidate = false;
 				} else {
-					$('.question-error').remove();
+					var questionE = document.querySelectorAll('.question-error');
+					$(questionE[i]).remove();
 				}
 			}
 			for (var i = 0; i < listMark.length; i++) {
@@ -198,7 +332,8 @@ $(document).ready(function () {
 					}
 					checkValidate = false;
 				} else {
-					$('.mark-error').remove();
+					var markE = document.querySelectorAll('.mark-error');
+					$(markE[i]).remove();
 				}
 			}
 			for (var i = 0; i < listTime.length; i++) {
@@ -210,7 +345,8 @@ $(document).ready(function () {
 					}
 					checkValidate = false;
 				} else {
-					$('.time-error').remove();
+					var timeE = document.querySelectorAll('.time-error');
+					$(timeE[i]).remove();
 				}
 			}
 			for (var i = 0; i < listTableReading.length; i++) {
@@ -363,7 +499,6 @@ $(document).ready(function () {
 
 	if ($("#indicate-form").length != 0) {
 		$("#indicate-form").submit(function () {
-			//Quả regex hơi cay =)))) cơ mà thế mới viết được tiếng việt
 			var regexIndicateQuestion = /\([a-zA-Z]{1}-[aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆ fFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTu UùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890]*\)/g;
 			let question = $("#questionIndicate").val();
 			list = question.match(regexIndicateQuestion);
@@ -439,5 +574,67 @@ $(document).ready(function () {
     }
 
 	//=============End Validate Indicate Mistake==============
+
+	//===============Validate Poll - New ================
+	$('#poll-form').validate({
+		onfocusout: false,
+		onkeyup: false,
+		onclick: false,
+		rules: {
+			"time": {
+				required: true,
+			},
+			"pollName": {
+				required: true,
+			},
+		},
+		messages: {
+			"time": {
+				required: "*Time is required"
+			},
+			"pollName": {
+				required: "*Poll Name is required"
+			}
+		}
+	});
+
+	if ($('#poll-form').length != 0) {
+
+		$('.ms-error').css("color", "red");
+		$('.ms-error').css("font-weight", "bold");
+
+		$('#poll-form').submit(function () {
+			var listOptionText = document.querySelectorAll('#txtPoll');
+			let countText = 0;
+
+			if ($('#question').val().trim() == '') {
+				if ($('.question-error').length == 0) {
+					$('#question').after('<div class="question-error">*Question is required</div>');
+					$('.question-error').css("color", "red");
+					$('.question-error').css("font-weight", "bold");
+                }
+				return false;
+			} else {
+				$('.question-error').remove();
+			}
+
+			for (var i = 0; i < listOptionText.length; i++) {
+				if (listOptionText[i].value.trim() != '') {
+					countText++;
+				}
+			}
+
+			if (countText < 2) {
+				$('.ms-error').html("*Need to fill in at least 2 option fields");
+				return false;
+			} else {
+				$('.ms-error').html("");
+			}
+
+		});
+
+	}
+
+	//===============End Validate Poll================
 	
 });

@@ -23,7 +23,7 @@ namespace InClassVoting.Models
         public int PAID { get; set; }
         public int PollID { get; set; }
         public string Answer_Text { get; set; }
-        public Nullable<int> ChosenQuantity { get; set; }
+        public int ChosenQuantity { get; set; }
     
         public virtual Poll Poll { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -7,27 +7,47 @@
     saveChanges();
 }
 function checkMask() {
-    if (document.getElementById("checkBoxRight").checked) {
-        document.getElementById("checkBoxMask").checked = "true";
+    if (document.getElementById("checkBoxMask").checked == false) {
+        document.getElementById("checkBoxAnswer").checked = false;
+        console.log("hihi4");
     }
+    console.log("hihi3");
     saveChanges();
 }
+function checkAnswer() {
+    if (document.getElementById("checkBoxAnswer").checked) {
+        document.getElementById("checkBoxMask").checked = true;
+    }
+    console.log("hihi2");
+    publishChange();
+}
 
-var quizLink = document.getElementById("quizLink").value;
+/*var quizLink = document.getElementById("quizLink").value;
 if (quizLink.indexOf("DoQuizPaperTest") == -1) {
     document.getElementById("qQuiz").checked = "true";
 } else {
     document.getElementById("papeQuiz").checked = "true";
-}
+}*/
 
 function changeLinkqQuiz() {
     let link = document.getElementById("linkQ").innerHTML;
-    document.getElementById("linkQ").innerHTML = link.replace("DoQuizPaperTest", "DoQuizQuestionByQuestion");
-    document.getElementById("quizLink").value = link.replace("DoQuizPaperTest", "DoQuizQuestionByQuestion");
+    /*document.getElementById("linkQ").innerHTML = link.replace("DoQuizPaperTest", "DoQuizQuestionByQuestion");
+    document.getElementById("quizLink").value = link.replace("DoQuizPaperTest", "DoQuizQuestionByQuestion");*/
+    let quizType = "ShowQuestionByQuestion";
+    document.getElementById("qtype").value = quizType;
+    document.getElementById("qtypeChange").value = quizType;
+    console.log(quizType);
 }
+
 function changeLinkpQuiz() {
     let link = document.getElementById("linkQ").innerHTML;
-    document.getElementById("quizLink").value = link.replace("DoQuestionByQTest", "DoQuizPaperTest");
+   /* document.getElementById("linkQ").innerHTML = link.replace("DoQuizQuestionByQuestion", "DoQuizPaperTest");
+    document.getElementById("quizLink").value = link.replace("DoQuizQuestionByQuestion", "DoQuizPaperTest");*/
+    let quizType = "ShowAllQuestion";
+    document.getElementById("qtype").value = quizType;
+    document.getElementById("qtypeChange").value = quizType;
+    console.log(quizType);
+    
 }
 
 

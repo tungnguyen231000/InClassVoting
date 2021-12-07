@@ -1,9 +1,10 @@
 ﻿
 @using System.Text.RegularExpressions;
 @{
-    ViewBag.Title = "DoQuizPaperTest";
+    ViewBag.Title = "DoQuizShowAllQuestion";
     Layout = "~/Areas/Student/Views/Shared/_Layout.cshtml";
 }
+
 
 
 <link type="text/css" href="~/Content/sidebar.css" rel="stylesheet" />
@@ -20,7 +21,7 @@
                     <span class="h4 pl-3 w-auto count-time ">TIME</span>
                 </div>
                 <div class="text-center">
-                    <span class="h4 pl-3 w-auto count-time" size="3" type="text" id="time" name="create-question-time" placeholder="Time" data-time="@ViewBag.Time">00:00</span>
+                    <span class="h4 pl-3 w-auto count-time" size="3" type="text" id="time" name="create-question-time" placeholder="Time" data-time="@ViewBag.CountDown">00:00</span>
                 </div>
 
             </div>
@@ -158,7 +159,7 @@
         @using (Html.BeginForm("SubmitQuiz", "Quiz", FormMethod.Post, new { id = "formPaperQuiz" }))
         {
             <input type="hidden" name="qDoneID" value="@ViewBag.Quiz.QuizDoneID" />
-            <input type="hidden" name="studentID" value="1" />
+            @*<input type="hidden" name="studentID" value="1" />*@
             <!--======Multiple Test=======-->
             if (ViewBag.MultipleQuestion.Count != 0)
             {
@@ -686,5 +687,6 @@
 <script src="~/Scripts/jqueryui/jquery-ui.min.js"></script>
 <script src="~/Scripts/countdown.js"></script>
 <script src="~/Scripts/sidebar.js"></script>
+
 
 

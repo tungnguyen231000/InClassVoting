@@ -11,128 +11,281 @@ using System.Web;
 using System.Web.Mvc;
 using PagedList.Mvc;
 using PagedList;
+using InClassVoting.Filter;
 
 namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 {
+    [AccessAuthenticationFilter]
+    [UserAuthorizeFilter("Teacher")]
     public class QuestionController : Controller
     {
         private DBModel db = new DBModel();
         // GET: teacher/Question
         public ActionResult QuestionBank()
         {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             return View();
         }
-        //Get question list by chapter (Question Bank)
-        public ActionResult ViewQuestionByChapter(string chid, string qtype, string searchText, int? i)
-        {
-            int chapID = int.Parse(chid);
-            var chapter = db.Chapters.Find(chapID);
-            var questions = db.Questions.Where(q => q.ChapterID == chapID).ToList();
-            var matchings = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
-            List<Question> qList = new List<Question>();
-            List<MatchQuestion> mList = new List<MatchQuestion>();
 
-            if (qtype == null || qtype.Trim().Equals(""))
+        private bool checkChapterIdAvailbile(string chid)
+        {
+            bool check = true;
+            int chapID;
+            bool isInt = int.TryParse(chid, out chapID);
+            //check if chapter id is int
+            if (isInt == false)
             {
-                qtype = "-1";
-            }
-            //get question type by dropdown list
-            int qTypeID = int.Parse(qtype);
-            if (qTypeID == -1)
-            {
-                mList = matchings;
-                qList = questions;
+                check = false;
             }
             else
             {
-                if (qTypeID == 5)
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var chapter = db.Chapters.Find(chapID);
+                //check if chapter exist in db
+                if (chapter == null)
                 {
-                    mList = matchings;
+                    check = false;
                 }
                 else
                 {
-                    qList = questions.Where(q => q.Qtype == qTypeID).ToList();
-                }
-
-            }
-
-
-            // check if user search by question text
-            if (searchText != null && !searchText.Equals(""))
-            {
-                if (mList != null)
-                {
-                    mList = mList.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
-                                    m.ColumnB.ToLower().Contains(searchText.ToLower().Trim())).ToList();
-                }
-                if (qList != null)
-                {
-                    qList = qList.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim())).ToList();
-                }
-                ViewBag.Search = searchText;
-
-            }
-            else
-            {
-                ViewBag.Search = "";
-            }
-
-            foreach (var m in mList)
-            {
-                Question q = new Question();
-                q.Text = m.ColumnA + "//" + m.ColumnB;
-                q.Qtype = 5;
-                q.Mark = m.Mark;
-                q.QID = m.MID;
-                q.CreatedDate = m.CreatedDate;
-                qList.Add(q);
-            }
-
-            //get question type
-
-            if (qtype == null)
-            {
-                ViewBag.QType = "";
-            }
-            else
-            {
-                ViewBag.QType = qtype;
-            }
-            /*Debug.WriteLine("///" + qtype);*/
-
-            ViewBag.CountQuest = db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID); ;
-            ViewBag.CourseName = chapter.Course.Name;
-            ViewBag.Chapter = chapter;
-            ViewBag.QuestionType = db.QuestionTypes.ToList();
-
-            //return page after delete and add
-            if (i == null)
-            {
-                i = 1;
-            }
-            else
-            {
-                int totalQuestion = qList.Count;
-                if (totalQuestion % 10 == 0)
-                {
-                    if (i > (totalQuestion / 10))
+                    //check if chapter belong to teacher
+                    if (chapter.Course.TeacherID != teacherId)
                     {
-                        i = totalQuestion / 10;
+                        check = false;
+                    }
+                }
+            }
+            return (check);
+        }
+
+        private bool checkQuestionIdAvailble(string qid, int qType)
+        {
+            bool check = true;
+            int questId;
+            bool isInt = int.TryParse(qid, out questId);
+            //check if question id is int
+            if (isInt == false)
+            {
+                check = false;
+            }
+            else
+            {
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                //if question is matching
+                if (qType == 5)
+                {
+                    var question = db.MatchQuestions.Find(questId);
+                    //check if question exist in db
+                    if (question == null)
+                    {
+                        check = false;
+                    }
+                    else
+                    {
+                        //if question belong to teacher
+                        if (question.Chapter.Course.TeacherID != teacherId)
+                        {
+                            check = false;
+                        }
+                    }
+                   
+                }
+                else
+                {
+                    var question = db.Questions.Find(questId);
+                    if (question == null)
+                    {
+                        check = false;
+                    }
+                    else
+                    {
+                        //if question belong to teacher
+                        if (question.Chapter.Course.TeacherID != teacherId)
+                        {
+                            check = false;
+                        }
+                        else
+                        {
+                            //if question type is wrong
+                            if (question.Qtype != qType)
+                            {
+                                check = false;
+                            }
+                        }
                     }
                 }
 
+
+            }
+            return (check);
+        }
+
+        private bool checkQuestionTypeIdAvailbile(string qtype)
+        {
+            bool check = true;
+            int qTypeId;
+            bool isInt = int.TryParse(qtype, out qTypeId);
+            //check if question type id is int
+            if (isInt == false)
+            {
+                check = false;
+            }
+            else if (qTypeId == -1)
+            {
+                check = true;
+            }
+            else
+            {
+                var questionType = db.QuestionTypes.Find(qTypeId);
+                //check if question type exist in db
+                if (questionType == null)
+                {
+                    check = false;
+                }
+            }
+            return (check);
+        }
+
+
+
+        //Get question list by chapter (Question Bank)
+        public ActionResult ViewQuestionByChapter(string chid, string qtype, string searchText, int? i)
+        {
+            //check if chapter is availble
+            if (checkChapterIdAvailbile(chid) == false)
+            {
+                Debug.WriteLine("nope");
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+
+                int chapID = int.Parse(chid);
+                var chapter = db.Chapters.Find(chapID);
+                var questions = db.Questions.Where(q => q.ChapterID == chapID).ToList();
+                var matchings = db.MatchQuestions.Where(m => m.ChapterId == chapID).ToList();
+                List<Question> qList = new List<Question>();
+                List<MatchQuestion> mList = new List<MatchQuestion>();
+
+                if (checkQuestionTypeIdAvailbile(qtype)==false)
+                {
+                    qtype = "-1";
+                }
+                //get question type by dropdown list
+                int qTypeID = int.Parse(qtype);
+                if (qTypeID == -1)
+                {
+                    mList = matchings;
+                    qList = questions;
+                }
+                else
+                {
+                    if (qTypeID == 5)
+                    {
+                        mList = matchings;
+                    }
+                    else
+                    {
+                        qList = questions.Where(q => q.Qtype == qTypeID).ToList();
+                    }
+
+                }
+
+
+                // check if user search by question text
+                if (searchText != null && !searchText.Equals(""))
+                {
+                    if (mList != null)
+                    {
+                        mList = mList.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
+                                        m.ColumnB.ToLower().Contains(searchText.ToLower().Trim())).ToList();
+                    }
+                    if (qList != null)
+                    {
+                        qList = qList.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim())).ToList();
+                    }
+                    ViewBag.Search = searchText;
+
+                }
+                else
+                {
+                    ViewBag.Search = "";
+                }
+
+                foreach (var m in mList)
+                {
+                    Question q = new Question();
+                    q.Text = m.ColumnA + "//" + m.ColumnB;
+                    q.Qtype = 5;
+                    q.Mark = m.Mark;
+                    q.QID = m.MID;
+                    q.CreatedDate = m.CreatedDate;
+                    qList.Add(q);
+                }
+
+                //get question type
+
+                if (qtype == null)
+                {
+                    ViewBag.QType = "";
+                }
+                else
+                {
+                    ViewBag.QType = qtype;
+                }
+                /*Debug.WriteLine("///" + qtype);*/
+
+                ViewBag.CountQuest = db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID); ;
+                ViewBag.CourseName = chapter.Course.Name;
+                ViewBag.LoList = db.QuestionLOes.Where(ql => ql.LearningOutcome.CourseID == chapter.CourseID).ToList();
+                ViewBag.Chapter = chapter;
+                ViewBag.QuestionType = db.QuestionTypes.ToList();
+
+
+                //return page after delete and add
+                if (i == null ||i<1)
+                {
+                    i = 1;
+                }
+                else
+                {
+                    if (qList.Count % 10 == 0 && i > qList.Count / 10)
+                    {
+                        i = 1;
+                    }
+                    else if (qList.Count % 10 != 0 && i > ((qList.Count / 10) + 1))
+                    {
+                        i = 1;
+                    }
+
+                }
+
+                ViewBag.QuestCount = (i - 1) * 10;
+                ViewBag.Page = i;
+                qList = qList.OrderBy(q => q.CreatedDate).ToList();
+                if (qList.Count == 0)
+                {
+                    i = null;
+                }
+                /*else {*/
+                return View(qList.ToPagedList(i ?? 1, 10));
+                /*}*/
+
             }
 
-            ViewBag.QuestCount = (i - 1) * 10;
-            ViewBag.Page = i;
-            qList = qList.OrderBy(q => q.CreatedDate).ToList();
-
-            return View(qList.ToPagedList(i ?? 1, 10));
         }
 
         //delete question
+        [HttpPost]
         public ActionResult DeleteQuestion(string chapterId, string qtype, string searchText, FormCollection collection, int? page)
         {
+            
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             int chapID = int.Parse(chapterId);
             var questions = collection["questionIdAndType"];
 
@@ -140,7 +293,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             if (questions == null)
             {
                 return Redirect(Request.UrlReferrer.ToString());
-
             }
             else
             {
@@ -209,6 +361,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //edit question
         public ActionResult EditQuestion(string qid, string qtype)
         {
+            
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             int questID = int.Parse(qid);
             int qTypeID = int.Parse(qtype);
             /*var question = db.Questions.Find(questID);*/
@@ -243,10 +398,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to create multiple choice question
         public ActionResult CreateMultipleChoiceQuestion(string chid)
         {
-            int chapID = int.Parse(chid);
-            ViewBag.ChapterID = chapID;
-            return View();
-
+            //check if chapter is availble
+            if (checkChapterIdAvailbile(chid) == false)
+            {
+                Debug.WriteLine("nope");
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int chapID = int.Parse(chid);
+                Chapter chapter = db.Chapters.Find(chapID);
+                ViewBag.ChapterID = chapID;
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //add new multiple choice question
@@ -254,7 +422,6 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         public ActionResult CreateMultipleChoiceQuestion(string chid, string questionText, FormCollection collection, string mark, string time,
             HttpPostedFileBase imgfile)
         {
-
             int chapID = int.Parse(chid);
             Question question = new Question();
             Chapter chapter = db.Chapters.Find(chapID);
@@ -290,7 +457,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     imgfile.SaveAs(path);
                 }
 
-                
+
 
 
                 question.ImageData = new byte[imgfile.ContentLength];
@@ -343,21 +510,58 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     db.QuestionAnswers.Add(qa);
                 }
             }
+
+
+            //get lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = qid;
+                        qLO.Qtype = 1;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
             db.SaveChanges();
+
             int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
 
+            Debug.Write(lastPage + "irutrut"+chapID);
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
         }
 
         //show page to edit multiple choice question
         public ActionResult EditMultipleChoiceQuestion(string qid)
         {
-            int questionID = int.Parse(qid);
-            Question question = db.Questions.Find(questionID);
-            ViewBag.ChapterID = question.ChapterID;
-            ViewBag.Question = question;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkQuestionIdAvailble(qid, 1) == false)
+            {
+
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int questionID = int.Parse(qid);
+                Question question = db.Questions.Find(questionID);
+                ViewBag.ChapterID = question.ChapterID;
+                ViewBag.Question = question;
+                ViewBag.Previous = Request.UrlReferrer.ToString(); 
+
+                ViewBag.QuestionLO = db.QuestionLOes.Where(ql => ql.QuestionID == question.QID && ql.Qtype == 1).ToList();
+                Chapter chapter = db.Chapters.Find(question.ChapterID);
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //save multiple choice question after edit
@@ -365,6 +569,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         public ActionResult EditMultipleChoiceQuestion(string previousUrl, string qid, string chid, string questionText, FormCollection collection, string mark, string time,
             HttpPostedFileBase imgfile)
         {
+            
             int questionID = int.Parse(qid);
             int chapID = int.Parse(chid);
             Question question = db.Questions.Find(questionID);
@@ -386,9 +591,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             //change image
             if (imgfile != null && imgfile.ContentLength > 0)
             {
-               /* var fileName = Path.GetFileName(imgfile.FileName);
-                var path = Path.Combine(Server.MapPath("~/Content/User_Images"), fileName);
-                imgfile.SaveAs(path);*/
+                /* var fileName = Path.GetFileName(imgfile.FileName);
+                 var path = Path.Combine(Server.MapPath("~/Content/User_Images"), fileName);
+                 imgfile.SaveAs(path);*/
 
                 var fileName = Path.GetFileName(imgfile.FileName);
                 var newPath = Server.MapPath("~/Images");
@@ -422,6 +627,31 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             foreach (var quiz in quizContainQuestions)
             {
                 updateQuizTimeAndMark(quiz);
+            }
+
+            var oldLoList = db.QuestionLOes.Where(lo => lo.QuestionID == questionID && lo.Qtype == 1);
+            //delete the old lo
+            foreach (var lo in oldLoList)
+            {
+                db.QuestionLOes.Remove(lo);
+            }
+
+            //get new lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = questionID;
+                        qLO.Qtype = 1;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
             }
 
 
@@ -463,10 +693,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to create reading question
         public ActionResult CreateReadingQuestion(string chid)
         {
-            int chapID = int.Parse(chid);
-            ViewBag.ChapterID = chapID;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkChapterIdAvailbile(chid) == false)
+            {
+                Debug.WriteLine("nope");
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int chapID = int.Parse(chid);
+                Chapter chapter = db.Chapters.Find(chapID);
+                ViewBag.ChapterID = chapID;
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
 
@@ -555,11 +798,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 int qid = int.Parse(db.Questions.OrderByDescending(q => q.QID).Where(q => q.ChapterID == chapID).Select(q => q.QID).First().ToString());
 
                 int countIndex = 0;
-                /* Debug.WriteLine(questionList[i] + "/1");
-                 Debug.WriteLine(cbOption[i] + "//2");
-                 Debug.WriteLine(markList[i] + "///3");
-                 Debug.WriteLine(timeList[i] + "///4");
- */
+
                 for (int j = countAnswer; j < (i + 1) * 6; j++)
                 {
                     countIndex++;
@@ -594,6 +833,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
                 }
                 countAnswer = countAnswer + 6;
+                //get lo
+                if (collection["lo"] != null)
+                {
+                    string[] loList = collection["lo"].Split(new char[] { ',' });
+                    foreach (string loId in loList)
+                    {
+                        var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                        if (lo != null)
+                        {
+                            QuestionLO qLO = new QuestionLO();
+                            qLO.QuestionID = qid;
+                            qLO.Qtype = 2;
+                            qLO.LearningOutcomeID = lo.LOID;
+                            db.QuestionLOes.Add(qLO);
+                        }
+                    }
+                }
             }
             db.SaveChanges();
 
@@ -607,25 +863,40 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to edit reading question
         public ActionResult EditReadingQuestion(string qid)
         {
-            int questionID = int.Parse(qid);
-            Question question = db.Questions.Find(questionID);
-            ViewBag.ChapterID = question.ChapterID;
-            ViewBag.QuestionList = db.Questions.Where(q => q.PassageID == question.PassageID).ToList();
-            ViewBag.Passage = question.Passage;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            var idList = db.Questions.Where(q => q.PassageID == question.PassageID).Select(q => q.QID).ToList();
-            string qidList = "";
-            for (int i = 0; i < idList.Count; i++)
+            //check if chapter is availble
+            if (checkQuestionIdAvailble(qid, 2) == false)
             {
-                qidList = qidList + idList[i];
-                if (i < idList.Count - 1)
-                {
-                    qidList = qidList + ";";
-                }
+                return RedirectToAction("QuestionBank");
             }
-            ViewBag.QuestionIDList = qidList;
-            Debug.WriteLine(qidList);
-            return View();
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+
+                int questionID = int.Parse(qid);
+                Question question = db.Questions.Find(questionID);
+                ViewBag.ChapterID = question.ChapterID;
+                ViewBag.QuestionList = db.Questions.Where(q => q.PassageID == question.PassageID).ToList();
+                ViewBag.Passage = question.Passage;
+                ViewBag.Previous = Request.UrlReferrer.ToString();
+                Chapter chapter = db.Chapters.Find(question.ChapterID);
+                ViewBag.QuestionLO = db.QuestionLOes.Where(ql => ql.QuestionID == questionID && ql.Qtype == 2).ToList();
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                var idList = db.Questions.Where(q => q.PassageID == question.PassageID).Select(q => q.QID).ToList();
+                string qidList = "";
+                for (int i = 0; i < idList.Count; i++)
+                {
+                    qidList = qidList + idList[i];
+                    if (i < idList.Count - 1)
+                    {
+                        qidList = qidList + ";";
+                    }
+                }
+                ViewBag.QuestionIDList = qidList;
+                Debug.WriteLine(qidList);
+                return View();
+            }
         }
 
         //savereading question after edit
@@ -752,6 +1023,32 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
                 }
                 countAnswer = countAnswer + 6;
+
+                var oldLoList = db.QuestionLOes.Where(lo => lo.QuestionID == questionID && lo.Qtype == 2);
+                //delete the old lo
+                foreach (var lo in oldLoList)
+                {
+                    db.QuestionLOes.Remove(lo);
+                }
+
+                //get new lo
+                if (collection["lo"] != null)
+                {
+                    string[] loList = collection["lo"].Split(new char[] { ',' });
+                    foreach (string loId in loList)
+                    {
+                        var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                        if (lo != null)
+                        {
+                            QuestionLO qLO = new QuestionLO();
+                            qLO.QuestionID = questionID;
+                            qLO.Qtype = 2;
+                            qLO.LearningOutcomeID = lo.LOID;
+                            db.QuestionLOes.Add(qLO);
+                        }
+                    }
+                }
+
             }
 
             db.SaveChanges();
@@ -822,6 +1119,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     question.PassageID = passageID;
                     question.ChapterID = chapID;
                     question.Mark = float.Parse(markList[i]);
+                    question.CreatedDate = DateTime.Now;
                     question.Time = int.Parse(timeList[i]);
                     //get mixchoice checkbox
                     if (mixChoiceList[0].Contains("1"))
@@ -887,10 +1185,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to create short answer question
         public ActionResult CreateShortAnswerQuestion(string chid)
         {
-            int chapID = int.Parse(chid);
-            ViewBag.ChapterID = chapID;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkChapterIdAvailbile(chid) == false)
+            {
+                Debug.WriteLine("nope");
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int chapID = int.Parse(chid);
+                Chapter chapter = db.Chapters.Find(chapID);
+                ViewBag.ChapterID = chapID;
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //add new short answer question
@@ -955,6 +1266,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 db.QuestionAnswers.Add(qa);
             }
 
+            //get lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = qid;
+                        qLO.Qtype = 4;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
 
             db.SaveChanges();
             int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
@@ -966,12 +1294,27 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to edit short answer question
         public ActionResult EditShortAnswerQuestion(string qid)
         {
-            int questionID = int.Parse(qid);
-            Question question = db.Questions.Find(questionID);
-            ViewBag.ChapterID = question.ChapterID;
-            ViewBag.Question = question;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkQuestionIdAvailble(qid, 4) == false)
+            {
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int questionID = int.Parse(qid);
+                Question question = db.Questions.Find(questionID);
+                ViewBag.ChapterID = question.ChapterID;
+                ViewBag.Question = question;
+                ViewBag.Previous = Request.UrlReferrer.ToString();
+
+                Chapter chapter = db.Chapters.Find(question.ChapterID);
+                ViewBag.QuestionLO = db.QuestionLOes.Where(ql => ql.QuestionID == questionID && ql.Qtype == 4).ToList();
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //saveedit short answer question after edit
@@ -1037,6 +1380,30 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 db.QuestionAnswers.Add(qa);
             }
 
+            var oldLoList = db.QuestionLOes.Where(lo => lo.QuestionID == question.QID && lo.Qtype == 4);
+            //delete the old lo
+            foreach (var lo in oldLoList)
+            {
+                db.QuestionLOes.Remove(lo);
+            }
+
+            //get new lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = question.QID;
+                        qLO.Qtype = 4;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
 
             db.SaveChanges();
 
@@ -1046,10 +1413,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to create matching question
         public ActionResult CreateMatchingQuestion(string chid)
         {
-            int chapID = int.Parse(chid);
-            ViewBag.ChapterID = chapID;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkChapterIdAvailbile(chid) == false)
+            {
+                Debug.WriteLine("nope");
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int chapID = int.Parse(chid);
+                Chapter chapter = db.Chapters.Find(chapID);
+                ViewBag.ChapterID = chapID;
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //add new matching question
@@ -1085,6 +1465,26 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             db.MatchQuestions.Add(matching);
             db.SaveChanges();
 
+            int mid = int.Parse(db.MatchQuestions.OrderByDescending(m => m.MID).Where(m => m.ChapterId == chapID).Select(m => m.MID).First().ToString());
+            //get lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = mid;
+                        qLO.Qtype = 5;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
+            db.SaveChanges();
+
             int lastPage = ((db.Questions.Count(q => q.ChapterID == chapID) + db.MatchQuestions.Count(m => m.ChapterId == chapID)) / 10 + 1);
             return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID + "&i=" + lastPage);
 
@@ -1093,12 +1493,26 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to edit matching question
         public ActionResult EditMatchingQuestion(string qid)
         {
-            int matchingID = int.Parse(qid);
-            MatchQuestion matching = db.MatchQuestions.Find(matchingID);
-            ViewBag.Matching = matching;
-            ViewBag.Solution = matching.Solution.Split(new char[] { ';' }).ToList();
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkQuestionIdAvailble(qid, 5) == false)
+            {
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int matchingID = int.Parse(qid);
+                MatchQuestion matching = db.MatchQuestions.Find(matchingID);
+                ViewBag.Matching = matching;
+                ViewBag.Solution = matching.Solution.Split(new char[] { ';' }).ToList();
+                ViewBag.Previous = Request.UrlReferrer.ToString();
+                Chapter chapter = db.Chapters.Find(matching.ChapterId);
+                ViewBag.QuestionLO = db.QuestionLOes.Where(ql => ql.QuestionID == matchingID && ql.Qtype == 5).ToList();
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //save matching question after edit
@@ -1129,6 +1543,32 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 updateQuizTimeAndMark(quiz);
             }
 
+            var oldLoList = db.QuestionLOes.Where(lo => lo.QuestionID == matching.MID && lo.Qtype == 5);
+            //delete the old lo
+            foreach (var lo in oldLoList)
+            {
+                db.QuestionLOes.Remove(lo);
+            }
+
+            //get new lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = matching.MID;
+                        qLO.Qtype = 5;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
+
+
             db.SaveChanges();
             return Redirect(previousUrl);
         }
@@ -1136,10 +1576,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to create indicate mistake question
         public ActionResult CreateIndicateMistakeQuestion(string chid)
         {
-            int chapID = int.Parse(chid);
-            ViewBag.ChapterID = chapID;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkChapterIdAvailbile(chid) == false)
+            {
+                Debug.WriteLine("nope");
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int chapID = int.Parse(chid);
+                Chapter chapter = db.Chapters.Find(chapID);
+                ViewBag.ChapterID = chapID;
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //add new indicate mistake question
@@ -1214,6 +1667,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
                 }
             }
+            //get lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = qid;
+                        qLO.Qtype = 6;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
 
             db.SaveChanges();
 
@@ -1226,12 +1696,26 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to edit indicate mistake question
         public ActionResult EditIndicateMistakeQuestion(string qid)
         {
-            int questionID = int.Parse(qid);
-            Question question = db.Questions.Find(questionID);
-            ViewBag.ChapterID = question.ChapterID;
-            ViewBag.Question = question;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkQuestionIdAvailble(qid, 6) == false)
+            {
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int questionID = int.Parse(qid);
+                Question question = db.Questions.Find(questionID);
+                ViewBag.ChapterID = question.ChapterID;
+                ViewBag.Question = question;
+                ViewBag.Previous = Request.UrlReferrer.ToString();
+                ViewBag.QuestionLO = db.QuestionLOes.Where(ql => ql.QuestionID == question.QID && ql.Qtype == 6).ToList();
+                Chapter chapter = db.Chapters.Find(question.ChapterID);
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //save indicate mistake question after edit
@@ -1300,6 +1784,31 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
 
                 }
             }
+
+            var oldLoList = db.QuestionLOes.Where(lo => lo.QuestionID == questionID && lo.Qtype == 6);
+            //delete the old lo
+            foreach (var lo in oldLoList)
+            {
+                db.QuestionLOes.Remove(lo);
+            }
+
+            //get new lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = questionID;
+                        qLO.Qtype = 6;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
             db.SaveChanges();
 
 
@@ -1311,10 +1820,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to create fill blank question
         public ActionResult CreateFillBlankQuestion(string chid)
         {
-            int chapID = int.Parse(chid);
-            ViewBag.ChapterID = chapID;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkChapterIdAvailbile(chid) == false)
+            {
+                Debug.WriteLine("nope");
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int chapID = int.Parse(chid);
+                Chapter chapter = db.Chapters.Find(chapID);
+                ViewBag.ChapterID = chapID;
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //add new fill blank question
@@ -1416,6 +1938,23 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 }
             }
 
+            //get lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = qid;
+                        qLO.Qtype = 3;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
 
             db.SaveChanges();
 
@@ -1428,12 +1967,26 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
         //show page to edit fill blank question
         public ActionResult EditFillBlankQuestion(string qid)
         {
-            int questionID = int.Parse(qid);
-            Question question = db.Questions.Find(questionID);
-            ViewBag.ChapterID = question.ChapterID;
-            ViewBag.Question = question;
-            ViewBag.Previous = Request.UrlReferrer.ToString();
-            return View();
+            //check if chapter is availble
+            if (checkQuestionIdAvailble(qid, 3) == false)
+            {
+                return RedirectToAction("QuestionBank");
+            }
+            else
+            {
+                
+                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                int questionID = int.Parse(qid);
+                Question question = db.Questions.Find(questionID);
+                ViewBag.ChapterID = question.ChapterID;
+                ViewBag.Question = question;
+                ViewBag.Previous = Request.UrlReferrer.ToString();
+                Chapter chapter = db.Chapters.Find(question.ChapterID);
+                ViewBag.QuestionLO = db.QuestionLOes.Where(ql => ql.QuestionID == question.QID && ql.Qtype == 3).ToList();
+                ViewBag.LoList = db.LearningOutcomes.Where(lo => lo.CourseID == chapter.CourseID).ToList();
+                return View();
+            }
         }
 
         //save fill blank question after edit
@@ -1502,6 +2055,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                     }
 
                 }
+
+
+
             }
             else
             {
@@ -1527,6 +2083,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                         db.QuestionAnswers.Add(qa);
                     }
                 }
+
+
             }
 
             string questAndType = question.QID + "-" + question.Qtype;
@@ -1537,18 +2095,43 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
                 updateQuizTimeAndMark(quiz);
             }
 
+            var oldLoList = db.QuestionLOes.Where(lo => lo.QuestionID == questionID && lo.Qtype == 3);
+            //delete the old lo
+            foreach (var lo in oldLoList)
+            {
+                db.QuestionLOes.Remove(lo);
+            }
+
+            //get new lo
+            if (collection["lo"] != null)
+            {
+                string[] loList = collection["lo"].Split(new char[] { ',' });
+                foreach (string loId in loList)
+                {
+                    var lo = db.LearningOutcomes.Find(int.Parse(loId));
+                    if (lo != null)
+                    {
+                        QuestionLO qLO = new QuestionLO();
+                        qLO.QuestionID = questionID;
+                        qLO.Qtype = 3;
+                        qLO.LearningOutcomeID = lo.LOID;
+                        db.QuestionLOes.Add(qLO);
+                    }
+                }
+            }
+
             db.SaveChanges();
 
 
             return Redirect(previousUrl);
         }
 
-        public void updateQuizTimeAndMark(Quiz quiz)
+        private void updateQuizTimeAndMark(Quiz quiz)
         {
             /*var quiz = db.Quizs.Find(qzid);*/
-            double? newMark = 0;
-            int? newTime = 0;
-            int? newNumQuest = 0;
+            double newMark = 0;
+            int newTime = 0;
+            int newNumQuest = 0;
             //check if question List is null
             if (quiz.Questions != null && !quiz.Questions.Equals(""))
             {
@@ -1596,8 +2179,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuestionBankController
             quiz.Time = newTime;
             quiz.NumOfQuestion = newNumQuest;
             db.Entry(quiz).State = EntityState.Modified;
-            /*Debug.WriteLine("hehehe" + quiz.QuizID);*/
-            db.SaveChanges();
+            /*db.SaveChanges();*/
         }
     }
 }

@@ -160,7 +160,10 @@
     <Compile Include="Areas\Teacher\Controllers\QuizLibraryController\QuizController.cs" />
     <Compile Include="Areas\Teacher\Controllers\ReportController\ReportController.cs" />
     <Compile Include="Areas\Teacher\teacherAreaRegistration.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeTotalController.cs" />
+    <Compile Include="Filter\AccessAuthenticationFilter.cs" />
+    <Compile Include="Filter\UserAuthorizeFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -263,6 +266,7 @@
     <Content Include="Content\img\calendar.png" />
     <Content Include="Content\img\congrats.svg" />
     <Content Include="Content\img\editing.png" />
+    <Content Include="Content\img\error.jpg" />
     <Content Include="Content\img\fav.png" />
     <Content Include="Content\img\food.svg" />
     <Content Include="Content\img\fptlogo.jpg" />
@@ -278,6 +282,7 @@
     <Content Include="Content\img\sneakers.svg" />
     <Content Include="Content\img\soccer.svg" />
     <Content Include="Content\img\socks.svg" />
+    <Content Include="Content\img\stop.jpg" />
     <Content Include="Content\img\system.png" />
     <Content Include="Content\img\tailwindcss.svg" />
     <Content Include="Content\img\team.png" />
@@ -332,7 +337,6 @@
     <Content Include="Areas\Teacher\Views\Quiz\CreateNewQuiz.cshtml" />
     <Content Include="Areas\Student\Views\web.config" />
     <Content Include="Areas\Student\Views\Home\Home.cshtml" />
-    <Content Include="Areas\Student\Views\Quiz\DoQuizPaperTest.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\QuizStarted.cshtml" />
     <Content Include="Areas\Student\Views\Quiz\QuizNotStartYet.cshtml" />
     <Content Include="Areas\Teacher\Views\Course\_ShowCourseListForReport.cshtml" />
@@ -340,7 +344,6 @@
     <Content Include="Areas\Teacher\Views\Report\ReportHome.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ViewReportListByCourse.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\_ShowQuestionsList.cshtml" />
-    <Content Include="Areas\Teacher\Views\Quiz\_ShowQuizList.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditReadingQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\CreateShortAnswerQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Question\EditShortAnswerQuestion.cshtml" />
@@ -355,13 +358,6 @@
     <Content Include="Areas\Teacher\Views\Report\ReportByQuestion.cshtml" />
     <Content Include="Areas\Teacher\Views\Report\ReportByStudent.cshtml" />
     <Content Include="Areas\Teacher\Views\LearningOutcome\ViewLearningOutcome.cshtml" />
-    <EntityDeploy Include="Models\DBModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DBModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\DBModel.edmx.diagram">
-      <DependentUpon>DBModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Areas\Teacher\Views\Quiz\PreviewQuizPaperTest.cshtml" />
     <Content Include="Areas\Student\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Student\Views\Report\ReportHome.cshtml" />
@@ -373,6 +369,14 @@
     <Content Include="Areas\Teacher\Views\Poll\StartPoll.cshtml" />
     <Content Include="Areas\Teacher\Views\Quiz\PreviewQuizQuestionByQuestion.cshtml" />
     <Content Include="Areas\Student\Views\Quiz\DoQuizQuestionByQuestion.cshtml" />
+    <EntityDeploy Include="Models\DBModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DBModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\DBModel.edmx.diagram">
+      <DependentUpon>DBModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Areas\Student\Views\Quiz\DoQuizShowAllQuestion.cshtml" />
     <None Include="Properties\PublishProfiles\InClassVoting - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\InClassVoting - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
@@ -397,6 +401,7 @@
     <Content Include="Scripts\jqueryui\jquery-ui.theme.css" />
     <Content Include="Scripts\jqueryui\jquery-ui.theme.min.css" />
     <Content Include="Scripts\Layout.js" />
+    <Content Include="Scripts\Login.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\more-option.js" />
     <Content Include="Scripts\piechart.js" />
@@ -404,6 +409,7 @@
     <Content Include="Scripts\processchart.js" />
     <Content Include="Scripts\studentReport.js" />
     <Content Include="Scripts\teacher.poll.countdown.js" />
+    <Content Include="Scripts\teacher.quiz.countdown.js" />
     <Content Include="Scripts\teacher.quiz.js" />
     <Content Include="Scripts\sidebar.js" />
     <Content Include="Scripts\SlideQ.js" />
@@ -411,6 +417,7 @@
     <Content Include="Scripts\teacher.lo.js" />
     <Content Include="Scripts\TestJS.js" />
     <Content Include="Scripts\validate.js" />
+    <Content Include="Scripts\validate2.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -424,6 +431,9 @@
     <Content Include="Scripts\teacher.chapter.js" />
     <Content Include="Views\HomeTotal\Home.cshtml" />
     <Content Include="Scripts\student.poll.countdown.js" />
+    <Content Include="Views\HomeTotal\Login.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Error\UnAuthorized.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\images\" />
@@ -431,7 +441,6 @@
     <Folder Include="Areas\Student\Views\Default\" />
     <Folder Include="Areas\Teacher\Data\" />
     <Folder Include="Areas\Teacher\Views\Chapter\" />
-    <Folder Include="Content\User_Images\" />
     <Folder Include="Views\Default\" />
   </ItemGroup>
   <ItemGroup>
