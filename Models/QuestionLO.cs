@@ -15,7 +15,7 @@ namespace InClassVoting.Models
     public partial class QuestionLO
     {
         public int QuestionLOID { get; set; }
-        public Nullable<int> QuestionID { get; set; }
+        public int QuestionID { get; set; }
         public int Qtype { get; set; }
         public int LearningOutcomeID { get; set; }
     

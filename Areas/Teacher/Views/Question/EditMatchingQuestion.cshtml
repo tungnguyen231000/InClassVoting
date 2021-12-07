@@ -16,10 +16,50 @@
 
             <div class="w-full items-center bg-gray ">
                 <div class="text-center">
-                    <h1 class="h4">
+                    <h1 class="h3">
                         <span>Question Type:</span>
                         <span>Matching</span>
                     </h1>
+                </div>
+                <div class="md:mx-16">
+                    <div class="m-6">
+                        <span class="label-mode-4">Learning outcome</span>
+                    </div>
+                    <div class="m-6">
+                        @if (ViewBag.LoList != null)
+                        {
+                            foreach (var lo in ViewBag.LoList)
+                            {
+                                bool isExisted = false;
+                                <div style="display:flex">
+                                    @if (ViewBag.QuestionLO != null)
+                                    {
+                                        foreach (var ql in ViewBag.QuestionLO)
+                                        {
+                                            if (ql.LearningOutcomeID == lo.LOID)
+                                            {
+                                                isExisted = true;
+                                            }
+                                        }
+                                    }
+
+                                    @if (isExisted == true)
+                                    {
+                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" checked />
+                                    }
+                                    else
+                                    {
+                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" />
+                                    }
+
+                                    <h4 class="label-mode-content-2">@lo.LO_Name</h4>
+                                </div>
+                            }
+                        }
+
+
+
+                    </div>
                 </div>
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
@@ -38,7 +78,7 @@
                     <div class="w-full">
                         <div class="flex items-center justify-center column-gap inline-block">
                             <div class="text-center my-2 w-6/12 px-4" name="name">Left Matching</div>
-                            <div class="grid grid-cols-1 px-2 w-1/12">
+                            <div class="text-center px-2 ">
                                 <span>Solution</span>
                             </div>
                             <div class="text-center my-2 w-6/12 px-4" name="name">Right Matching</div>
@@ -70,17 +110,19 @@
                         </ul>
                     </div>
                 </div>
-                <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                    <span class="mx-2 w-1/12 text-center">Number:</span>
-                    <span class="mx-2 w-1/12 text-center">Letter:</span>
+                <div class="mt-2 w-full text-center column-gap inline-block mt-4">
+                    <span class="mx-4 text-center">Number:</span>
+                    <span class="mx-4 text-center">Letter:</span>
                 </div>
-                <div class="mt-2 text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <div class="mt-2 flex flex-wrap justify-center column-gap inline-block mt-4">
                     <input type="number" name="name" id="number" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
                     <input type="text" name="name" id="letter" class="mx-2 w-1/12 border border-black-400 text-center" value="" />
                 </div>
-                <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                    <a id="add-matching" class="btn bg-blue-200 mx-2  w-1/12" name="add">Add solution</a>
-                    <a id="remove-matching" class="btn bg-blue-200 mx-2 w-1/12" name="remove">Remove Solution</a>
+                <div class="w-full text-center column-gap inline-block mt-4">
+                    <a id="add-matching" class=" btn bg-blue-200 mx-2 " name="add">Add solution</a>
+                </div>
+                <div class="w-full text-center column-gap inline-block mt-4">
+                    <a id="remove-matching" class=" btn bg-blue-200 mx-2 " name="remove">Remove Solution</a>
                 </div>
             </div>
 
@@ -105,7 +147,7 @@
                 </button>
                 <h4 class="text-center" id="exampleModalLabel">Preview</h4>
             </div>
-            <div id="matching-test" class=" w-full p-5">
+            <div class=" w-full p-5">
                 <div class="w-full bg-gray p-6 text-center flex items-center justify-center inline-block">
                     <div class="w-full">
                         <div class="flex items-center justify-center column-gap inline-block">

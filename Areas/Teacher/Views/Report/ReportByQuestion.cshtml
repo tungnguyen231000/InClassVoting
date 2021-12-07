@@ -56,9 +56,11 @@
                 </div>
                 <div>
                     <h1 class="label-mode-4">Learning outcome covered</h1>
-
-                    <h4 class="label-mode-content-2">LO 1</h4>
-                    <h4 class="label-mode-content-2">LO 2</h4>
+                    @foreach(var lo in ViewBag.LOList)
+            {
+                <h4 class="label-mode-content-2">@lo.LO_Name</h4>
+            }
+                    
 
                 </div>
             </div>
@@ -79,8 +81,8 @@
                             <tr>
                                 <th class="w-1/12 ">STT</th>
                                 <th class="w-5/12 ">Question</th>
-                                <th class="w-2/12 ">Type</th>
-                                <th class="w-2/12 ">LO</th>
+                                <th class="w-1/12 ">Type</th>
+                                <th class="w-1/12 ">Mark</th>
                                 <th class="w-2/12 ">Correct/Total</th>
                             </tr>
                         </thead>
@@ -93,7 +95,7 @@
                             <tr class="hover:bg-gray-200">
                                 <td class="w-1/12">@countQ</td>
                                 <td class="w-5/12"><span class="data-row">@question.Text </span></td>
-                                <td class="w-2/12">
+                                <td class="w-1/12">
                                     @if (question.Qtype == 5)
                                     {
                                         <span>Matching</span> }
@@ -101,7 +103,7 @@
                                     {
                                         @question.QuestionType.Name}
                                 </td>
-                                <td class="w-2/12">LO1,LO2</td>
+                                <td class="w-1/12">@question.Mark</td>
                                 <td class="w-2/12">@question.CorrectNumber/@question.StudentReceive</td>
                             </tr>
                         }

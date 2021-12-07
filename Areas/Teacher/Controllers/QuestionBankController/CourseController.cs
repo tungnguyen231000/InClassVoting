@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -14,61 +15,97 @@ namespace InClassVoting.Areas.teacher.Controllers
         
         public PartialViewResult ShowCourseListForQuestionBank()
         {
-            ViewBag.CourseList = db.Courses.ToList();
-            ViewBag.ChapterList = db.Chapters.ToList();
-            ViewBag.CourseCount = db.Courses.Count();
+            int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+            List<Course> courseList = db.Courses.Where(c => c.TeacherID == teacherId).ToList();
+            ViewBag.CourseList = courseList;
+            ViewBag.ChapterList = db.Chapters.Where(ch=>ch.Course.TeacherID==teacherId).ToList();
+            ViewBag.CourseCount = courseList.Count;
             return PartialView("_ShowCourseListForQuestionBank");
         }
 
         public PartialViewResult ShowCourseListForQuizLibrary()
         {
-            ViewBag.CourseList = db.Courses.ToList();
-            ViewBag.ChapterList = db.Chapters.ToList();
-            ViewBag.CourseCount = db.Courses.Count();
+            int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+            List<Course> courseList = db.Courses.Where(c => c.TeacherID == teacherId).ToList();
+            ViewBag.CourseList = courseList;
+            ViewBag.ChapterList = db.Chapters.Where(ch => ch.Course.TeacherID == teacherId).ToList();
+            ViewBag.CourseCount = courseList.Count;
             return PartialView("_ShowCourseListForQuizLibrary");
        
         }
 
         public PartialViewResult ShowCourseListForReport()
         {
-            ViewBag.CourseList = db.Courses.ToList();
-            ViewBag.ChapterList = db.Chapters.ToList();
-            ViewBag.CourseCount = db.Courses.Count();
+            int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+            List<Course> courseList = db.Courses.Where(c => c.TeacherID == teacherId).ToList();
+            ViewBag.CourseList = courseList;
+            ViewBag.ChapterList = db.Chapters.Where(ch => ch.Course.TeacherID == teacherId).ToList();
+            ViewBag.CourseCount = courseList.Count;
             return PartialView("_ShowCourseListForReport");
 
         }
 
         //Create New Course
         [HttpPost]
-        public ActionResult CreateCourse(string newcourseName, string chid)
+        public ActionResult CreateCourse(string newcourseName)
         {
             Course course = new Course();
+            int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+            course.TeacherID = teacherId;
             course.Name = newcourseName.ToUpper().Trim();
             db.Courses.Add(course);
             db.SaveChanges();
-            int chapID = int.Parse(chid);
-            /* if (chapID == -1)
-             {
-                 return Redirect("~/Teacher/Question/QuestionBank");
-             }
-             else
-             {
-                 return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
-             }*/
 
             return Redirect(Request.UrlReferrer.ToString());
         }
+        
+        //Check New Course Name
+        [HttpPost]
+        public JsonResult CheckDuplicateCourse(string text)
+        {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
 
+            string dataInput = text;
+            string check = "";
+            string message = "";
+
+            if (dataInput.Trim() == "")
+            {
+                check = "0";
+                message = "Please input course name !";
+            }
+            else
+            {
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var course = db.Courses.Where(c => c.TeacherID == teacherId && c.Name.ToLower().Trim().Equals(dataInput.ToLower().Trim())).FirstOrDefault();
+
+                if (course != null)
+                {
+                    check = "0";
+                    message = "This course name already existed!";
+                }
+                else
+                {
+                    check = "1";
+                    message = "";
+                }
+            }
+
+            return Json(new { mess = message, check = check }) ;
+
+        }
+       
         //Edit CourseName
         [HttpPost]
-        public ActionResult EditCourse(string newCourseName, string courseIdUpdate, string chid)
+        public ActionResult EditCourse(string newCourseName, string courseIdUpdate/*, string chid*/) 
         {
             int courseIdToUpdate = int.Parse(courseIdUpdate);
             var updateCourse = db.Courses.Find(courseIdToUpdate);
             updateCourse.Name = newCourseName.ToUpper().Trim();
             db.Entry(updateCourse).State = EntityState.Modified;
             db.SaveChanges();
-            int chapID = int.Parse(chid);
+           /* int chapID = int.Parse(chid);*/
             /* if (chapID == -1)
              {
                  return Redirect("~/Teacher/Question/QuestionBank");
@@ -80,9 +117,60 @@ namespace InClassVoting.Areas.teacher.Controllers
             return Redirect(Request.UrlReferrer.ToString());
         }
 
+
+        //Check New Course Name when edit name
+        [HttpPost]
+        public JsonResult CheckDuplicateEditCourse(string text, string cid)
+        {
+            /* ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+             ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);*/
+            string dataInput = text;
+            int courseId = int.Parse(cid);
+            string check = "";
+            string message = "";
+
+
+            if (dataInput.Trim() == "")
+            {
+                check = "0";
+                message = "Please input course name!";
+            }
+            else
+            {
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var course = db.Courses.Where(c => c.TeacherID == teacherId &&
+                c.CID!= courseId&&
+                c.Name.ToLower().Trim().Equals(dataInput.ToLower().Trim())).FirstOrDefault();
+                var currentCourse = db.Courses.Find(courseId);
+
+                if (course != null)
+                {
+                    check = "0";
+                    message = "This course name already existed!";
+                }
+                else
+                {
+                    if (dataInput.Trim().ToLower().Equals(currentCourse.Name.Trim().ToLower()))
+                    {
+                        check = "0";
+                        message = "Your course name is unchange!";
+                    }
+                    else
+                    {
+                        check = "1";
+                        message = "";
+                    }
+                }
+            }
+
+
+            return Json(new { mess = message, check = check });
+
+        }
+
         //delete course
         [HttpPost]
-        public ActionResult DeleteCourse(string courseIdDelete, string chid)
+        public ActionResult DeleteCourse(string courseIdDelete/*, string chid*/)
         {
             int courseIdToDelete = int.Parse(courseIdDelete);
             var deleteCourse = db.Courses.Find(courseIdToDelete);
@@ -125,7 +213,7 @@ namespace InClassVoting.Areas.teacher.Controllers
 
             //delete quiz inside course
 
-            int chapID = int.Parse(chid);
+           /* int chapID = int.Parse(chid);*/
 
             return Redirect(Request.UrlReferrer.ToString());
         }

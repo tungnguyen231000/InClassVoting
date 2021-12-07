@@ -22,6 +22,44 @@
                     <input type="hidden" name="pid" value="@ViewBag.Passage.PID" />
                     <input type="hidden" name="qidList" value="@ViewBag.QuestionIDList" />
                 </div>
+                <div class="md:mx-16">
+                    <div class="m-6">
+                        <span class="label-mode-4">Learning outcome</span>
+                    </div>
+                    <div class="m-6">
+                        @if (ViewBag.LoList != null)
+                        {
+                            foreach (var lo in ViewBag.LoList)
+                            {
+                                bool isExisted = false;
+                                <div style="display:flex">
+                                    @if (ViewBag.QuestionLO != null)
+                                    {
+                                        foreach (var ql in ViewBag.QuestionLO)
+                                        {
+                                            if (ql.LearningOutcomeID == lo.LOID)
+                                            {
+                                                isExisted = true;
+                                            }
+                                        }
+                                    }
+
+                                    @if (isExisted == true)
+                                    {
+                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" checked />
+                                    }
+                                    else
+                                    {
+                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" />
+                                    }
+
+                                    <h4 class="label-mode-content-2">@lo.LO_Name</h4>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                </div>
             </div>
             <div class="w-full items-center bg-gray p-6 border border-black-400">
                 <div>
@@ -66,7 +104,7 @@
                     <div id="reading-question" class="w-full items-center bg-gray p-6 border border-black-400">
                         <div class="ms-error"></div>
                         <div class="m-2">
-                            <i id="remove-question-reading" class="fas fa-times delete h4 float-right"></i>
+                            <i id="remove-question-reading" class="delete h4 float-right">x</i>
                         </div>
                         <div class="m-4">
                             <span id="reading-note" class="question-num-2" style="margin-right:20px">Question @countQuestion:</span>

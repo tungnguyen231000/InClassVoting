@@ -25,14 +25,14 @@ namespace InClassVoting.Models
         public int CourseID { get; set; }
         public string Questions { get; set; }
         public Nullable<int> NumOfQuestion { get; set; }
-        public Nullable<double> Mark { get; set; }
-        public Nullable<bool> MixQuestion { get; set; }
+        public double Mark { get; set; }
+        public bool MixQuestion { get; set; }
         public Nullable<int> MixQuestionNumber { get; set; }
-        public string StudentGuide { get; set; }
         public string Status { get; set; }
-        public Nullable<int> Time { get; set; }
-        public Nullable<bool> PublicResult { get; set; }
-        public Nullable<bool> PublicAnswer { get; set; }
+        public int Time { get; set; }
+        public string QuizType { get; set; }
+        public bool PublicResult { get; set; }
+        public bool PublicAnswer { get; set; }
     
         public virtual Course Course { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

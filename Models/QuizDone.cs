@@ -27,14 +27,15 @@ namespace InClassVoting.Models
         public int CourseID { get; set; }
         public string Questions { get; set; }
         public Nullable<int> NumOfQuestion { get; set; }
-        public Nullable<double> TotalMark { get; set; }
-        public Nullable<bool> MixQuestion { get; set; }
+        public double TotalMark { get; set; }
+        public bool MixQuestion { get; set; }
         public Nullable<int> MixQuestionNumber { get; set; }
-        public Nullable<int> Time { get; set; }
+        public int Time { get; set; }
         public Nullable<System.DateTime> EndTime { get; set; }
-        public Nullable<System.DateTime> CreatedDate { get; set; }
-        public Nullable<bool> PublicResult { get; set; }
-        public Nullable<bool> PublicAnswer { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public string QuizType { get; set; }
+        public bool PublicResult { get; set; }
+        public bool PublicAnswer { get; set; }
     
         public virtual Course Course { get; set; }
         public virtual Quiz Quiz { get; set; }

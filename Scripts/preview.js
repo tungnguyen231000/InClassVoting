@@ -69,15 +69,21 @@
     //=========End Reading PreView=========
 
     //=========Short PreView=========
+    if ($('#previewShort').length != 0) {
+        $('#previewShort').click(function () {
 
-    $('#previewShort').click(function () {
+            const getQuestion = document.querySelector('#questionShort').value;
 
-        const getQuestion = document.querySelector('#questionShort').value;
+            
 
+          
 
-        $('#questionShort-preview').text(getQuestion);
+            $('#questionShort-preview').text(getQuestion);
 
-    });
+            $('#answerShort-preview').val($('#answerShort').val());
+
+        });
+    }
     //=========End Short PreView=========
 
     //=========Matching PreView=========
@@ -91,5 +97,96 @@
     });
     //=========End Matching PreView=========
     
+    //=========Indicate PreView=========
+    if ($('#previewIndicate').length != 0) {
+        $('#previewIndicate').click(function () {
 
+            var getQuestion = $('#questionIndicate').val();
+
+            var regexIndicateQuestion = /\([a-zA-Z]{1}-[aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆ fFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTu UùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890]*\)/g;
+            var list = getQuestion.match(regexIndicateQuestion);
+
+            var list2 = [];
+            
+            for (let i = 0; i < list.length; i++) {
+                let currentString = list[i];
+                let answer = currentString.split("-")[1].replace(")", "");
+                let option = currentString.split("-")[0].replace("(", "");
+                list2.push('<span style="color:blue">(' + option + ')</span> <u>' + answer + '</u>');
+                
+            }
+
+            
+
+            for (let i = 0; i < list.length; i++) {
+                let currentString = list[i];
+                getQuestion = getQuestion.replace(currentString, list2[i]);
+            }
+
+
+            $('#questionIndicate-preview').html(getQuestion);
+
+
+            $('#answerIndicate-preview').val($('#answerIndicate').val());
+
+        });
+    }
+    //=========End Indicate PreView=========
+
+    //=========Fill Blank PreView=========
+    if ($('#previewFill').length != 0) {
+        $('#previewFill').click(function () {
+
+            const regexGroup = /\(\~[^\(\)]+\)/g;
+            var fillText = $("#questionFill").val();
+            var arrGroup = fillText.match(regexGroup);
+
+            if ($("#givenFill").prop("checked") == true) {
+                var arrGroup3 = fillText.match(regexGroup);
+
+                if (arrGroup != null) {
+                    for (var i = 0; i < arrGroup.length; i++) {
+                        let selectString = '<select id="" style="width: 15 %; color: blue" name="fillBankGivenAnswer" class="border border-black-400">' + '<option label=""></option>';
+
+                        arrGroup[i] = arrGroup[i].replace("(", "");
+                        arrGroup[i] = arrGroup[i].replace(")", "");
+                        var listOption = arrGroup[i].match(/\~[^,. =][aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890,. ]+/g);
+                        var listAnswer = arrGroup[i].match(/\~=[^,. ][aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890,. ]+/g);
+                        if (listOption != null) {
+                            for (let j = 0; j < listOption.length; j++) {
+                                selectString += '<option label="">' + listOption[j].replace("~", "") + '</option>';
+                            }
+                        }
+                        if (listAnswer != null) {
+                            for (let z = 0; z < listAnswer.length; z++) {
+                                selectString += '<option label="">' + listAnswer[z].replace("~=", "") + '</option>';
+                            }
+                        }
+                        
+                        selectString += '</select>';
+
+                        fillText = fillText.replace(arrGroup3[i], selectString);
+                    }
+                }
+
+                $('#questionFill-preview').html(fillText);
+
+            }
+            if ($("#givenFill").prop("checked") == false) {
+
+                const regexGroup2 = /\([^\(\)]+\)/g;
+                var arrGroup2 = fillText.match(regexGroup2);
+
+                for (var i = 0; i < arrGroup2.length; i++) {
+                    let selectString = '<input type="text" id="" value="" style="width: 15%; color:blue" class="fill-input border border-black-400" name="fillBankNotGivenAnswer" placeholder="..." disabled>';
+                    fillText = fillText.replace(arrGroup2[i], selectString);
+                }
+
+                $('#questionFill-preview').html(fillText);
+
+            }
+
+        });
+    }
+    //=========End Fill Blank PreView=========
 });

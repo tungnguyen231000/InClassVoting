@@ -19,6 +19,46 @@
                         <input type="hidden" name="qid" value="@ViewBag.Question.QID" />
                     </h1>
                 </div>
+                <div class="md:mx-16">
+                    <div class="m-6">
+                        <span class="label-mode-4">Learning outcome</span>
+                    </div>
+                    <div class="m-6">
+                        @if (ViewBag.LoList != null)
+                        {
+                            foreach (var lo in ViewBag.LoList)
+                            {
+                                bool isExisted = false;
+                                <div style="display:flex">
+                                    @if (ViewBag.QuestionLO != null)
+                                    {
+                                        foreach (var ql in ViewBag.QuestionLO)
+                                        {
+                                            if (ql.LearningOutcomeID == lo.LOID)
+                                            {
+                                                isExisted = true;
+                                            }
+                                        }
+                                    }
+
+                                    @if (isExisted == true)
+                                    {
+                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" checked />
+                                    }
+                                    else
+                                    {
+                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" />
+                                    }
+
+                                    <h4 class="label-mode-content-2">@lo.LO_Name</h4>
+                                </div>
+                            }
+                        }
+
+
+
+                    </div>
+                </div>
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
                         <span><b>Time:</b></span>

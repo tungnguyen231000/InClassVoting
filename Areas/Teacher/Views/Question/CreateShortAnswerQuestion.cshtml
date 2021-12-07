@@ -19,14 +19,33 @@
                     <h1 class="h3">
                         <span>Question Type:</span>
                         <span>Short Answer</span>
-                        <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
                         <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
                     </h1>
                 </div>
 
+                <div class="md:mx-16">
+                    <div class="m-6">
+                        <span class="label-mode-4">Learning outcome</span>
+                    </div>
+                    <div class="m-6">
+                        @if (ViewBag.LoList != null)
+                        {
+                            foreach (var lo in ViewBag.LoList)
+                            {
+                                <div style="display:flex">
+                                    <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" />
+                                    <h4 class="label-mode-content-2">@lo.LO_Name</h4>
+                                </div>
+                            }
+                        }
+
+
+                    </div>
+                </div>
+
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span><b>Time:</b></span>
+                        <span><b>Time(second):</b></span>
                         <input class="border border-black-400 pl-1 w-4/12" id="timeShort" type="number" name="time" placeholder="...">
                     </div>
                     <div class="m-6  ">
@@ -41,7 +60,7 @@
                 <div>
                     <span><b>Question:</b> </span>
                 </div>
-                <div class="w-10/12  float-left mt-3">
+                <div class="w-10/12 float-left mt-3 pr-6">
                     <textarea class="p-2 w-full" name="questionText" rows="6" id="questionShort" placeholder=" ..."></textarea>
                 </div>
                 <div class="w-2/12 drag-content float-right">
@@ -67,6 +86,9 @@
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
+                <button type="button" id="previewShort" class="btn btn-primary mr-6" data-toggle="modal" data-target="#shortPreview">
+                    Preview
+                </button>
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
             </div>
 
@@ -94,6 +116,42 @@
         </p>
 
     </div>
+
+    <!--Thêm Dialog Paper Preview-->
+    <div class="modal fade" id="shortPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content ">
+                <div class="">
+                    <button type="button" class="close float-right p-3" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="text-center" id="exampleModalLabel">Preview</h4>
+                </div>
+                <div id="short-test" class="p-5">
+                    <div>
+                        <div class="w-full items-center bg-gray ">
+                            <div>
+                                <div class="w-full items-center p-6 ">
+                                    <div contenteditable="false" id="questionShort-preview" class="w-full items-center bg-gray">
+                                    </div>
+                                    <div class="drag-area-preview">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full  items-center bg-gray ">
+                            <table id="table-short-preview" class="w-full border-spacing-2">
+                                <tr>
+                                    <td><input type="text" class="txt w-full pl-3" id="answerShort-preview" name="edit" placeholder="Answer" value="" disabled></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 

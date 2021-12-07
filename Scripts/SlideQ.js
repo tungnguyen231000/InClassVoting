@@ -30,6 +30,9 @@
                     timeCountDown(indexItem);
                 }
                 $("#next").val("Submit");
+                if (checkPreview) {
+                    $("#next").prop("disabled", true);
+                }
 
             } else {
                 ++indexItem;
@@ -37,6 +40,10 @@
                     timeCountDown(indexItem);
                 }
                 $("#prev").show();
+
+                if (checkPreview) {
+                    $("#next").prop("disabled", false);
+                }
             }
         }
         else {
@@ -60,6 +67,11 @@
             } else {
                 $("#prev").show();
             }
+
+            if (checkPreview) {
+                $("#next").prop("disabled", false);
+            }
+
         }
         else {
             $(".divs > .cls:visible").hide();

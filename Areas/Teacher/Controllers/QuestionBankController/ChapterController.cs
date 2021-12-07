@@ -1,20 +1,24 @@
-﻿using InClassVoting.Models;
+﻿using InClassVoting.Filter;
+using InClassVoting.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
 namespace InClassVoting.Areas.teacher.Controllers
 {
+    /*[AccessAuthenticationFilter]
+    [UserAuthorizeFilter("Teacher")]*/
     public class ChapterController : Controller
     {
         private DBModel db = new DBModel();
 
         //Create Chapter
         [HttpPost]
-        public ActionResult CreateChapter(string newChapCID, string chapterName, string chid)
+        public ActionResult CreateChapter(string newChapCID, string chapterName /*, string chid*/)
         {
 
             Chapter chapter = new Chapter();
@@ -22,8 +26,51 @@ namespace InClassVoting.Areas.teacher.Controllers
             chapter.Name = chapterName.Trim();
             db.Chapters.Add(chapter);
             db.SaveChanges();
-           
+
             return Redirect(Request.UrlReferrer.ToString());
+        }
+
+        //Check New chapter Name
+        [HttpPost]
+        public JsonResult CheckDuplicateNewChapter(string text, string cid)
+        {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+            string dataInput = text;
+            int courseId = int.Parse(cid);
+            string check = "";
+            string message = "";
+
+
+            if (dataInput.Trim() == "")
+            {
+                check = "0";
+                message = "Please input chapter name !";
+            }
+            else
+            {
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var chapter = db.Chapters.Where(ch => ch.Course.TeacherID == teacherId &&
+                ch.CourseID == courseId &&
+                ch.Name.ToLower().Trim().Equals(dataInput.ToLower().Trim())).FirstOrDefault();
+                /*var currentCourse = db.Courses.Find(courseId);*/
+
+                if (chapter != null)
+                {
+                    check = "0";
+                    message = "This chapter name already existed!";
+                }
+                else
+                {
+                    check = "1";
+                    message = "";
+                }
+            }
+
+            Debug.WriteLine(message + "=-11=-=" + check);
+
+            return Json(new { mess = message, check = check });
+
         }
 
         //Edit Chapter Name
@@ -39,6 +86,57 @@ namespace InClassVoting.Areas.teacher.Controllers
             return Redirect(Request.UrlReferrer.ToString());
         }
 
+        //Check New chapter Name
+        [HttpPost]
+        public JsonResult CheckDuplicateEditChapter(string text, string cid, string chid)
+        {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+            string dataInput = text;
+            int courseId = int.Parse(cid);
+            int chapterId = int.Parse(chid);
+            string check = "";
+            string message = "";
+
+
+            if (dataInput.Trim() == "")
+            {
+                check = "0";
+                message = "Please input chapter name !";
+            }
+            else
+            {
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var chapter = db.Chapters.Where(ch => ch.Course.TeacherID == teacherId &&
+                ch.CourseID == courseId && ch.ChID != chapterId &&
+                ch.Name.ToLower().Trim().Equals(dataInput.ToLower().Trim())).FirstOrDefault();
+                var currentChapter = db.Chapters.Find(chapterId);
+
+                if (chapter != null)
+                {
+                    check = "0";
+                    message = "This chapter name already existed!";
+                }
+                else
+                {
+                    if (dataInput.Trim().ToLower().Equals(currentChapter.Name.Trim().ToLower()))
+                    {
+                        check = "0";
+                        message = "Your chapter name is unchange!";
+                    }
+                    else
+                    {
+                        check = "1";
+                        message = "";
+                    }
+                }
+            }
+
+            Debug.WriteLine(message + "=-1112312312=-=" + check);
+
+            return Json(new { mess = message, check = check });
+
+        }
 
         //Delete Chapter
         [HttpPost]
@@ -60,16 +158,16 @@ namespace InClassVoting.Areas.teacher.Controllers
                 }
                 db.Questions.Remove(question);
             }
-            
+
             var questionDoneContain = db.QuestionDones.Where(q => q.ChapterID == chapterId).ToList();
             //remove chapter of question done
             foreach (var questionDone in questionDoneContain)
             {
-                questionDone.ChapterID= null;
+                questionDone.ChapterID = null;
                 db.Entry(questionDone).State = EntityState.Modified;
             }
             db.Chapters.Remove(chapter);
-            
+
             var passageContain = db.Passages.Where(p => p.ChapterID == chapterId).ToList();
 
             //remove passage inside chapter
@@ -77,12 +175,12 @@ namespace InClassVoting.Areas.teacher.Controllers
             {
                 db.Passages.Remove(passage);
             }
-            
-            var passageDoneContain = db.Passages.Where(p => p.ChapterID == chapterId).ToList();
+
+            var passageDoneContain = db.Passage_Done.Where(p => p.ChapterID == chapterId).ToList();
             //remove chapter of question done
             foreach (var passageD in passageDoneContain)
             {
-                passageD.ChapterID= null;
+                passageD.ChapterID = null;
                 db.Entry(passageD).State = EntityState.Modified;
             }
 
@@ -92,7 +190,8 @@ namespace InClassVoting.Areas.teacher.Controllers
             int chapID = int.Parse(chid);
 
             //return questionbank page
-            return Redirect("~/Teacher/Question/QuestionBank");
+            /* return Redirect("~/Teacher/Question/QuestionBank");*/
+            return Redirect(Request.UrlReferrer.ToString());
 
         }
 

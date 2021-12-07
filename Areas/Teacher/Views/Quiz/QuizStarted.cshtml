@@ -18,8 +18,8 @@
             <h5 class="modal-title h5" id="exampleModalLabel">Student are doing this quiz..</h5>
         </div>
         <div style="display: flex; margin-bottom:10px">
-
-            <h1 class="quiz-lable-3">Time: 03:00</h1>
+            <span class="quiz-lable-3" size="3" style="margin-right:10px">Time left: </span>
+            <span class="quiz-lable-3" size="3" type="text" id="time" name="create-question-time" placeholder="Time" data-time="@ViewBag.CountDown">00:00</span>
         </div>
     </div>
 
@@ -31,12 +31,20 @@
     <div style="display:flex;margin-top:20px">
         <div style="display:flex">
             <h1 class="quiz-lable">Quiz Mode: </h1>
-            <input class="mode-rdb" name="rdPreview" type="radio" value="1" checked disabled />
-            <h4 class="label-mode-content-3">Show all question</h4>
-            <input class="mode-rdb" name="rdPreview" type="radio" value="0" disabled />
-            <h4 class="label-mode-content-3"> Show question by question</h4>
-            @*<input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizID" />
-                <button type="submit" style="width: 177px;" class="label-preview"><i class="fas fa-eye" style="margin-right:5px"></i>Preview</button>*@
+            @if (ViewBag.Quiz.QuizType.Equals("ShowAllQuestion"))
+            {
+                <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" checked disabled/>
+                <h4 class="label-mode-content-3">Show all question</h4>
+                <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" name="rdPreview" type="radio" value="0" disabled/>
+                <h4 class="label-mode-content-3"> Show question by question</h4>
+            }
+            else
+            {
+                <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" disabled/>
+                <h4 class="label-mode-content-3">Show all question</h4>
+                <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" name="rdPreview" type="radio" value="0" checked disabled/>
+                <h4 class="label-mode-content-3"> Show question by question</h4>
+            }
 
         </div>
     </div>
@@ -48,7 +56,7 @@
                     <th style="width: 47%;" scope="col">Question</th>
                     <th scope="col">Type</th>
                     <th scope="col">Mark</th>
-                    <td scope="col"> </td>
+                   @* <td scope="col"> </td>*@
 
                 </tr>
             </thead>
@@ -71,7 +79,7 @@
                                     @question.QuestionType.Name}
                             </td>
                             <td>@question.Mark</td>
-                            <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&qid=@question.QID&qtype=@question.Qtype&i=@ViewBag.Page" class="fas fa-trash-alt"></a></td>
+                            @*<td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&qid=@question.QID&qtype=@question.Qtype&i=@ViewBag.Page" class="fas fa-trash-alt"></a></td>*@
                         </tr>
                     }
                 }
@@ -169,8 +177,12 @@
     </div>
 
     <div style="display: flex; margin-top:15px">
-        <a href="~/Teacher/Quiz/FinishQuiz?qzid=@ViewBag.Quiz.QuizID" style="background-color: aquamarine; margin-left:10px " class="btn ">End Quiz</a>
-    </div>
+        @using (Html.BeginForm("FinishQuiz", "Quiz", FormMethod.Post, new { id = "formEndQuiz" }))
+        {
+            <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizID" />
+            <button type="submit" style="background-color: aquamarine; margin-left:10px " class="btn ">End Quiz</button>
+        }
+        </div>
 </div>
 
-
+<script src="~/Scripts/teacher.quiz.countdown.js"></script>

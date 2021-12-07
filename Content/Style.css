@@ -1,4 +1,30 @@
-﻿.div-rd-question{
+﻿.pop-up-content-title {
+	font-weight: bold;
+	font-size: large;
+	margin-bottom: 10px;
+}
+
+
+.pop-up-input {
+	height: 35px;
+	border-radius: 9.1px;
+	background-color: white;
+	margin-bottom: 20px;
+	border: 0.2px solid black;
+	width:250px	;
+}
+
+.img-fix {
+	width:20%;
+	height:auto;
+}
+
+.modal-body-add {
+	overflow: scroll;
+	height: 500px;
+}
+
+.div-rd-question{
 	margin-top:2px;
 	margin-left:15px;
 }
@@ -179,7 +205,21 @@
     height: 30px;
 }
 .text_overflow {
-    width: 200px;
+    width: 300px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.text_overflow-2 {
+    width: 500px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.text_overflow-3 {
+    width: 620px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;

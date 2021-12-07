@@ -25,7 +25,7 @@ namespace InClassVoting.Models
     
         public int CID { get; set; }
         public string Name { get; set; }
-        public Nullable<int> TeacherID { get; set; }
+        public int TeacherID { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Chapter> Chapters { get; set; }

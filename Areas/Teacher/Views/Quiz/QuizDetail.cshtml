@@ -175,10 +175,21 @@
                 <div style="display:flex;margin-top:20px">
                     <div style="display:flex">
                         <h1 class="quiz-lable">Quiz Mode: </h1>
-                        <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" checked />
-                        <h4 class="label-mode-content-3">Show all question</h4>
-                        <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" name="rdPreview" type="radio" value="0" />
-                        <h4 class="label-mode-content-3"> Show question by question</h4>
+                        @if (ViewBag.Quiz.QuizType.Equals("ShowAllQuestion"))
+                        {
+                            <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" checked />
+                            <h4 class="label-mode-content-3">Show all question</h4>
+                            <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" name="rdPreview" type="radio" value="0" />
+                            <h4 class="label-mode-content-3"> Show question by question</h4>
+                        }
+                        else
+                        {
+                            <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" />
+                            <h4 class="label-mode-content-3">Show all question</h4>
+                            <input onclick="changeLinkqQuiz()" id="qQuiz" class="mode-rdb" name="rdPreview" type="radio" value="0" checked />
+                            <h4 class="label-mode-content-3"> Show question by question</h4>
+                        }
+
                         <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizID" />
                         <button type="submit" style="width: 177px;" class="label-preview"><i class="fas fa-eye" style="margin-right:5px"></i>Preview</button>
 
@@ -239,6 +250,7 @@
                             <th style="width: 47%;" scope="col">Question</th>
                             <th scope="col">Type</th>
                             <th scope="col">Mark</th>
+                            <th scope="col">Learning Outcome</th>
                             <td scope="col"> </td>
 
                         </tr>
@@ -250,20 +262,50 @@
                             foreach (var question in Model)
                             {
                                 ViewBag.QuestionNo = ViewBag.QuestionNo + 1;
-                                <tr>
-                                    <th scope="row"> @ViewBag.QuestionNo</th>
-                                    <td><a href="#" type="button">@question.Text </a></td>
-                                    <td>
-                                        @if (question.Qtype == 5)
-                                        {
-                                            <span>Matching</span> }
-                                        else
-                                        {
-                                            @question.QuestionType.Name}
-                                    </td>
-                                    <td>@question.Mark</td>
-                                    <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&qid=@question.QID&qtype=@question.Qtype&i=@ViewBag.Page" class="fas fa-trash-alt"></a></td>
-                                </tr>
+                        <tr>
+                            <th scope="row"> @ViewBag.QuestionNo</th>
+                            <td>
+                                @*<a href="#" type="button" class="text_overflow-2">@question.Text </a>*@
+                                @if (question.Text != null && !question.Text.Equals(""))
+                                {
+                                    <a href="#" type="button" class="text_overflow-2">@question.Text </a>
+                                }
+                                @if (question.ImageData != null)
+                                {
+                                    var base64 = Convert.ToBase64String(question.ImageData);
+                                    var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                                    <a href="~/Teacher/Question/EditQuestion?qid=@question.QID&&qtype=@question.Qtype" type="button">
+                                        <img src="@imgSrc" alt="pic" class="img-fix" />
+                                    </a>
+                                }
+                            </td>
+                            <td>
+                                @if (question.Qtype == 5)
+                                {
+                                    <span>Matching</span> }
+                                else
+                                {
+                                    @question.QuestionType.Name}
+                            </td>
+                            <td>@question.Mark</td>
+                            @{
+                                string loList = "";
+                                foreach (var ql in ViewBag.LoList)
+                                {
+                                    if (ql.QuestionID == question.QID && ql.Qtype == question.Qtype)
+                                    {
+                                        loList = loList + ql.LearningOutcome.LO_Name + ", ";
+                                    }
+                                }
+                                if (loList != "")
+                                {
+                                    loList = loList.Substring(0, loList.Length - 2);
+                                }
+                            }
+
+                            <td>@loList </td>
+                            <td><a href="~/Teacher/Quiz/DeleteQuestionsInsideQuiz?qzID=@ViewBag.Quiz.QuizID&qid=@question.QID&qtype=@question.Qtype&i=@ViewBag.Page" class="fas fa-trash-alt"></a></td>
+                        </tr>
                             }
                         }
                     </tbody>
@@ -283,6 +325,7 @@
             @using (Html.BeginForm("SaveQuizOption", "Quiz", FormMethod.Post))
             {
                 <input type="hidden" name="qzID" value="@ViewBag.Quiz.QuizID" />
+                <input type="hidden" name="qtypeChange" id="qtypeChange" value="@ViewBag.Quiz.QuizType">
                 <h1 class="quiz-lable">Quiz attributes</h1>
                 <div style="display: flex; margin-top: 20px">
                     <div style="display:flex">
@@ -348,12 +391,12 @@
                     <div class="div-mode">
                         @if (ViewBag.PublishMark == 1)
                         {
-                            <input id="checkBoxMask" onchange="saveChanges()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" checked />
+                            <input id="checkBoxMask" onchange="checkMask()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" checked />
                             <input type="hidden" name="cbPublishMark" value="0" />
                         }
                         else
                         {
-                            <input id="checkBoxMask" onchange="saveChanges()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" />
+                            <input id="checkBoxMask" onchange="checkMask()" class="mode-rdb2" value="1" type="checkbox" name="cbPublishMark" />
                             <input type="hidden" name="cbPublishMark" value="0" />
                         }
 
@@ -361,12 +404,12 @@
                         <h4 class="label-mode-content-2">Mark</h4>
                         @if (ViewBag.PublicAnswer == 1)
                         {
-                            <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" checked />
+                            <input onchange="checkAnswer()" id="checkBoxAnswer" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" checked />
                             <input type="hidden" name="cbPublishAnswer" value="0" />
                         }
                         else
                         {
-                            <input onchange="checkMask()" id="checkBoxRight" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />
+                            <input onchange="checkAnswer()" id="checkBoxAnswer" class="mode-rdb2" type="checkbox" name="cbPublishAnswer" value="1" />
                             <input type="hidden" name="cbPublishAnswer" value="0" />
                         }
                         <h4 class="label-mode-content-2">Questions and answers</h4>
@@ -378,7 +421,12 @@
             }
         </div>
         <div style="display: flex; margin-top: 15px; margin-left:auto">
-            <a href="~/Teacher/Quiz/QuizStarted?qzid=@ViewBag.Quiz.QuizID" class="btn btn-start-quiz">Start Quiz</a>
+            @using (Html.BeginForm("QuizStarted", "Quiz", FormMethod.Post))
+            {
+                <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizID">
+                <input type="hidden" name="qtype" id="qtype" value="@ViewBag.Quiz.QuizType">
+                <button type="submit" class="btn btn-start-quiz">Start Quiz</button>
+            }
         </div>
 
     }
@@ -388,6 +436,9 @@
 </div>
 
 <script src="~/Scripts/teacher.quiz.js"></script>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jqueryui/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
 function reloadModalAddQuestion() {

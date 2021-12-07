@@ -17,7 +17,7 @@ namespace InClassVoting.Models
         public int QAID { get; set; }
         public int QuestionID { get; set; }
         public string Text { get; set; }
-        public Nullable<bool> IsCorrect { get; set; }
+        public bool IsCorrect { get; set; }
     
         public virtual Question Question { get; set; }
     }
