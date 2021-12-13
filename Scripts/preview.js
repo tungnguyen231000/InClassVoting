@@ -1,11 +1,14 @@
 ﻿$(document).ready(function () {
 
+    
+    const alphabet = ["A.", "B.", "C.", "D.", "E.", "F.", "G.", "H.", "I.", "J.", "K.", "L.", "M.", "N.", "O.", "P.", "Q.", "R.", "S.", "T.", "U.", "V.", "W.", "X.", "Y.", "Z."];
+    
     //=========Multiple Choice PreView=========
-
     $('#previewMultiple').click(function () {
 
         const getText = document.querySelectorAll('#optionMultiple-text');
         const getQuestion = document.querySelector('#questionMultiple').value;
+        var indexAlphabet = 0;
 
         var item = '';
 
@@ -13,11 +16,11 @@
             if (getText[i].value != '') {
 
                 item +=     '<tr>' +
-                                '<td class="w-2"><input type="checkbox" id="multiple-q1" name="cb-option1" value="1" disabled></td>' +
-                                '<td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="' + getText[i].value+'" readonly></td>' +
+                            '<td class="w-2"><input type="checkbox" id="multiple-q1" name="cb-option1" value="1" disabled></td>' +
+                    '<td class="w-2">' + alphabet[indexAlphabet] + '</td><td><input type="text" class="w-full bg-gray-100" name="option1" placeholder="Option 1" value="' + getText[i].value + '" readonly></td>' +
                             '</tr>';
 
-
+                ++indexAlphabet;
                 $('#table-multiple-preview').html(item);
             }
         }
@@ -37,6 +40,8 @@
         for (var i = 0; i < getQuestion.length; i++) {
 
             var listText = getListOption[i].querySelectorAll('#optionReading-text');
+            var indexAlphabet = 0;
+
             item1 += '<div id="reading-test-preview">' +
                 '<div class="w-full items-center bg-gray p-6">' +
                 '<span>Question ' + (i + 1) + ':</span>' +
@@ -53,8 +58,11 @@
                 if (listText[z].value != '') {
                 item1 +='<tr>' +
                             '<td class="w-2"><input type="checkbox" id="multiple-q1" name="cb-option1" value="1" disabled></td>' +
+                            '<td class="w-2">' + alphabet[indexAlphabet] + '</td>' +
                             '<td><input type="text" class="w-full pl-3 bg-gray-100" name="option1" placeholder="Option 1" value="' + listText[z].value + '" readonly></td>' +
                         '</tr>';
+
+                    ++indexAlphabet;
                 }
             }
 
@@ -80,7 +88,8 @@
 
             $('#questionShort-preview').text(getQuestion);
 
-            $('#answerShort-preview').val($('#answerShort').val());
+            //Hidden
+            //$('#answerShort-preview').val($('#answerShort').val());
 
         });
     }
@@ -107,21 +116,24 @@
             var list = getQuestion.match(regexIndicateQuestion);
 
             var list2 = [];
-            
-            for (let i = 0; i < list.length; i++) {
-                let currentString = list[i];
-                let answer = currentString.split("-")[1].replace(")", "");
-                let option = currentString.split("-")[0].replace("(", "");
-                list2.push('<span style="color:blue">(' + option + ')</span> <u>' + answer + '</u>');
-                
+            if (list != null) {
+                for (let i = 0; i < list.length; i++) {
+                    let currentString = list[i];
+                    let answer = currentString.split("-")[1].replace(")", "");
+                    let option = currentString.split("-")[0].replace("(", "");
+                    list2.push('<span style="color:blue">(' + option + ')</span> <u>' + answer + '</u>');
+
+                }
+
+
+
+                for (let i = 0; i < list.length; i++) {
+                    let currentString = list[i];
+                    getQuestion = getQuestion.replace(currentString, list2[i]);
+                }
             }
 
             
-
-            for (let i = 0; i < list.length; i++) {
-                let currentString = list[i];
-                getQuestion = getQuestion.replace(currentString, list2[i]);
-            }
 
 
             $('#questionIndicate-preview').html(getQuestion);
@@ -146,7 +158,7 @@
 
                 if (arrGroup != null) {
                     for (var i = 0; i < arrGroup.length; i++) {
-                        let selectString = '<select id="" style="width: 15 %; color: blue" name="fillBankGivenAnswer" class="border border-black-400">' + '<option label=""></option>';
+                        let selectString = '<select id="" style="color: blue" name="fillBankGivenAnswer" class="border border-black-400 w-2/12">' + '<option label=""></option>';
 
                         arrGroup[i] = arrGroup[i].replace("(", "");
                         arrGroup[i] = arrGroup[i].replace(")", "");
@@ -189,4 +201,30 @@
         });
     }
     //=========End Fill Blank PreView=========
+
+
+    //=========Multiple Choice PreView=========
+    $('#previewPoll').click(function () {
+
+        const getText = document.querySelectorAll('#txtPoll');
+        const getQuestion = document.querySelector('#questionPoll').value;
+
+        var item = '';
+
+        for (var i = 0; i < getText.length; i++) {
+            if (getText[i].value != '') {
+
+                item += '<tr>' +
+                    '<td class="w-2"><input type="checkbox"  disabled></td>' +
+                    '<td><input type="text" class="w-full bg-gray-100" value="' + getText[i].value + '" readonly></td>' +
+                    '</tr>';
+
+                $('#table-poll-preview').html(item);
+            }
+        }
+
+        $('#questionPoll-preview').text(getQuestion);
+
+    });
+    //=========End Multiple Choice PreView=========
 });

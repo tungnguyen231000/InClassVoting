@@ -12,7 +12,10 @@
             </button>
         </div>
         <!-- end sidebar toggle -->
-        <h1 class="mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
+        <!-- button -->
+        <a href="~/Teacher/Report/ReportPollList" style="background-color:aquamarine" class="btn"> Poll Report</a>
+        <!-- end button -->
+        <h1 class="mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500" style="margin-top:10px">
             <i class="fas fa-graduation-cap "></i>
             <strong style="font-size:initial">My Course</strong>
         </h1>
@@ -21,7 +24,7 @@
         <div class="layout-content">
             @if (ViewBag.CourseCount == 0)
             {
-                <p style="text-align: center; margin-top: 10%; font-size: larger;">Course List Is Empty</p>
+                <p style="text-align: center; margin-top: 10%; font-size: larger;">Course list is empty</p>
             }
             else
             {
@@ -33,8 +36,8 @@
                         <a href="~/Teacher/Report/ViewReportListByCourse?cid=@course.CID" style="margin-left:20px" class="mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
                             <i class="fas fa-graduation-cap "></i>
                             @{
-                                int coutnQuiz = 0;
-                            }
+                                int coutnQuiz = course.QuizDones.Count;
+                            }@*
                             @foreach (var quiz in course.QuizDones)
                             {
 
@@ -43,7 +46,7 @@
                                     coutnQuiz++;
                                 }
 
-                            }
+                            }*@
                             @course.Name (@coutnQuiz Report)
                         </a>
 

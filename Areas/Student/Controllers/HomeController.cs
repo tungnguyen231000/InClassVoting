@@ -11,10 +11,9 @@ namespace InClassVoting.Areas.Student.Controllers
     [UserAuthorizeFilter("Student")]
     public class HomeController : Controller
     {
-        // GET: Student/Home
+        [HandleError]
         public ActionResult Home()
         {
-            
             ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
             ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             return View();

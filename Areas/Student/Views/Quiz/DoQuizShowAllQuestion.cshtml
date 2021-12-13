@@ -180,7 +180,22 @@
                             <span class="question-num">
                                 Question @countMultipleQuestion:
                             </span>
-                            <span></span>
+                            @{ int countCorrectAnswer = 0;
+                                foreach (var answers in question.QuestionAnswerDones)
+                                {
+                                    if (answers.IsCorrect)
+                                    {
+                                        countCorrectAnswer++;
+                                    }
+                                }
+                            }
+                            <p>
+                                (Choose @countCorrectAnswer
+                                @if (countCorrectAnswer > 1)
+                                {<span>answers</span>}
+                                else
+                                {<span>answer</span>})
+                            </p>
                         </div>
                         <div class="w-full items-center bg-gray  ">
                             <div>
@@ -294,6 +309,22 @@
                                 <div>
                                     <div class="w-full items-center bg-gray p-6">
                                         <span class="question-num">Question @countReadingQuestion:</span>
+                                        @{ int countCorrectAnswer = 0;
+                                            foreach (var answers in question.QuestionAnswerDones)
+                                            {
+                                                if (answers.IsCorrect)
+                                                {
+                                                    countCorrectAnswer++;
+                                                }
+                                            }
+                                        }
+                                        <p>
+                                            (Choose @countCorrectAnswer
+                                            @if (countCorrectAnswer > 1)
+                                            {<span>answers</span>}
+                                            else
+                                            {<span>answer</span>})
+                                        </p>
                                     </div>
 
                                     <div class="w-full items-center bg-gray ">
@@ -606,6 +637,7 @@
                         countIndicateQuestion++;
                         <div class="w-full items-center bg-gray p-6 ">
                             <span class="question-num">Question @countIndicateQuestion:</span>
+                            <p>(Choose 1 answer)</p>
                         </div>
                         <div class="w-full items-center bg-gray  ">
                             <div>

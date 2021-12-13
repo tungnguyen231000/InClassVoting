@@ -12,7 +12,7 @@ namespace InClassVoting.Areas.teacher.Controllers
     [UserAuthorizeFilter("Teacher")]
     public class HomeController : Controller
     {
-        
+        [HandleError]
         public ActionResult Home()
         {
             

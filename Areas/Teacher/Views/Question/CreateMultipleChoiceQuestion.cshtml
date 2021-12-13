@@ -5,17 +5,15 @@
 }
 
 <link rel="stylesheet" type="text/css" href="~/Content/drag-and-drop.css">
-<!--Thêm thư viện bootstrap.min.css-->
-<link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="~/Content/error.css">
 
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-    @using (Html.BeginForm("CreateMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "multiple-form" }))
+    @using (Html.BeginForm("CreateMultipleChoiceQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "multiple-form", autocomplete = "off" }))
     {
         <div class="grid grid-cols-1 w-full ">
             <div class="w-full items-center bg-gray">
                 <div class="text-center">
-                    <h1 class="h3">
+                    <h1 class="h4">
                         <span>Question Type:</span>
                         <span>Multiple Choice   </span>
                         <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
@@ -25,8 +23,8 @@
                     <div class="m-6">
                         <span class="label-mode-4">Learning outcome</span>
                     </div>
-                    <div class="m-6">
-                        @if (ViewBag.LoList != null)
+                    <div class="m-6" style="display:flex">
+                        @if (ViewBag.LoList != null && ViewBag.LoList.Count != 0)
                         {
                             foreach (var lo in ViewBag.LoList)
                             {
@@ -35,18 +33,22 @@
                                     <h4 class="label-mode-content-2">@lo.LO_Name</h4>
                                 </div>
                             }
+                        } 
+                        else
+                        {
+                        <p style="text-align: center; font-size: medium;">There is no learning outcome to choose!!</p>
                         }
 
                     </div>
                 </div>
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span><b>Time:</b></span>
-                        <input id="timeMultiple" class="border border-black-400 pl-1 w-4/12" type="number" name="time" placeholder="Time">
+                        <span class="label-mode-4">Time (second): </span> 
+                        <input id="timeMultiple" class="border border-black-400 pl-1 w-5/12" min="15" max="3600" step="1" type="number" name="time" placeholder="...">
                     </div>
                     <div class="m-6  ">
-                        <span><b>Mark:</b></span>
-                        <input class="border border-black-400 pl-1 w-4/12" type="number" name="mark" placeholder="Mark">
+                         <span class="label-mode-4">Mark: </span>
+                        <input class="border border-black-400 pl-1 w-7/12" step="0.5" min="0.5" max="10" type="number" name="mark" placeholder="...">
                     </div>
                 </div>
 
@@ -58,7 +60,7 @@
                 </div>
                 <div class="w-10/12  float-left mt-3 pr-6">
                     <!--Sửa id="questionMultiple"-->
-                    <textarea class="p-2 w-full" name="questionText" rows="6" id="questionMultiple" placeholder="Question ..."></textarea>
+                    <textarea class="p-2 w-full" name="questionText" rows="5" id="questionMultiple" placeholder="Question ..."></textarea>
                 </div>
                 <div class="w-2/12 drag-content float-right">
                     <div class="drag-area">
@@ -95,7 +97,7 @@
                         <td>&nbsp;C.&nbsp;<input style="width:95%" type="text" id="optionMultiple-text" class="w-full pl-3" name="option"></td>
                     </tr>
                     <tr>
-                        <td class="w-2"><input type="checkbox" class="form-check-input" id="optionMultiple-checkbox" " name="cbOption" value="4"></td>
+                        <td class="w-2"><input type="checkbox" class="form-check-input" id="optionMultiple-checkbox" name="cbOption" value="4"></td>
                         <td> &nbsp;D.&nbsp;<input style="width:95%" type="text" id="optionMultiple-text" class="w-full pl-3" name="option"></td>
                     </tr>
                     <tr>
@@ -111,7 +113,7 @@
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                <button type="button" id="previewMultiple" class="btn btn-primary mr-6" data-toggle="modal" data-target="#multiplePreview">
+                <button type="button" id="previewMultiple" class="btn mr-6" data-bs-toggle="modal" data-bs-target="#multiplePreview">
                     Preview
                 </button>
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Create Question">
@@ -123,13 +125,13 @@
 
     <!--Thêm Dialog Paper Preview-->
     <div class="modal fade" id="multiplePreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog w-9/12" style="max-width:none" role="document">
             <div class="modal-content ">
                 <div class="">
                     <button type="button" class="close float-right p-3" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="text-center" id="exampleModalLabel">Preview</h4>
+                    <h4 class="text-center h4" id="exampleModalLabel">Preview</h4>
                 </div>
                 <div id="multiple-test" class="p-5">
                     <div class="w-full items-center bg-gray  ">

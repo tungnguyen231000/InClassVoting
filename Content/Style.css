@@ -57,6 +57,13 @@
 	margin-left: 10px
 }
 
+.btn-copy {
+	background-color: cornflowerblue;
+	color: whitesmoke;
+	width: 50px;
+	margin-right: 5px;
+}
+
 .quiz-lable {
 	margin-top:20px;
 	font-weight: 700;
@@ -77,6 +84,17 @@
 }
 
 .linkquiz-lable {
+	font-weight: 500;
+	font-size: 20px;
+}
+
+.linkquiz-lable-3 {
+	font-weight: 400;
+	font-size: 18px;
+	margin-bottom:5px;	
+}
+
+.linkquiz-lable-2 {
 	font-weight: 500;
 	font-size: 20px;
 }
@@ -150,8 +168,20 @@
 	height:17px;
 }
 
+.mode-rdb-3 {
+	margin-top:2px;
+	width:17px;
+	height:17px;
+}
+
 .label-mode-content-3 {
 	margin-top: 20px;
+	margin-right: 20px;
+	font-size: 19px;
+}
+
+.label-mode-content-4 {
+	margin-top: 10px;
 	margin-right: 20px;
 	font-size: 19px;
 }
@@ -237,7 +267,8 @@
 	margin-top: 25px;
 }
 .search-box{
-	padding:0.5rem;
+	padding:0.5rem 1rem;
+	color:#572f2f;
 }
 .search-size{
 	width:85%;

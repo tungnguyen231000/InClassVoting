@@ -16,10 +16,12 @@ namespace InClassVoting.Areas.teacher.Controllers
     {
         private DBModel db = new DBModel();
 
+        [HandleError]
         //Create Chapter
         [HttpPost]
         public ActionResult CreateChapter(string newChapCID, string chapterName /*, string chid*/)
         {
+            try { 
 
             Chapter chapter = new Chapter();
             chapter.CourseID = int.Parse(newChapCID);
@@ -28,9 +30,15 @@ namespace InClassVoting.Areas.teacher.Controllers
             db.SaveChanges();
 
             return Redirect(Request.UrlReferrer.ToString());
+
+            }
+            catch
+            { return Redirect("~Error/NotFound"); }
         }
 
+
         //Check New chapter Name
+        [HandleError]
         [HttpPost]
         public JsonResult CheckDuplicateNewChapter(string text, string cid)
         {
@@ -73,10 +81,12 @@ namespace InClassVoting.Areas.teacher.Controllers
 
         }
 
+        [HandleError]
         //Edit Chapter Name
         [HttpPost]
         public ActionResult EditChapter(string newChapterName, string chid)
         {
+            try { 
             int chapterID = int.Parse(chid);
             //check for dupilcate name
             var updateChapter = db.Chapters.Find(chapterID);
@@ -84,6 +94,10 @@ namespace InClassVoting.Areas.teacher.Controllers
             db.Entry(updateChapter).State = EntityState.Modified;
             db.SaveChanges();
             return Redirect(Request.UrlReferrer.ToString());
+
+            }
+            catch
+            { return Redirect("~Error/NotFound"); }
         }
 
         //Check New chapter Name
@@ -138,6 +152,7 @@ namespace InClassVoting.Areas.teacher.Controllers
 
         }
 
+        [HandleError]
         //Delete Chapter
         [HttpPost]
         public ActionResult DeleteChapter(string chid)

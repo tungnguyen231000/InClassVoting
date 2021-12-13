@@ -9,16 +9,13 @@
 function checkMask() {
     if (document.getElementById("checkBoxMask").checked == false) {
         document.getElementById("checkBoxAnswer").checked = false;
-        console.log("hihi4");
     }
-    console.log("hihi3");
     saveChanges();
 }
 function checkAnswer() {
     if (document.getElementById("checkBoxAnswer").checked) {
         document.getElementById("checkBoxMask").checked = true;
     }
-    console.log("hihi2");
     publishChange();
 }
 
@@ -60,20 +57,36 @@ function copyLink() {
 }
 
 
-function getQuizName() {
+function getNewQuizInfo() {
     var newName = document.getElementById("newName").value;
     document.getElementById("quizName").value = newName;
+    var checkedQuizMode = null;
+    var listCheckBox = document.getElementsByClassName('rdQuizMode');
+    for (var i = 0; listCheckBox[i]; ++i) {
+        if (listCheckBox[i].checked) {
+            checkedQuizMode = listCheckBox[i].value;
+            break;
+        }
+    }
+
+    document.getElementById("quizMode").value = checkedQuizMode;
 }
 
 function getTempQuizInfo() {
-    console.log("hihih");
-
     var tempName = document.getElementById("newName").value;
     document.getElementById("tempName").value = tempName;
-    console.log(tempName + "===");
+    var checkedTempMod = null;
+    var listCheckBox = document.getElementsByClassName('rdQuizMode');
+    for (var i = 0; listCheckBox[i]; ++i) {
+        if (listCheckBox[i].checked) {
+            checkedTempMod = listCheckBox[i].value;
+            break;
+        }
+    }
+    document.getElementById("tempMode").value = checkedTempMod;
 }
 
 function saveChanges() {
-    console.log("hihi");
+   
     document.getElementById("saveOption").hidden = false;
 }

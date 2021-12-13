@@ -21,7 +21,7 @@
                     <div style=" margin-bottom:25px">
                         <input type="hidden" id="chidEditChapter" name="chid" value="@ViewBag.Chapter.ChID" />
                         <input type="hidden" id="cidEditChapter" value="@ViewBag.Chapter.CourseID" />
-                        <input type="text" id="newNameEditChapter" name="newChapterName" class="pop-up-input"  value="@ViewBag.Chapter.Name" />
+                        <input type="text" id="newNameEditChapter" name="newChapterName" class="pop-up-input" value="@ViewBag.Chapter.Name" />
                     </div>
 
                 </div>
@@ -58,6 +58,29 @@
         </div>
     </div>
 }
+<!-- End Modal -->
+<!-- Modal Confirm Delete Question -->
+<div class="modal fade" id="confirmDeleteQuestionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h5" id="exampleModalLabel">Delete Question</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p style="color:red"> You will delete all questions that you have selected!!!</p>
+                <p style="color:red">
+                    Do you wish to continue?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="deleteQuestion()" class="btn btn-primary">Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+            </div>
+        </div>
+    </div>
+</div>
 <!-- End Modal -->
 <!-- Modal new Question -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -127,12 +150,10 @@
 
         </div>
     </div>
-
-
     @if (ViewBag.CountQuest == 0)
     {
 
-        <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Chapter</p>
+        <p style="text-align: center; margin-top: 10%; font-size: larger;">There is no question in this chapter</p>
     }
     else
     {
@@ -140,18 +161,17 @@
         {
             <div class="block-search-dropdown">
 
-                <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
-                    <div class="w-full">
+                <div class="search-size text-gray-700 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+                    <div class="">
                         <input type="hidden" id="chapterId" name="chid" value="@ViewBag.Chapter.ChID" />
-                        @*<input type="hidden" name="questCount" value="0" />*@
-                        <span class="h5">Search: </span> <input class="search-box flex-1 w-8/12" type="text" placeholder="..." id="searchText" name="searchText" value="@ViewBag.Search">
+                        <span class="h5">Search: </span> <input class="search-box flex-1 w-10/12 border border-black-400" type="text" placeholder="Research..." id="searchText" name="searchText" value="@ViewBag.Search">
 
                         <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
                     </div>
                 </div>
-                <div style="width:33%" class="btn-group mg-left">
-                    <h1 style="margin:auto">Question Type: </h1>
-                    <select onchange="this.form.submit()" id="qType" name="qtype" class="btn-indigo mg-left ">
+                <div  class="btn-group mg-left w-3/12">
+                    <span class="h5 mr-1 my-auto text-gray-700">Question Type </span>
+                    <select onchange="this.form.submit()" id="qType" name="qtype" class="btn-indigo">
                         <option value="-1">All Type </option>
                         @foreach (var questionType in ViewBag.QuestionType)
                         {
@@ -170,7 +190,7 @@
             </div>
         }
         <div class="tb-mg-top">
-            @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post))
+            @using (Html.BeginForm("DeleteQuestion", "Question", FormMethod.Post,new { id="formDeleteQuestion"}))
             {
                 <input type="hidden" id="chapterId" name="chapterId" value="@ViewBag.Chapter.ChID" />
                 <input type="hidden" name="searchText" value="@ViewBag.Search" />
@@ -179,7 +199,7 @@
                 <div id="divShowQuestions">
                     @if (Model.Count() == 0)
                     {
-                        <p style="text-align: center; margin-top: 10%; font-size: larger;">0 Question Found...</p> }
+                        <p style="text-align: center; margin-top: 10%; font-size: larger;">0 question found...</p> }
                     else
                     {
                         <table class="table w-full">
@@ -197,52 +217,52 @@
                                 @foreach (var question in Model)
                                 {
                                     ViewBag.QuestCount = ViewBag.QuestCount + 1;
-                                <tr>
-                                    <th scope="row">@ViewBag.QuestCount</th>
-                                    @{ string qSet = question.QID + "-" + question.Qtype; }
-                                    <td><input type="checkbox" name="questionIdAndType" class="form-check-input" id="cbQuestID" value="@qSet"></td>
-                                    <td class="w-6/12">
-                                        @if (question.Text != null && !question.Text.Equals(""))
-                                        {
-                                            <a href="~/Teacher/Question/EditQuestion?qid=@question.QID&&qtype=@question.Qtype" type="button" class=" text_overflow-3">@question.Text </a>
-                                        }
-                                        @if (question.ImageData != null)
-                                        {
-                                            var base64 = Convert.ToBase64String(question.ImageData);
-                                            var imgSrc = string.Format("data:image/png;base64,{0}", base64);
-                                            <a href="~/Teacher/Question/EditQuestion?qid=@question.QID&&qtype=@question.Qtype" type="button">
-                                                <img src="@imgSrc" alt="pic" class="img-fix" />
-                                            </a>
-                                        }
-
-
-                                    </td>
-                                    <td class="w-2/12">
-                                        @if (question.Qtype == 5)
-                                        {
-                                            <span>Matching</span> }
-                                        else
-                                        {
-                                            @question.QuestionType.Name}
-                                    </td>
-                                    <td class="w-2/12">@question.Mark</td>
-                                    @{
-                                        string loList = "";
-                                        foreach (var ql in ViewBag.LoList)
-                                        {
-                                            if (ql.QuestionID == question.QID && ql.Qtype == question.Qtype)
+                                    <tr>
+                                        <th scope="row">@ViewBag.QuestCount</th>
+                                        @{ string qSet = question.QID + "-" + question.Qtype; }
+                                        <td><input type="checkbox" name="questionIdAndType" class="form-check-input" id="cbQuestID" value="@qSet"></td>
+                                        <td class="w-6/12">
+                                            @if (question.Text != null && !question.Text.Equals(""))
                                             {
-                                                loList = loList + ql.LearningOutcome.LO_Name + ", ";
+                                                <a href="~/Teacher/Question/EditQuestion?qid=@question.QID&&qtype=@question.Qtype" type="button" class=" text_overflow-3">@question.Text </a>
+                                            }
+                                            @if (question.ImageData != null)
+                                            {
+                                                var base64 = Convert.ToBase64String(question.ImageData);
+                                                var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                                                <a href="~/Teacher/Question/EditQuestion?qid=@question.QID&&qtype=@question.Qtype" type="button">
+                                                    <img src="@imgSrc" alt="pic" class="img-fix" />
+                                                </a>
+                                            }
+
+
+                                        </td>
+                                        <td class="w-2/12">
+                                            @if (question.Qtype == 5)
+                                            {
+                                                <span>Matching</span> }
+                                            else
+                                            {
+                                                @question.QuestionType.Name}
+                                        </td>
+                                        <td class="w-2/12">@question.Mark</td>
+                                        @{
+                                            string loList = "";
+                                            foreach (var ql in ViewBag.LoList)
+                                            {
+                                                if (ql.QuestionID == question.QID && ql.Qtype == question.Qtype)
+                                                {
+                                                    loList = loList + ql.LearningOutcome.LO_Name + ", ";
+                                                }
+                                            }
+                                            if (loList != "")
+                                            {
+                                                loList = loList.Substring(0, loList.Length - 2);
                                             }
                                         }
-                                        if (loList != "")
-                                        {
-                                            loList = loList.Substring(0, loList.Length - 2);
-                                        }
-                                    }
 
-                                    <td class="w-2/12">@loList </td>
-                                </tr>
+                                        <td class="w-2/12">@loList </td>
+                                    </tr>
                                 }
 
 
@@ -255,7 +275,7 @@
                         </div>
                         <div style="display:flex">
 
-                            <button type="submit" style="margin-left:6px" class="btn-indigo">Delete Question</button>
+                            <button type="button" style="margin-left:6px"id="deleteQuestionButton" class="btn-indigo" data-bs-toggle="modal" data-bs-target="#confirmDeleteQuestionModal">Delete Question</button>
 
                         </div>
                     }

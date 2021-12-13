@@ -4,213 +4,219 @@
     Layout = "~/Areas/Teacher/Views/Shared/_Layout.cshtml";
 }
 
-
-<link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css" />
-
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-    @using (Html.BeginForm("EditReadingQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "reading-form" }))
+    @using (Html.BeginForm("EditReadingQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "reading-form", autocomplete = "off" }))
     {
-        <div class="grid grid-cols-1 w-full ">
-            <div class="w-full items-center bg-gray">
-                <div class="text-center">
-                    <h1 class="h4">
-                        <span>Question Type:</span>
-                        <span>Reading</span>
-                    </h1>
-                    <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
-                    <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
-                    <input type="hidden" name="pid" value="@ViewBag.Passage.PID" />
-                    <input type="hidden" name="qidList" value="@ViewBag.QuestionIDList" />
+    <div class="grid grid-cols-1 w-full ">
+        <div class="w-full items-center bg-gray">
+            <div class="text-center">
+                <h1 class="h4">
+                    <span>Question Type:</span>
+                    <span>Reading</span>
+                </h1>
+                <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
+                <input type="hidden" name="chid" value="@ViewBag.ChapterID" />
+                <input type="hidden" name="pid" value="@ViewBag.Passage.PID" />
+                <input type="hidden" name="qidList" value="@ViewBag.QuestionIDList" />
+            </div>
+            <div class="md:mx-16">
+                <div class="m-6">
+                    <span class="label-mode-4">Learning outcome</span>
                 </div>
-                <div class="md:mx-16">
-                    <div class="m-6">
-                        <span class="label-mode-4">Learning outcome</span>
-                    </div>
-                    <div class="m-6">
-                        @if (ViewBag.LoList != null)
+                <div class="m-6" style="display:flex">
+                    @if (ViewBag.LoList != null && ViewBag.LoList.Count != 0)
+                    {
+                        foreach (var lo in ViewBag.LoList)
                         {
-                            foreach (var lo in ViewBag.LoList)
-                            {
-                                bool isExisted = false;
-                                <div style="display:flex">
-                                    @if (ViewBag.QuestionLO != null)
+                            bool isExisted = false;
+                            <div style="display:flex">
+                                @if (ViewBag.QuestionLO != null)
+                                {
+                                    foreach (var ql in ViewBag.QuestionLO)
                                     {
-                                        foreach (var ql in ViewBag.QuestionLO)
+                                        if (ql.LearningOutcomeID == lo.LOID)
                                         {
-                                            if (ql.LearningOutcomeID == lo.LOID)
-                                            {
-                                                isExisted = true;
-                                            }
+                                            isExisted = true;
                                         }
                                     }
+                                }
 
-                                    @if (isExisted == true)
-                                    {
-                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" checked />
-                                    }
-                                    else
-                                    {
-                                        <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" />
-                                    }
+                                @if (isExisted == true)
+                                {
+                                    <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" checked />
+                                }
+                                else
+                                {
+                                    <input class="mode-rdb2" style="margin-right:5px" type="checkbox" name="lo" value="@lo.LOID" />
+                                }
 
-                                    <h4 class="label-mode-content-2">@lo.LO_Name</h4>
-                                </div>
-                            }
+                                <h4 class="label-mode-content-2">@lo.LO_Name</h4>
+                            </div>
                         }
+                    }
+                    else
+                    {
+                        <p style="text-align: center; font-size: medium;">There is no learning outcome to choose!!</p>
+                    }
 
-                    </div>
                 </div>
             </div>
-            <div class="w-full items-center bg-gray p-6 border border-black-400">
+        </div>
+        <div class="w-full items-center bg-gray p-6 border border-black-400">
+            <div>
+                <span class="h5"><b>Reading Passage:</b> </span>
+            </div>
+            <div class="w-10/12  float-left mt-3 pr-6">
+                <textarea class="p-2 w-full" name="paragraph" rows="6" placeholder="..." id="paragraphReading">@ViewBag.Passage.Text</textarea>
+            </div>
+
+            <div class="w-2/12 drag-content float-right">
+                <div class="drag-area">
+                    @if (ViewBag.Passage.PassageImage != null)
+                    {
+                        var base64 = Convert.ToBase64String(ViewBag.Passage.PassageImage);
+                        var imgSrc = string.Format("data:image/png;base64,{0}", base64);
+                        <img src="@imgSrc" alt="pic" />
+                    }
+                    else
+                    {
+                        <div><i class="icon fas fa-cloud-upload-alt"></i></div>
+                        <div><h3 class="header">Drag and Drop to Upload File</h3></div>
+                        <div><h4 class="or">or</h4></div>
+                    }
+
+                </div>
                 <div>
-                    <span class="h5"><b>Reading Passage:</b> </span>
-                </div>
-                <div class="w-10/12  float-left mt-3 pr-6">
-                    <textarea class="p-2 w-full" name="paragraph" rows="7" placeholder="..." id="paragraphReading">@ViewBag.Passage.Text</textarea>
-                </div>
-
-                <div class="w-2/12 drag-content float-right">
-                    <div class="drag-area">
-                        @if (ViewBag.Passage.PassageImage != null)
-                        {
-                            var base64 = Convert.ToBase64String(ViewBag.Passage.PassageImage);
-                            var imgSrc = string.Format("data:image/png;base64,{0}", base64);
-                            <img src="@imgSrc" alt="pic" />
-                        }
-                        else
-                        {
-                            <div><i class="icon fas fa-cloud-upload-alt"></i></div>
-                            <div><h3 class="header">Drag and Drop to Upload File</h3></div>
-                            <div><h4 class="or">or</h4></div>
-                        }
-
-                    </div>
                     <div>
-                        <div>
-                            <input type="file" class="file-input btn-image" name="imgfile" accept="image/*">
-                        </div>
+                        <input type="file" class="file-input btn-image" name="imgfile" accept="image/*">
                     </div>
                 </div>
             </div>
-            @{
-                int countQuestion = 0;
-            }
-            @foreach (var question in ViewBag.QuestionList)
-            {
-                countQuestion++;
+        </div>
+        @{
+            int countQuestion = 0;
+        }
+    <div id="table-question-reading">
+        @foreach (var question in ViewBag.QuestionList)
+        {
+            countQuestion++;
 
-                <div id="table-question-reading">
-                    
-                    <div id="reading-question" class="w-full items-center bg-gray p-6 border border-black-400">
-                        <div class="ms-error"></div>
-                        <div class="m-2">
-                            <i id="remove-question-reading" class="delete h4 float-right">x</i>
-                        </div>
-                        <div class="m-4">
-                            <span id="reading-note" class="question-num-2" style="margin-right:20px">Question @countQuestion:</span>
-                            <span>Time:</span>
-                            <input id="timeReading" class="border border-black-400 pl-1" size="3" type="text" name="time" placeholder="..." value="@question.Time">
-                            <span>Mark:</span>
-                            <input class="border border-black-400 pl-1" size="3" type="text" name="mark" placeholder="..." value="@question.Mark">
 
-                        </div>
-                        <div class="mx-4">
-                            <input type="hidden" value="@question.QID" name="qid" />
-                            <textarea class="p-2 w-full" id="questionReading" name="question" rows="3" placeholder="Question ...">@question.Text</textarea>
-                        </div>
-                        <div class="mx-4 div-margin-20">
-                            @if (question.MixChoice == true)
+            <div id="reading-question" class="w-full items-center bg-gray p-6 border border-black-400">
+                <div class="ms-error"></div>
+                <div class="m-2">
+                    <i id="remove-question-reading" class="fas fa-times delete h4 float-right"></i>
+
+                </div>
+                <div class="flex md:mx-16">
+                    <div class="m-6 ">
+                        <span id="reading-note" class="question-num-2" style="margin-right:20px">Question @countQuestion:</span>
+                        <span class="label-mode-4">Time (second): </span>
+                        <input id="timeReading" class="border border-black-400 pl-1 w-3/12" min="15" max="3600" step="1" type="number" name="time" placeholder="..." value="@question.Time">
+                    </div>
+                    <div class="m-6 ">
+                        <span class="label-mode-4">Mark: </span>
+                        <input id="markReading" class="border border-black-400 pl-1 w-7/12" min="0.5" max="10" step="0.5" type="number" name="mark" placeholder="..." value="@question.Mark">
+                    </div>
+                </div>
+                <div class="mx-4">
+                    <input type="hidden" value="@question.QID" name="qid" />
+                    <textarea class="p-2 w-full" id="questionReading" name="question" rows="4" placeholder="Question ...">@question.Text</textarea>
+                </div>
+                <div class="mx-4 div-margin-20">
+                    @if (question.MixChoice == true)
+                    {
+                        <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" style="margin-top:6px" checked>
+                        <input type="hidden" name="mixChoice" value="0">
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" style="margin-top:6px">
+                        <input type="hidden" name="mixChoice" value="0">
+                    }
+
+                    &nbsp;&nbsp;<span class="shuffle-lable">Shuffle Answer</span>
+
+                </div>
+                <table id="table-reading" class="w-full border-spacing-2">
+                    @{
+                        int answerNum = 0;
+                    }
+                    @foreach (var answer in question.QuestionAnswers)
+                    {
+                        answerNum++;
+                        <tr id="reading-option">
+                            @if (answer.IsCorrect)
                             {
-                                <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" style="margin-top:6px" checked>
-                                <input type="hidden" name="mixChoice" value="0">
+                                <td class="w-2">
+                                    <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1" checked>
+                                    <input type="hidden" name="cboption" value="0">
+                                </td>
                             }
                             else
                             {
-                                <input type="checkbox" class="form-check-input" id="cb-option2" name="mixChoice" value="1" style="margin-top:6px">
-                                <input type="hidden" name="mixChoice" value="0">
+                                <td class="w-2">
+                                    <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                    <input type="hidden" name="cboption" value="0">
+                                </td>
                             }
+                            <td>
+                                @if (answerNum == 1)
+                                {<label>A.</label>}
+                                else if (answerNum == 2)
+                                {<label>B.</label>}
+                                else if (answerNum == 3)
+                                {<label>C.</label>}
+                                else if (answerNum == 4)
+                                {<label>D.</label>}
+                                else if (answerNum == 5)
+                                {<label>E.</label>}
+                                else if (answerNum == 6)
+                                {<label>F.</label>}
+                                &nbsp;&nbsp;
+                                <input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...." value="@answer.Text">
 
-                            &nbsp;&nbsp;<span class="shuffle-lable">Shuffle Answer</span>
+                            </td>
+                        </tr>
+                    }
+                    @while (answerNum < 6)
+                    {
+                        answerNum++;
+                        <tr id="reading-option">
+                            <td class="w-2">
+                                <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
+                                <input type="hidden" name="cboption" value="0">
+                            </td>
+                            <td>
+                                @if (answerNum == 1)
+                                {<label>A.</label>}
+                                else if (answerNum == 2)
+                                {<label>B.</label>}
+                                else if (answerNum == 3)
+                                {<label>C.</label>}
+                                else if (answerNum == 4)
+                                {<label>D.</label>}
+                                else if (answerNum == 5)
+                                {<label>E.</label>}
+                                else if (answerNum == 6)
+                                {<label>F.</label>}
+                                &nbsp;&nbsp;
+                                <input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="....">
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
 
-                        </div>
-                        <table id="table-reading" class="w-full border-spacing-2">
-                            @{
-                                int answerNum = 0;
-                            }
-                            @foreach (var answer in question.QuestionAnswers)
-                            {
-                                answerNum++;
-                                <tr>
-                                    @if (answer.IsCorrect)
-                                    {
-                                        <td class="w-2">
-                                            <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1" checked>
-                                            <input type="hidden" name="cboption" value="0">
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td class="w-2">
-                                            <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
-                                            <input type="hidden" name="cboption" value="0">
-                                        </td>
-                                    }
-                                    <td>
-                                        @if (answerNum == 1)
-                                        {<label>A.</label>}
-                                        else if (answerNum == 2)
-                                        {<label>B.</label>}
-                                        else if (answerNum == 3)
-                                        {<label>C.</label>}
-                                        else if (answerNum == 4)
-                                        {<label>D.</label>}
-                                        else if (answerNum == 5)
-                                        {<label>E.</label>}
-                                        else if (answerNum == 6)
-                                        {<label>F.</label>}
-                                        &nbsp;&nbsp;
-                                        <input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="...." value="@answer.Text">
-
-                                    </td>
-                                </tr>
-                            }
-                            @while (answerNum < 6)
-                            {
-                                answerNum++;
-                                <tr>
-                                    <td class="w-2">
-                                        <input type="checkbox" id="optionReading-checkbox" name="cboption" value="1">
-                                        <input type="hidden" name="cboption" value="0">
-                                    </td>
-                                    <td>
-                                        @if (answerNum == 1)
-                                        {<label>A.</label>}
-                                        else if (answerNum == 2)
-                                        {<label>B.</label>}
-                                        else if (answerNum == 3)
-                                        {<label>C.</label>}
-                                        else if (answerNum == 4)
-                                        {<label>D.</label>}
-                                        else if (answerNum == 5)
-                                        {<label>E.</label>}
-                                        else if (answerNum == 6)
-                                        {<label>F.</label>}
-                                        &nbsp;&nbsp;
-                                        <input style="width:95%" id="optionReading-text" type="text" class="w-full pl-3" name="option" placeholder="....">
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                    </div>
-                </div>
-            }
+        }
+    </div>
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block">
                 <a id="more-question-reading" class="btn-bs-info btn-more float-right w-2/12">More Question</a>
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
                 <!--Thêm Button Preview-->
-                <button type="button" id="previewReading" class="btn btn-primary mr-6" data-toggle="modal" data-target="#readingPreview">
+                <button type="button" id="previewReading" class="btn mr-6" data-bs-toggle="modal" data-bs-target="#readingPreview">
                     Preview
                 </button>
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
@@ -219,6 +225,49 @@
 
         </div>
     }
+
+    <!--Thêm Dialog Paper Preview-->
+    <div class="modal fade" id="readingPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog w-9/12" style="max-width:none" role="document">
+            <div class="modal-content p-5">
+                <div class="">
+                    <button type="button" class="close float-right p-3" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="text-center h4" id="exampleModalLabel">Preview</h4>
+                </div>
+                <div class="w-full items-center bg-gray">
+                    <div>
+                        <div contenteditable="false" id="paragraphReading-preview" class="w-full items-center bg-gray p-6 ">
+                        </div>
+                        <div class="drag-area-preview">
+                        </div>
+                    </div>
+
+                </div>
+                <hr />
+                <div id="table-reading-question-preview">
+                    <div id="reading-test-preview">
+                        <div class="w-full items-center bg-gray p-6">
+                            <span>Question 1:</span>
+                        </div>
+                        <div class="w-full items-center bg-gray ">
+                            <div class="">
+                                <div contenteditable="false" id="questionReading-preview" class="w-full items-center bg-gray p-6 font-sans font-semibold ">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="w-full items-center bg-gray ">
+                            <table id="table-reading-preview" class="w-full border-spacing-2">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 

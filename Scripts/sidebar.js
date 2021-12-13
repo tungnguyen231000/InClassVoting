@@ -62,29 +62,55 @@
     var letterMatching = document.querySelectorAll('#letter');
     var tableSolution = document.querySelectorAll('#table-solution');
     var removeMatching = document.querySelectorAll('#remove-matching');
+
+    var removePosition = 0;
+
     addMatching.forEach((item) => {
         $(item).click(function(e){
             var z = e.target;
             var parentDiv = z.parentNode;
             var a = document.querySelector('button[data-option="' + parentDiv.id + '"]');
-            a.classList.remove("bg-gray-200");
+            
 
             var index = Array.prototype.indexOf.call(addMatching, z);
 
             if (numberMatching[index].value != '' && letterMatching[index].value != '') {
                 var txtLine = '<input type="text" id="matching-solution" class="text-center" name="solution" value="' + numberMatching[index].value + '-' + letterMatching[index].value + '" readonly/>';
-
+                a.classList.remove("bg-gray-200");
                 $(tableSolution[index]).append(txtLine);
             }
+
+            $(numberMatching[index]).val("");
+            $(letterMatching[index]).val("");
 
             var listSolution = $(tableSolution[index]).children();
 
 
             for (var z = 0; z < listSolution.length; z++) {
                 listSolution[z].addEventListener('click', function (event) {
+                    let check1 = Array.prototype.indexOf.call(tableSolution, event.currentTarget.parentNode);
+                    removePosition = check1;
+
+                    if ($('.solution-active').length == 0) {
+                        $(event.target).addClass("solution-active");
+                    } else {
+                        $('.solution-active').removeClass("solution-active");
+                        $(event.target).addClass("solution-active");
+                    }
 
                     $(removeMatching[index]).click(function (e) {
-                        event.target.remove();
+                        let check2 = Array.prototype.indexOf.call(removeMatching, e.currentTarget);
+                        //event.target.remove();
+                        if (removePosition == check2) {
+                            $('.solution-active').remove();
+                        }
+
+                        if (tableSolution[check2].children.length < 1) {
+                            a.classList.add("bg-gray-200");
+                        } else {
+                            a.classList.remove("bg-gray-200");
+                        }
+                        
                     });
 
                 });
@@ -93,23 +119,7 @@
         });
     });
 
-    for (var i = 0; i < removeMatching.length; i++) {
-        removeMatching[i].addEventListener("mouseup", (e) => {
-            var z = e.target;
-            var parentDiv = z.parentNode;
-            var a = document.querySelector('button[data-option="' + parentDiv.id + '"]');
-
-            var index = Array.prototype.indexOf.call(removeMatching, z);
-
-            if (tableSolution[index].children.length == 1) {
-                a.classList.add("bg-gray-200");
-            } else {
-                a.classList.remove("bg-gray-200");
-            }
-
-        });
-
-    }
+  
 
 
     //Check Student Input Fillblank Test --- DONE

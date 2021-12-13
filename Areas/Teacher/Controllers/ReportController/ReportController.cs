@@ -78,8 +78,8 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 }
             }
             return (check);
-        } 
-        
+        }
+
         private bool checkStudentIdAvailbile(string qzid, string stid)
         {
             bool check = true;
@@ -88,7 +88,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             bool quizIsInt = int.TryParse(qzid, out quizDoneId);
             bool studentIsInt = int.TryParse(stid, out studentId);
             //check if quiz and student id is int
-            if (quizIsInt == false|| studentIsInt==false)
+            if (quizIsInt == false || studentIsInt == false)
             {
                 check = false;
             }
@@ -97,9 +97,9 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
                 var student = db.Students.Find(studentId);
                 var quiz = db.QuizDones.Find(quizDoneId);
-                var student_quiz = db.Student_QuizDone.Where(sq=>sq.QuizDoneID==quizDoneId && sq.StudentID==studentId).FirstOrDefault();
+                var student_quiz = db.Student_QuizDone.Where(sq => sq.QuizDoneID == quizDoneId && sq.StudentID == studentId).FirstOrDefault();
                 //check if student quizdone exist in db
-                if (student_quiz == null || student==null ||quiz==null)
+                if (student_quiz == null || student == null || quiz == null)
                 {
                     check = false;
                 }
@@ -115,16 +115,17 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             return (check);
         }
 
-
-
+        [HandleError]
         public ActionResult ReportHome()
         {
             
             ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
             ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             return View();
+            
         }
 
+        [HandleError]
         public ActionResult ViewReportListByCourse(string cid, string searchText, int? i)
         {
             //check if course is availble
@@ -138,7 +139,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int courseId = int.Parse(cid);
                 var course = db.Courses.Find(courseId);
-                var listQuizDone = db.QuizDones.Where(q => q.CourseID == courseId).OrderByDescending(q => q.QuizDoneID).ToList();
+                var listQuizDone = db.QuizDones.Where(q => q.CourseID == courseId)/*.OrderByDescending(q => q.QuizDoneID)*/.ToList();
 
                 List<QuizDone> quizzes = new List<QuizDone>();
                 if (searchText != null && !searchText.Trim().Equals(""))
@@ -167,7 +168,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
 
                 }
 
-                quizzes = quizzes.Where(qz => qz.Student_QuizDone.Count != 0).ToList();
+                /*quizzes = quizzes.Where(qz => qz.Student_QuizDone.Count != 0).ToList();*/
                 ViewBag.QuizCount = (i - 1) * 10;
                 ViewBag.Course = course;
                 ViewBag.Search = searchText;
@@ -176,6 +177,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             }
         }
 
+        [HandleError]
         public ActionResult ReportByQuestion(string qzid, string searchText)
         {
             //check if quiz done is availble
@@ -186,7 +188,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             }
             else
             {
-                
+
                 ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int quizDoneID = int.Parse(qzid);
@@ -197,8 +199,6 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 if (qzDone.Questions != null && !qzDone.Questions.Equals(""))
                 {
                     List<string> questSet = qzDone.Questions.Split(new char[] { ';' }).ToList();
-                    /*Dictionary<int, string> questionSet = new Dictionary<int, string>();
-                    Dictionary<int, string> matchingSet = new Dictionary<int, string>();*/
 
                     //get question in report
                     foreach (string questions in questSet)
@@ -213,25 +213,8 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                             QuestionDone matching = new QuestionDone();
                             matching.Q_DoneID = mID;
                             Debug.WriteLine("--2--" + matchQuest.Chapter.ChID);
-                            /*  if (matchQuest.Chapter != null)
-                              {
-                                  bool isExisted = false;
-                                  foreach (Chapter c in chapterList)
-                                  {
-                                      if (matchQuest.ChapterID == c.ChID)
-                                      {
-                                          isExisted = true;
-                                          Debug.WriteLine("--3--" + matchQuest.Chapter.ChID);
-
-                                      }
-                                  }
-                                  if (isExisted == false)
-                                  {
-                                      chapterList.Add(matchQuest.Chapter);
-                                  }
-
-                              }*/
                             matching.Chapter = matchQuest.Chapter;
+                            matching.ChapterID = matchQuest.ChapterID;
                             matching.Text = matchQuest.ColumnA + "//" + matchQuest.ColumnB;
                             matching.Time = matchQuest.Time;
                             matching.Mark = matchQuest.Mark;
@@ -245,8 +228,6 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                             int qID = int.Parse(questAndType[0]);
                             QuestionDone question = db.QuestionDones.Find(qID);
                             Debug.WriteLine("--0--" + question.Chapter.ChID);
-
-
                             questionsList.Add(question);
                         }
                     }
@@ -298,7 +279,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                     questionsList = questionsList.Where(ql => ql.Text.Trim().ToLower().Contains(searchText.ToLower())).ToList();
                 }
 
-
+               
                 var studentDoneTest = db.Student_QuizDone.Where(stq => stq.QuizDoneID == quizDoneID).ToList();
 
                 ViewBag.Quiz = qzDone;
@@ -308,12 +289,12 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 ViewBag.Search = searchText;
                 ViewBag.ChapterList = chapterList.OrderBy(c => c.ChID);
                 ViewBag.LOList = loList.OrderBy(lo => lo.LOID);
-
+                ViewBag.QuestionLoList = db.QuestionDoneLOes.Where(ql => ql.LearningOutcome.CourseID == qzDone.CourseID).ToList();
                 return View();
             }
         }
 
-
+        [HandleError]
         public ActionResult ReportByStudent(string qzid, string searchText)
         {
             //check if quiz done is availble
@@ -324,7 +305,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             }
             else
             {
-                
+
                 ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int quizDoneID = int.Parse(qzid);
@@ -357,6 +338,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             }
         }
 
+        [HandleError]
         public ActionResult Search(string qzid, string searchType, string searchText)
         {
 
@@ -371,17 +353,18 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             }
         }
 
+        [HandleError]
         public ActionResult ReportStudentQuiz(string qzid, string stid)
         {
             //check if quiz done is availble
-            if (checkQuizDoneIdAvailbile(qzid) == false|| checkStudentIdAvailbile(qzid,stid)==false)
+            if (checkQuizDoneIdAvailbile(qzid) == false || checkStudentIdAvailbile(qzid, stid) == false)
             {
                 Debug.WriteLine("nope");
                 return RedirectToAction("ReportHome");
             }
             else
             {
-                
+
                 ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 if (stid == null)
@@ -392,12 +375,12 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
                 int quizId = int.Parse(qzid);
                 int studentId = int.Parse(stid);
                 var student_quiz = db.Student_QuizDone.Where(sq => sq.StudentID == studentId && sq.QuizDoneID == quizId).OrderByDescending(sq => sq.SQID).FirstOrDefault();
-                Debug.WriteLine("----" + student_quiz.SQID);
+                
 
                 string[] questionReceived = student_quiz.ReceivedQuestions.Split(new char[] { ';' });
 
                 //get student answer
-                var student_Answers = db.Student_Answer.Where(sa => sa.QuizDoneID == student_quiz.QuizDoneID).ToList();
+                var student_Answers = db.Student_Answer.Where(sa => sa.QuizDoneID == student_quiz.QuizDoneID && sa.StudentID == studentId).ToList();
 
 
                 Dictionary<int, string> questionSet = new Dictionary<int, string>();
@@ -500,6 +483,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             }
         }
 
+        [HandleError]
         [HttpPost]
         public ActionResult SaveReportOption(string qzID, string currentPage, string searchText, string cbPublishMark, string cbPublishAnswer)
         {
@@ -536,6 +520,134 @@ namespace InClassVoting.Areas.Teacher.Controllers.ReportController
             {
                 return Redirect("~/Teacher/Report/ReportByStudent?qzid=" + quizDoneID + "&searchText=" + searchText);
             }
+        }
+
+        [HandleError]
+        public ActionResult ReportPollList(string searchText, int? i)
+        {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+            int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+
+            var listPoll = db.Polls.Where(p => p.TeacherID == teacherId &&
+            p.TotalParticipian != 0 || p.TeacherID == teacherId && p.IsDoing == true).OrderByDescending(p => p.PollID).ToList();
+
+            List<Poll> polls = new List<Poll>();
+            if (searchText != null && !searchText.Trim().Equals(""))
+            {
+                polls = listPoll.Where(p => p.Question.Trim().ToLower().Contains(searchText.Trim().ToLower())).ToList();
+            }
+            else
+            {
+                polls = listPoll;
+            }
+
+            if (i == null || i == 0)
+            {
+                i = 1;
+            }
+            else
+            {
+                if (polls.Count % 10 == 0 && i > polls.Count / 10)
+                {
+                    i = 1;
+                }
+                else if (polls.Count % 10 != 0 && i > ((polls.Count / 10) + 1))
+                {
+                    i = 1;
+                }
+
+            }
+
+            ViewBag.PollCount = (i - 1) * 10;
+            ViewBag.Search = searchText;
+            ViewBag.CountPoll = listPoll.Count;
+            return View(polls.ToPagedList(i ?? 1, 10));
+        }
+
+        [HandleError]
+        [HttpPost]
+        public ActionResult DeleteReport(string qzid)
+        {
+            int quizDoneID = int.Parse(qzid);
+            var quizDone = db.QuizDones.Find(quizDoneID);
+            int courseId = quizDone.CourseID;
+
+            string [] questSet = quizDone.Questions.Split(new char[] { ';' });
+      
+
+            //delete question inside report
+            foreach (string qIdAndType in questSet)
+            {
+                string[] questAndType = qIdAndType.Split(new char[] { '-' });
+                int qtypeID = int.Parse(questAndType[1]);
+                if (qtypeID == 5)
+                {
+                    int mID = int.Parse(questAndType[0]);
+                    var matchQuest = db.MatchQuestionDones.Find(mID);
+                    db.MatchQuestionDones.Remove(matchQuest);
+                    var questionDoneLO = db.QuestionDoneLOes.Where(ql => ql.QuestionDoneID == mID && ql.Qtype == 5).ToList();
+                    //deleteLO
+                    foreach (var qlo in questionDoneLO)
+                    {
+                        db.QuestionDoneLOes.Remove(qlo);
+                    }
+                }
+                else
+                {
+                    int qID = int.Parse(questAndType[0]);
+                    var questionDone = db.QuestionDones.Find(qID);
+                    var qaList = db.QuestionAnswerDones.Where(qa => qa.QuestionID == qID).ToList();
+                    //remove answer of question
+                    foreach (var qa in qaList)
+                    {
+                        db.QuestionAnswerDones.Remove(qa);
+                    }
+
+                    db.QuestionDones.Remove(questionDone);
+                    var questionDoneLO = db.QuestionDoneLOes.Where(ql => ql.QuestionDoneID == qID && ql.Qtype == questionDone.Qtype).ToList();
+
+                    //deleteLO
+                    foreach (var qlo in questionDoneLO)
+                    {
+                        db.QuestionDoneLOes.Remove(qlo);
+                    }
+                }
+            }
+
+
+
+            var studentAnswers = db.Student_Answer.Where(sa => sa.QuizDoneID == quizDoneID).ToList();
+            //delete student answer
+            foreach (var studentAnswer in studentAnswers)
+            {
+                db.Student_Answer.Remove(studentAnswer);
+            }
+
+            var studenWorks = db.Student_QuizDone.Where(sq => sq.QuizDoneID == quizDoneID).ToList();
+            //delete student report
+            foreach(var studentWork in studenWorks)
+            {
+                db.Student_QuizDone.Remove(studentWork);
+            }
+
+            db.QuizDones.Remove(quizDone);
+            db.SaveChanges();
+
+            return Redirect("~/Teacher/Report/ViewReportListByCourse?cid=" + courseId);
+        }
+        
+        [HandleError]
+        [HttpPost]
+        public ActionResult EditReportName(string qzid, string newReportName)
+        {
+            int quizDoneID = int.Parse(qzid);
+            var quizDone = db.QuizDones.Find(quizDoneID);
+
+            quizDone.Quiz_Name = newReportName;
+            db.Entry(quizDone).State = EntityState.Modified;
+            db.SaveChanges();
+            return Redirect(Request.UrlReferrer.ToString());
         }
     }
 }

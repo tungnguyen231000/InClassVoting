@@ -12,16 +12,17 @@
 {
     <div class="modal fade" id="editquizModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content bg-gray-100 ">
                 <div class="modal-header">
-                    <h5 class="modal-title h5" id="exampleModalLabel">Edit Quiz</h5>
+                    <h5 class="modal-title h5" id="exampleModalLabel">Edit quiz name</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="h5"> Enter New Quiz Name</p>
+                    <h1 class="pop-up-content-title">Enter new quiz name </h1>
+                    @*<p class="h5"> Enter New Quiz Name</p>*@
                     <div style="display:flex; margin-bottom:25px">
                         <input type="hidden" value="@ViewBag.Quiz.QuizID" name="qzID" />
-                        <input type="text" id="fname" name="newQuizName" value="@ViewBag.Quiz.QuizName">
+                        <input type="text" id="fname" class="pop-up-input" name="newQuizName" value="@ViewBag.Quiz.QuizName" required>
                     </div>
 
                 </div>
@@ -51,8 +52,9 @@
 
                         <div class="mr-2 transition duration-500 px-3 border-b">
 
-                            <input class="search-box flex-1" type="text" id="searchString" placeholder="search">
-                            <button type="button" onclick="reloadModalAddQuestion()" class="search-box">
+                            <h1 style="margin:auto;margin-right:10px">Search: </h1>
+                            <input class="search-box flex-1" type="text" id="searchString2" placeholder="search">
+                            <button type="button" id="btnSearch" onclick="reloadModalAddQuestion()" class="search-box">
                                 <i class="fad fa-search"></i>
                             </button>
                         </div>
@@ -109,12 +111,15 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title h5" id="exampleModalLabel">Delete Quiz @ViewBag.Quiz.QuizName</h5>
+                    <h5 class="modal-title h5" id="exampleModalLabel">Delete quiz @ViewBag.Quiz.QuizName</h5>
                     <input type="hidden" name="qzID" value="@ViewBag.Quiz.QuizID" />
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="h5"> Are you Sure?</p>
+                    <p style="color:red"> You will delete this quiz!!!</p>
+                    <p style="color:red">
+                        Do you wish to continue?
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Delete</button>
@@ -131,7 +136,7 @@
 
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     <!-- start navbar -->
-    <div style=" height: 63px; border-bottom: solid;">
+    <div style=" height: 63px; border-bottom: solid">
         <div style="display: flex; height: 40px;">
             <h1 class="h5 mg-top">@ViewBag.Course.Name</h1>
             <!-- Example single danger button -->
@@ -143,8 +148,8 @@
         </div>
     </div>
 
-    <div style="display:flex">
-        <h1 style="margin-top:auto;margin-bottom:auto" class="h5">@ViewBag.Quiz.QuizName</h1>
+    <div style="display:flex;margin-top:10px">
+        <h1 style="margin-top:auto;margin-bottom:auto;font-size:23px" class="h6">@ViewBag.Quiz.QuizName</h1>
         <div style="margin-left: 10px; height: fit-content;margin-top:auto;margin-bottom:auto" class="dropdown">
             <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
 
@@ -159,7 +164,7 @@
     @if (ViewBag.CountQuest == 0)
     {
 
-        <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Question In This Quiz</p>
+        <p style="text-align: center; margin-top: 10%; font-size: larger;">There is no question inside this quiz</p>
         <div style="display: flex; margin-left: auto">
             <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#addQuestionModal">
                 Add Question
@@ -174,7 +179,7 @@
             {
                 <div style="display:flex;margin-top:20px">
                     <div style="display:flex">
-                        <h1 class="quiz-lable">Quiz Mode: </h1>
+                        <h1 class="quiz-lable">Quiz mode: </h1>
                         @if (ViewBag.Quiz.QuizType.Equals("ShowAllQuestion"))
                         {
                             <input onclick="changeLinkpQuiz()" id="papeQuiz" class="mode-rdb" name="rdPreview" type="radio" value="1" checked />
@@ -198,7 +203,7 @@
                 <div style="display:flex;margin-top:20px">
 
                     <div style="display:flex">
-                        <h1 style="margin: auto" class="quiz-lable2">Link quiz: </h1>
+                        <h1 style="margin: auto" class="quiz-lable2">Quiz link: </h1>
                         <p class="linkquiz-lable" style="margin: auto; margin-left: 10px;" id="linkQ">@ViewBag.QuizLink</p>
                         <input type="hidden" id="quizLink" value="@ViewBag.QuizLink" />
                         <a style="background-color:aquamarine;margin-left:20px;margin-right:10px" class="btn " onclick="copyLink()">Copy</a>
@@ -207,9 +212,9 @@
                 <div style="display:flex;margin-top:20px">
 
                     <div style="display:flex">
-                        <h1 style="margin: auto" class="quiz-lable2">Total Mark: </h1>
+                        <h1 style="margin: auto" class="quiz-lable2">Total mark: </h1>
                         <h4 class="label-mode-content-2" style="margin-left:5px">@ViewBag.Quiz.Mark</h4>
-                        <h1 style="margin: auto" class="quiz-lable2">Total Time: </h1>
+                        <h1 style="margin: auto" class="quiz-lable2">Total time: </h1>
                         @{
                             int? time = ViewBag.Quiz.Time;
                             string second = "00";
@@ -355,8 +360,8 @@
                             <div id="rdQuestionNum" style="display:none" class="div-rd-question">
                                 <div style="display:flex">
                                     <h4 class="label-mode-content-2">Number of random question :</h4>
-                                    <span>
-                                        <input name="rdQuestionNum" type="number" min="1" max="@ViewBag.CountQuest" />
+                                    <span style="font-size:14px">
+                                        <input name="rdQuestionNum" type="number" min="1" step="1" max="@ViewBag.CountQuest" /> /@ViewBag.CountQuest
                                     </span>
 
                                 </div>
@@ -377,7 +382,7 @@
                                 <div style="display:flex">
                                     <h4 class="label-mode-content-2">Number of random question :</h4>
                                     <span>
-                                        <input name="rdQuestionNum" onclick="saveChanges()" type="number" min="1" max="@ViewBag.CountQuest" value="@ViewBag.RandomQuestionNum" />
+                                        <input name="rdQuestionNum" onclick="saveChanges()" type="number" min="1" step="1" max="@ViewBag.CountQuest" value="@ViewBag.RandomQuestionNum" />/@ViewBag.CountQuest
                                     </span>
 
                                 </div>
@@ -441,13 +446,25 @@
 <script src="~/Scripts/jqueryui/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
-function reloadModalAddQuestion() {
+    function reloadModalAddQuestion() {
+
+        
     var chid = document.getElementById("ddlChapter").value;
     var cid = document.getElementById("cidAddModal").value;
     var qzid = document.getElementById("qzidAddModal").value;
     var qtype = document.getElementById("ddlQtype").value;
-    var searchText = document.getElementById("searchString").value;
+        var searchTextget = document.getElementById("searchString2").value;
+        var searchText = searchTextget.split(' ').join('%');
+        console.log("hih123123222ihi" + searchText);
     $("#divShowQuestions").load('@Url.Action("ShowQuestionForEditQuiz", "Quiz")' +
         '?chid=' + chid + '&cid=' + cid + '&qzid=' + qzid + '&qtype=' + qtype + '&searchText=' + searchText);
-}
+    }
+    var inputSearch = document.getElementById("searchString2");
+    inputSearch.addEventListener("keyup", function (event) {
+       
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("btnSearch").click();
+        }
+    });
 </script>

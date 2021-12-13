@@ -11,54 +11,50 @@
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     <!-- start navbar -->
 
-    <div style="  height: 90px;">
+    <div style="height: 100px; border-bottom: solid 0.5px;margin-bottom:10px ">
         <div style="display: flex; height: 40px;">
             <h1 class="h5 mg-top">@ViewBag.Course.Name</h1>
-            <!-- Example single danger button -->
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            @using (Html.BeginForm("CreateNewQuiz", "Quiz", FormMethod.Get))
-            {
-                <input type="hidden" name="tempName" value="">
-                <input type="hidden" id="cid" name="cid" value="@ViewBag.Course.CID" />
-                <input type="hidden" name="questions" />
-                <button type="submit" class="btn-indigo mg_btn">
-                    New Quiz
-                </button>
-            }
         </div>
+        <!-- Example single danger button -->
+        @using (Html.BeginForm("CreateNewQuiz", "Quiz", FormMethod.Get))
+        {
+            <input type="hidden" name="tempName" value="">
+            <input type="hidden" id="cid" name="cid" value="@ViewBag.Course.CID" />
+            <input type="hidden" name="questions" />
+            <button type="submit" class="btn-indigo mg_btn">
+                New Quiz
+            </button>
+        }
 
     </div>
     <!-- end navbar -->
     <!-- General Report -->
     @if (ViewBag.CoutnQuiz == 0)
     {
-        <p style="text-align: center; margin-top: 10%; font-size: larger;">There Is No Quiz In This Course</p>
+        <p style="text-align: center; margin-top: 10%; font-size: larger;">There is no quiz in this course</p>
     }
     else
     {
-
-
         <div class="block-search-dropdown">
-            <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
+            <div class="search-size text-gray-700 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
                 <div class="w-full">
                     @using (Html.BeginForm("ViewQuizByCourse", "Quiz", FormMethod.Get))
                     {
                         <input type="hidden" value="@ViewBag.Course.CID" name="cid" />
-                        <span class="h5">Search:</span>
-                        <input class="search-box flex-1 w-8/12" type="text" placeholder="..." name="searchText" value="@ViewBag.Search">
+                        <span class="h5">Search: </span>
+                        <input class="search-box flex-1 w-10/12 border border-black-400" type="text" placeholder="Research..." name="searchText" value="@ViewBag.Search">
 
                         <button type="submit" class="search-box" onclick="reloadQuizList()"> <i class="fad fa-search"></i> </button>
                     }
                 </div>
             </div>
-
         </div>
 
 
         <div class="tb-mg-top" id="divShowQuizList">
             @if (Model.Count() == 0)
             {
-                <p style="text-align: center; margin-top: 10%; font-size: larger;">0 Quiz Found...</p>
+                <p style="text-align: center; margin-top: 10%; font-size: larger;">0 quiz found...</p>
             }
             else
             {
@@ -124,7 +120,17 @@
 
                                 }
                                 <td class="w-2/12">@time</td>
-                                <td class="w-3/12">@quiz.Status</td>
+                                
+                               
+                                <td class="w-3/12">
+                                    @if (quiz.Status.Equals("Doing"))
+                                    {<span style="color:blue"><b>@quiz.Status</b></span>}
+                                    else
+                                    {
+                                <span>@quiz.Status</span>
+                                    }
+                                </td>
+                                
                             </tr>
                         }
 

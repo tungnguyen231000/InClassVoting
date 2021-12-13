@@ -135,6 +135,8 @@ namespace InClassVoting.Areas.Student.Controllers
 
             return (check);
         }
+
+        [HandleError]
         public ActionResult ReportHome(string cid, string date, string searchText, int? i)
         {
 
@@ -225,13 +227,16 @@ namespace InClassVoting.Areas.Student.Controllers
 
             }
             ViewBag.ReportCount = (i - 1) * 10;
-            /*ViewBag.ReportList = listStudentQuizDone;*/
+
+           /* listStudentQuizDone = listStudentQuizDone.OrderByDescending(sq => sq.SQID).ToList();*/
 
             return View(listStudentQuizDone.ToPagedList(i ?? 1, 10));
 
 
 
         }
+
+        [HandleError]
         public ActionResult QuizReport(string qzid)
         {
             if (checkQuizDoneAvailble(qzid) == false)
@@ -245,7 +250,6 @@ namespace InClassVoting.Areas.Student.Controllers
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int quizId = int.Parse(qzid);
                 int studentId = Convert.ToInt32(HttpContext.Session["StudentId"]);
-
 
                 var student_quiz = db.Student_QuizDone.Where(sq => sq.StudentID == studentId && sq.QuizDoneID == quizId).OrderByDescending(sq => sq.SQID).FirstOrDefault();
                 if (student_quiz.QuizDone.PublicResult == true)
@@ -262,13 +266,13 @@ namespace InClassVoting.Areas.Student.Controllers
                 List<QuestionDone> shortAnswerQuestionsList = new List<QuestionDone>();
                 List<QuestionDone> indicateMistakeQuestionsList = new List<QuestionDone>();
                 List<MatchQuestionDone> matchQuestionsList = new List<MatchQuestionDone>();
-
+                List<Passage_Done> passageList = new List<Passage_Done>();
 
                 List<Student_Answer> student_Answers = new List<Student_Answer>();
                 if (student_quiz.QuizDone.PublicAnswer == true)
                 {
                     //get student answer
-                    student_Answers = db.Student_Answer.Where(sa => sa.QuizDoneID == student_quiz.QuizDoneID).ToList();
+                    student_Answers = db.Student_Answer.Where(sa => sa.QuizDoneID == student_quiz.QuizDoneID&&sa.StudentID==studentId).ToList();
                     string[] questionReceived = student_quiz.ReceivedQuestions.Split(new char[] { ';' });
 
                     Dictionary<int, string> questionSet = new Dictionary<int, string>();
@@ -304,8 +308,23 @@ namespace InClassVoting.Areas.Student.Controllers
                         }
                         else if (quest.Qtype == 2)
                         {
-
                             readingQuestionsList.Add(quest);
+                            //add passage to a list
+                            var passage = quest.Passage_Done;
+                            bool existed = false;
+                            foreach (var p in passageList)
+                            {
+                                if (passage.P_DoneID == p.P_DoneID)
+                                {
+                                    existed = true;
+
+                                }
+
+                            }
+                            if (!existed)
+                            {
+                                passageList.Add(passage);
+                            }
                         }
                         else if (quest.Qtype == 3)
                         {
@@ -341,6 +360,7 @@ namespace InClassVoting.Areas.Student.Controllers
                 ViewBag.ReadingQuestion = readingQuestionsList;
                 ViewBag.MatchingQuestion = matchQuestionsList;
                 ViewBag.StudentAnswer = student_Answers;
+                ViewBag.PassageList = passageList;
                 return View();
             }
             

@@ -4,40 +4,80 @@
 }
 
 <link rel="stylesheet" type="text/css" href="~/Content/error.css">
+@using (Html.BeginForm("EditReportName", "Report", FormMethod.Post))
+{
+    <div class="modal fade" id="editquizModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-gray-100 ">
+                <div class="modal-header">
+                    <h5 class="modal-title h5" id="exampleModalLabel">Edit quiz name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h1 class="pop-up-content-title">Enter new quiz name </h1>
+                    @*<p class="h5"> Enter New Quiz Name</p>*@
+                    <div style="display:flex; margin-bottom:25px">
+                        <input type="hidden" value="@ViewBag.Quiz.QuizDoneID" name="qzid" />
+                        <input type="text" id="fname" class="pop-up-input" name="newReportName" value="@ViewBag.Quiz.Quiz_Name"required>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Changed</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("DeleteReport", "Report", FormMethod.Post))
+{
+    <div class="modal fade" id="confirmDeleteQuizModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h5" id="exampleModalLabel">Delete report @ViewBag.Quiz.Quiz_Name</h5>
+                    <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizDoneID" />
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color:red"> You will delete this report and all student results!!!</p>
+                    <p style="color:red">
+                        Do you wish to continue?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     <div class="grid grid-cols-1 w-full ">
-        <div class="topcontent w-auto flex flex-row justify-center bg-gray p-6">
-            <div class="py-6 w-4/12 ">
-                <h1 class="h4 pl-6 w-3/12 ">@ViewBag.Quiz.Quiz_Name</h1>
+        <div class="topcontent w-auto flex flex-row bg-gray p-6">
+            <div class="py-6 w-6/12 ">
+                <span class="h4 pl-6 w-4/12 ">@ViewBag.Quiz.Quiz_Name</span>
+                <div  style="display:inline-block" class="dropdown">
+                    <button id="dropdownMenuEdit" data-bs-toggle="dropdown"><i class="fas fa-pencil-alt "></i></button>
+
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuEdit">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editquizModal">Rename</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#confirmDeleteQuizModal">Delete  </a></li>
+
+                    </ul>
+                </div>
                 <div>
                     <span class="">Finished Date: @ViewBag.Quiz.CreatedDate.ToString("dd-MM-yyyy") </span>
                 </div>
-
             </div>
-            <div class="w-7/12 w-full">
-                @using (Html.BeginForm("Search", "Report", FormMethod.Get))
-                {
-                    <div class="w-10/12 flex">
-                        Search:&nbsp; <input type="text" name="searchText" class="pl-2 w-7/12 txt-report" placeholder="..." value="@ViewBag.Search" />
-                        <button type="submit" class="btn btn-report"><i class="fad fa-search"></i></button>
-                        <div class="w-5/12 pt-2">
-                            <span class="ms-error"></span>
-                        </div>
-                    </div>
-                    <div class="w-7/12 flex py-2">
-                        <div class="w-4/12">
-                            <input type="radio" name="searchType" value="0" />
-                            <label for="radio-question">Question</label>
-                        </div>
-                        <div class="w-4/12">
-                            <input type="radio" name="searchType" value="1" checked />
-                            <label for="radio-student">Student</label>
-                        </div>
-
-                    </div>
-                    <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizDoneID" />
-                }
-            </div>
+            
 
         </div>
 
@@ -46,8 +86,30 @@
     <hr />
     <div class="p-6">
         <div class="text-center flex flex-wrap column-gap inline-block">
-            <a href="~/Teacher/Report/ReportByQuestion?qzid=@ViewBag.Quiz.QuizDoneID" class="p-2 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Question (<span>@ViewBag.QuestCount</span>)</a>
             <a href="~/Teacher/Report/ReportByStudent?qzid=@ViewBag.Quiz.QuizDoneID" class="p-2 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Student (<span>@ViewBag.StudentCount</span>)</a>
+            <a href="~/Teacher/Report/ReportByQuestion?qzid=@ViewBag.Quiz.QuizDoneID" class="p-2 flex-row border border-black-400 rounded-t mr-1 hover:bg-blue-200 focus:bg-blue-200">Question (<span>@ViewBag.QuestCount</span>)</a>
+            <div class="w-8/12" style="margin-left:auto">
+                @using (Html.BeginForm("Search", "Report", FormMethod.Get))
+                {
+                    <div class="w-full flex text-gray-700">
+                        <input class="ml-2 pl-3 search-box flex-1 w-10/12 border-l border-r border-t border-black-400" type="text" placeholder="Research..." id="searchText" name="searchText" value="@ViewBag.Search">
+
+                        <button type="submit" class="search-box"> <i class="fad fa-search"></i> </button>
+                    </div>
+                    <div class="w-7/12 flex py-2" hidden>
+                        <div class="w-4/12" hidden>
+                            <input type="radio" name="searchType" value="0" />
+                            <label for="radio-question">Question</label>
+                        </div>
+                        <div class="w-4/12" hidden>
+                            <input type="radio" name="searchType" value="1" checked />
+                            <label for="radio-student">Student</label>
+                        </div>
+
+                    </div>
+                    <input type="hidden" name="qzid" value="@ViewBag.Quiz.QuizDoneID" />
+                }
+            </div>
         </div>
 
 
@@ -74,7 +136,7 @@
                         countS++;
                         <tr class="hover:bg-gray-200">
                             <td class="w-1/10">@countS</td>
-                            <td class="w-3/10"><a href="~/Teacher/Report/ReportStudentQuiz?qzid=@ViewBag.Quiz.QuizDoneID&stid=@studentDoneQuiz.StudentID" class="data-row">@studentDoneQuiz.Student.Name</a></td>
+                            <td class="w-3/10"><a href="~/Teacher/Report/ReportStudentQuiz?qzid=@ViewBag.Quiz.QuizDoneID&stid=@studentDoneQuiz.StudentID" class="data-row"><span style="color:blue"><u>@studentDoneQuiz.Student.Name</u></span></a></td>
                             <td class="w-2/10">@studentDoneQuiz.Student.Email</td>
                             <td class="w-2/10">@studentDoneQuiz.StudentMark/@studentDoneQuiz.TotalMark</td>
                             @{
@@ -130,9 +192,9 @@
 </div>
 
 
-@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/validate.js"></script>*@
+    <script src="~/Scripts/validate.js"></script>
 
 <script type="text/javascript">
     function checkAnswer() {

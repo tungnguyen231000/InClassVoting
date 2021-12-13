@@ -27,9 +27,28 @@
 
             </div>
             <div class="w-full items-center bg-gray p-6 ">
+                
                 <div>
+                    <div>
+                        <span class="question-num">
+                            Question:
+                        </span>
+                        @if (ViewBag.Poll.Polltype.Equals("MultipleAnswer"))
+                        {
+                            <p>
+                                (Choose 1 or more answer)
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                (Choose 1 answer)
+                            </p>
+                        }
+
+                    </div>
                     <div class="w-full items-center p-6 ">
-                        <div contenteditable="false" class="w-full items-center bg-gray question-num-2">
+                        <div contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold">
                             @ViewBag.Poll.Question
                         </div>
                     </div>
@@ -64,7 +83,7 @@
             </div>
             <div class="form-group">
                 <div class="">
-                    <input type="submit" value="Submit Comments" class="btn btn-default mt-2 w-full start-test" />
+                    <input type="submit" value="Submit Answer" class="btn btn-default mt-2 w-full start-test" />
                 </div>
             </div>
 

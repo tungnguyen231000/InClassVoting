@@ -101,6 +101,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                     }
                     else
                     {
+                       
 
                         List<QuestionDone> multipleQuestionsList = new List<QuestionDone>();
                         List<QuestionDone> readingQuestionsList = new List<QuestionDone>();
@@ -115,6 +116,8 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
 
                         int studentId = Convert.ToInt32(HttpContext.Session["StudentId"]);
                         Student_QuizDone getStudentQuizFromDB = db.Student_QuizDone.Where(sq => sq.StudentID == studentId && sq.QuizDoneID == quiz.QuizDoneID).FirstOrDefault();
+
+
 
                         //if student not access to the quiz before
                         if (getStudentQuizFromDB == null)
@@ -303,10 +306,10 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                                 db.Student_QuizDone.Add(studentQuizDone);
                                 db.SaveChanges();
                             }
-                            else
+                          /*  else
                             {
                                 Debug.WriteLine("huhuh");
-                            }
+                            }*/
                         }
                         else
                         {
@@ -399,7 +402,7 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                                             if (!existed)
                                             {
                                                 passageList.Add(passage);
-                                                Debug.WriteLine("dia" + passage.Text);
+                                               /* Debug.WriteLine("dia" + passage.Text);*/
                                             }
                                         }
                                         else if (quest.Qtype == 3)
@@ -429,8 +432,6 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                                 return Redirect("~/Student/Report/QuizReport?qzid=" + getStudentQuizFromDB.QuizDoneID);
                             }
                         }
-
-
 
                         DateTime now = DateTime.Now;
                         TimeSpan? totalTime = quiz.EndTime - now;
@@ -484,150 +485,156 @@ namespace InClassVoting.Areas.Student.Controllers.QuizController
                         //get quiz saved in database
                         var quiz = db.QuizDones.Where(qz => qz.QuizID == quizId).OrderByDescending(qz => qz.QuizDoneID).FirstOrDefault();
 
-                        int studentId = Convert.ToInt32(HttpContext.Session["StudentId"]);
-                        Student_QuizDone getStudentQuizFromDB = db.Student_QuizDone.Where(sq => sq.StudentID == studentId && sq.QuizDoneID == quiz.QuizDoneID).FirstOrDefault();
-
-                        //if student already access to quiz
-                        if (getStudentQuizFromDB == null)
+                        DateTime now = DateTime.Now;
+                        if (now >= quiz.EndTime)
                         {
-                            double quizMark = 0;
-                            List<QuestionDone> questionListForQuiz = new List<QuestionDone>();
-                            //check if questions list is null
-                            if (quiz.Questions != null && !quiz.Questions.Equals(""))
+                            return View("QuizTimeOverDue");
+                        }
+                        else
+                        {
+                            int studentId = Convert.ToInt32(HttpContext.Session["StudentId"]);
+                            Student_QuizDone getStudentQuizFromDB = db.Student_QuizDone.Where(sq => sq.StudentID == studentId && sq.QuizDoneID == quiz.QuizDoneID).FirstOrDefault();
+
+                            //if student havent access to quiz
+                            if (getStudentQuizFromDB == null)
                             {
-                                //////////////////////////////////////
-                                string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
-                                List<string> questionList = new List<string>();
-                                //if quiz mix question
-                                if (quiz.MixQuestion == true)
+                                double quizMark = 0;
+                                List<QuestionDone> questionListForQuiz = new List<QuestionDone>();
+                                //check if questions list is null
+                                if (quiz.Questions != null && !quiz.Questions.Equals(""))
                                 {
-                                    Random rd = new Random();
-                                    int numOfQuest = quizQuestions.Count();
-                                    while (numOfQuest > 1)
+                                    //////////////////////////////////////
+                                    string[] quizQuestions = quiz.Questions.Split(new char[] { ';' });
+                                    List<string> questionList = new List<string>();
+                                    //if quiz mix question
+                                    if (quiz.MixQuestion == true)
                                     {
-                                        numOfQuest--;
-                                        int k = rd.Next(numOfQuest + 1);
-                                        var qaTemp = quizQuestions[k];
-                                        quizQuestions[k] = quizQuestions[numOfQuest];
-                                        quizQuestions[numOfQuest] = qaTemp;
-                                    }
-                                }
-                                //get random question in quiz
-                                if (quiz.MixQuestionNumber != null && quiz.MixQuestionNumber != 0)
-                                {
-                                    List<int> addedQuestion = new List<int>();
-                                    Random rd = new Random();
-                                    for (int i = 0; i < quiz.MixQuestionNumber; i++)
-                                    {
-                                        int q = rd.Next(quizQuestions.Length);
-                                        /* Debug.WriteLine("q1:=" + q);*/
-                                        while (addedQuestion.Contains(q))
+                                        Random rd = new Random();
+                                        int numOfQuest = quizQuestions.Count();
+                                        while (numOfQuest > 1)
                                         {
-                                            q = rd.Next(quizQuestions.Length);
-                                            /*Debug.WriteLine("q2:=" + q);*/
+                                            numOfQuest--;
+                                            int k = rd.Next(numOfQuest + 1);
+                                            var qaTemp = quizQuestions[k];
+                                            quizQuestions[k] = quizQuestions[numOfQuest];
+                                            quizQuestions[numOfQuest] = qaTemp;
                                         }
-                                        /* Debug.WriteLine("q10:=" + q);*/
-                                        questionList.Add(quizQuestions[q]);
-                                        addedQuestion.Add(q);
-
                                     }
-                                    /* Debug.WriteLine("===1=1==");*/
-
-
-                                }
-                                else
-                                {
-                                    questionList = quizQuestions.ToList();
-                                }
-
-                                //////////////////////////////////////
-
-                                /*Dictionary<int, string> questionSet = new Dictionary<int, string>();
-                                Dictionary<int, string> matchingSet = new Dictionary<int, string>();*/
-                                foreach (string questions in questionList)
-                                {
-                                    string[] questAndType = questions.Split(new char[] { '-' });
-                                    int qType = int.Parse(questAndType[1]);
-                                    if (qType == 5)
+                                    //get random question in quiz
+                                    if (quiz.MixQuestionNumber != null && quiz.MixQuestionNumber != 0)
                                     {
-                                        countMatching++;
-                                        int mID = int.Parse(questAndType[0]);
-                                        /*matchingSet.Add(mID, questAndType[1]);*/
-                                        var matchQuest = db.MatchQuestionDones.Find(mID);
-                                        QuestionDone matching = new QuestionDone();
-                                        matching.Q_DoneID = mID;
-                                        matching.Text = matchQuest.ColumnA + "//" + matchQuest.ColumnB;
-                                        matching.Time = matchQuest.Time;
-                                        matching.Qtype = 5;
-                                        quizMark = quizMark + matchQuest.Mark;
-                                        questionListForQuiz.Add(matching);
+                                        List<int> addedQuestion = new List<int>();
+                                        Random rd = new Random();
+                                        for (int i = 0; i < quiz.MixQuestionNumber; i++)
+                                        {
+                                            int q = rd.Next(quizQuestions.Length);
+                                            /* Debug.WriteLine("q1:=" + q);*/
+                                            while (addedQuestion.Contains(q))
+                                            {
+                                                q = rd.Next(quizQuestions.Length);
+                                                /*Debug.WriteLine("q2:=" + q);*/
+                                            }
+                                            /* Debug.WriteLine("q10:=" + q);*/
+                                            questionList.Add(quizQuestions[q]);
+                                            addedQuestion.Add(q);
+
+                                        }
+                                        /* Debug.WriteLine("===1=1==");*/
+
 
                                     }
                                     else
                                     {
-                                        int qID = int.Parse(questAndType[0]);
-                                        QuestionDone question = db.QuestionDones.Find(qID);
-                                        quizMark = quizMark + question.Mark;
-                                        if (qType == 1 || qType == 2)
-                                        {
-                                            List<QuestionAnswerDone> qAnswer = question.QuestionAnswerDones.ToList();
-                                            //if question mix choice
-                                            if (question.MixChoice == true)
-                                            {
-                                                Random rd = new Random();
-                                                int numOfAnswer = qAnswer.Count;
-                                                while (numOfAnswer > 1)
-                                                {
-                                                    numOfAnswer--;
-                                                    int k = rd.Next(numOfAnswer + 1);
-                                                    var qaTemp = qAnswer[k];
-                                                    qAnswer[k] = qAnswer[numOfAnswer];
-                                                    qAnswer[numOfAnswer] = qaTemp;
-                                                }
-                                                question.QuestionAnswerDones = qAnswer;
-                                            }
-
-                                        }
-                                        questionListForQuiz.Add(question);
+                                        questionList = quizQuestions.ToList();
                                     }
 
+                                    //////////////////////////////////////
+
+                                    //get question list
+                                    foreach (string questions in questionList)
+                                    {
+                                        string[] questAndType = questions.Split(new char[] { '-' });
+                                        int qType = int.Parse(questAndType[1]);
+                                        if (qType == 5)
+                                        {
+                                            countMatching++;
+                                            int mID = int.Parse(questAndType[0]);
+                                            /*matchingSet.Add(mID, questAndType[1]);*/
+                                            var matchQuest = db.MatchQuestionDones.Find(mID);
+                                            QuestionDone matching = new QuestionDone();
+                                            matching.Q_DoneID = mID;
+                                            matching.Text = matchQuest.ColumnA + "//" + matchQuest.ColumnB;
+                                            matching.Time = matchQuest.Time;
+                                            matching.Qtype = 5;
+                                            quizMark = quizMark + matchQuest.Mark;
+                                            questionListForQuiz.Add(matching);
+
+                                        }
+                                        else
+                                        {
+                                            int qID = int.Parse(questAndType[0]);
+                                            QuestionDone question = db.QuestionDones.Find(qID);
+                                            quizMark = quizMark + question.Mark;
+                                            if (qType == 1 || qType == 2)
+                                            {
+                                                List<QuestionAnswerDone> qAnswer = question.QuestionAnswerDones.ToList();
+                                                //if question mix choice
+                                                if (question.MixChoice == true)
+                                                {
+                                                    Random rd = new Random();
+                                                    int numOfAnswer = qAnswer.Count;
+                                                    while (numOfAnswer > 1)
+                                                    {
+                                                        numOfAnswer--;
+                                                        int k = rd.Next(numOfAnswer + 1);
+                                                        var qaTemp = qAnswer[k];
+                                                        qAnswer[k] = qAnswer[numOfAnswer];
+                                                        qAnswer[numOfAnswer] = qaTemp;
+                                                    }
+                                                    question.QuestionAnswerDones = qAnswer;
+                                                }
+
+                                            }
+                                            questionListForQuiz.Add(question);
+                                        }
+
+                                    }
+                                    string receivedQuestions = "";
+                                    foreach (string quest in questionList)
+                                    {
+                                        receivedQuestions = receivedQuestions + quest + ";";
+                                    }
+                                    Student_QuizDone studentQuizDone = new Student_QuizDone();
+                                    studentQuizDone.StudentID = studentId;
+                                    studentQuizDone.QuizDoneID = quiz.QuizDoneID;
+                                    studentQuizDone.ReceivedQuestions = receivedQuestions.Substring(0, receivedQuestions.Length - 1);
+                                    studentQuizDone.Status = "Doing";
+                                    studentQuizDone.StudentMark = 0;
+                                    studentQuizDone.TotalMark = quizMark;
+                                    db.Student_QuizDone.Add(studentQuizDone);
+                                    db.SaveChanges();
                                 }
-                                string receivedQuestions = "";
-                                foreach (string quest in questionList)
+                              /*  else
                                 {
-                                    receivedQuestions = receivedQuestions + quest + ";";
+                                    Debug.WriteLine("huhuh");
                                 }
-                                Student_QuizDone studentQuizDone = new Student_QuizDone();
-                                studentQuizDone.StudentID = studentId;
-                                studentQuizDone.QuizDoneID = quiz.QuizDoneID;
-                                studentQuizDone.ReceivedQuestions = receivedQuestions.Substring(0, receivedQuestions.Length - 1);
-                                studentQuizDone.Status = "Doing";
-                                studentQuizDone.StudentMark = 0;
-                                studentQuizDone.TotalMark = quizMark;
-                                db.Student_QuizDone.Add(studentQuizDone);
-                                db.SaveChanges();
+*/
+
+                                ViewBag.Quiz = quiz;
+                                ViewBag.QuestionList = questionListForQuiz;
+                                ViewBag.CountMatching = countMatching;
+
+                                return View();
                             }
                             else
                             {
-                                Debug.WriteLine("huhuh");
+                                getStudentQuizFromDB.Status = "Done";
+                                db.Entry(getStudentQuizFromDB).State = EntityState.Modified;
+                                db.SaveChanges();
+                                return Redirect("~/Student/Report/QuizReport?qzid=" + getStudentQuizFromDB.QuizDoneID);
                             }
 
-                            
-                            ViewBag.Quiz = quiz;
-                            ViewBag.QuestionList = questionListForQuiz;
-                            ViewBag.CountMatching = countMatching;
-
-                            return View();
                         }
-                        else
-                        {
-                            getStudentQuizFromDB.Status = "Done";
-                            db.Entry(getStudentQuizFromDB).State = EntityState.Modified;
-                            db.SaveChanges();
-                            return Redirect("~/Student/Report/QuizReport?qzid=" + getStudentQuizFromDB.QuizDoneID);
-                        }
-
-                      
                     }
                 }
             }

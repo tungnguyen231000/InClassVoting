@@ -47,76 +47,140 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
             return (check);
         }
 
+        [HandleError]
         public ActionResult CreatePoll()
         {
-            
+
             ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
             ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             return View();
         }
 
+        [HandleError]
         [HttpPost]
         public ActionResult CreatePoll(FormCollection form)
         {
-            string questionText = form["questionText"];
-            string pollName = form["pollName"];
-            string pollType = form["rdPollType"];
-            List<string> optionList = new List<string>();
-            int? polltime = null;
-            int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
-
-            if (form["option"] != null && !form["option"].Equals(""))
+            try
             {
-                optionList = form["option"].Split(new char[] { ',' }).ToList();
-            }
+                string questionText = form["questionText"];
+                string pollName = form["pollName"];
+                string pollType = form["rdPollType"];
+                List<string> optionList = new List<string>();
+                int? polltime = null;
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
 
-            if (form["time"] != "" && !form["time"].Equals(""))
-            {
-                polltime = int.Parse(form["time"]);
-            }
-            int ptype = int.Parse(pollType);
-
-            Poll newPoll = new Poll();
-
-            newPoll.PollName = pollName;
-            newPoll.Question = questionText;
-            newPoll.Time = polltime;
-            newPoll.TotalParticipian = 0;
-            newPoll.IsDoing = false;
-            newPoll.TeacherID = teacherId;
-            newPoll.CreatedDate = DateTime.Today;
-            if (ptype == 1)
-            {
-                newPoll.Polltype = "MultipleAnswer";
-            }
-            else
-            {
-                newPoll.Polltype = "OneAnswer";
-            }
-
-            db.Polls.Add(newPoll);
-
-            db.SaveChanges();
-
-            int pollID = db.Polls.Where(p => p.TeacherID == teacherId).OrderByDescending(p => p.PollID).Select(p => p.PollID).FirstOrDefault();
-
-            foreach (string opt in optionList)
-            {
-                if (!opt.Equals("") && opt != null)
+                if (form["option"] != null && !form["option"].Equals(""))
                 {
-                    Poll_Answer pollAns = new Poll_Answer();
-                    pollAns.Answer_Text = opt;
-                    pollAns.PollID = pollID;
-                    pollAns.ChosenQuantity = 0;
-                    db.Poll_Answer.Add(pollAns);
+                    optionList = form["option"].Split(new char[] { ',' }).ToList();
                 }
+
+                if (form["time"] != "" && !form["time"].Equals(""))
+                {
+                    polltime = int.Parse(form["time"]);
+                }
+                int ptype = int.Parse(pollType);
+
+                Poll newPoll = new Poll();
+
+                newPoll.PollName = pollName;
+                newPoll.Question = questionText;
+                newPoll.Time = polltime;
+                newPoll.TotalParticipian = 0;
+                newPoll.IsDoing = false;
+                newPoll.TeacherID = teacherId;
+                newPoll.CreatedDate = DateTime.Today;
+                if (ptype == 1)
+                {
+                    newPoll.Polltype = "MultipleAnswer";
+                }
+                else
+                {
+                    newPoll.Polltype = "OneAnswer";
+                }
+
+                db.Polls.Add(newPoll);
+
+                db.SaveChanges();
+
+                int pollID = db.Polls.Where(p => p.TeacherID == teacherId).OrderByDescending(p => p.PollID).Select(p => p.PollID).FirstOrDefault();
+
+                foreach (string opt in optionList)
+                {
+                    if (!opt.Equals("") && opt != null)
+                    {
+                        Poll_Answer pollAns = new Poll_Answer();
+                        pollAns.Answer_Text = opt;
+                        pollAns.PollID = pollID;
+                        pollAns.ChosenQuantity = 0;
+                        db.Poll_Answer.Add(pollAns);
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Redirect("~/Teacher/Poll/ShowPollLink?poid=" + pollID);
+
             }
+            catch
+            { return Redirect("~Error/NotFound"); }
 
-            db.SaveChanges();
+        }
+        
+        
+        [HandleError]
+        [HttpPost]
+        public ActionResult ReopenPoll(FormCollection form)
+        {
+            try
+            {
+                string oldPollID = form["oldPollID"];
+                string pollName = form["newPollName"];
 
-            return Redirect("~/Teacher/Poll/ShowPollLink?poid=" + pollID);
+                var oldPoll = db.Polls.Find(int.Parse(oldPollID));
+
+                Poll newPoll = new Poll();
+
+                newPoll.PollName = pollName;
+                newPoll.Question = oldPoll.Question;
+                newPoll.Time = oldPoll.Time;
+                newPoll.TotalParticipian = 0;
+                newPoll.IsDoing = false;
+                newPoll.TeacherID = oldPoll.TeacherID;
+                newPoll.CreatedDate = DateTime.Today;
+                newPoll.Polltype = oldPoll.Polltype;
+
+                db.Polls.Add(newPoll);
+
+                db.SaveChanges();
+
+                int pollID = db.Polls.Where(p => p.TeacherID == oldPoll.TeacherID).OrderByDescending(p => p.PollID).Select(p => p.PollID).FirstOrDefault();
+
+
+                List<string> oldPollAnswer = oldPoll.Poll_Answer.Select(pa => pa.Answer_Text).ToList();
+
+                foreach (string opt in oldPollAnswer)
+                {
+                    if (!opt.Equals("") && opt != null)
+                    {
+                        Poll_Answer pollAns = new Poll_Answer();
+                        pollAns.Answer_Text = opt;
+                        pollAns.PollID = pollID;
+                        pollAns.ChosenQuantity = 0;
+                        db.Poll_Answer.Add(pollAns);
+                    }
+                }
+
+                db.SaveChanges();
+
+                return Redirect("~/Teacher/Poll/ShowPollLink?poid=" + pollID);
+
+            }
+            catch
+            { return Redirect("~/Error/NotFound"); }
+
         }
 
+        [HandleError]
         public ActionResult ShowPollLink(string poid)
         {
             //check if poll is availble
@@ -126,13 +190,14 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
             }
             else
             {
-                
+
                 ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int pollID = int.Parse(poid);
                 var poll = db.Polls.Find(pollID);
                 string pollLinkEnCode = Base64Encode(poid);
-                ViewBag.PollLink = "https://inclassvoting.azurewebsites.net/Student/Poll/DoPoll?poid=" + pollLinkEnCode;
+                /*ViewBag.PollLink = "https://inclassvoting.azurewebsites.net/Student/Poll/DoPoll?poid=" + pollLinkEnCode;*/
+                ViewBag.PollLink = "https://localhost:44350/Student/Poll/DoPoll?poid=" + pollLinkEnCode;
 
 
                 ViewBag.Poll = poll;
@@ -146,6 +211,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
+        [HandleError]
         public ActionResult StartPoll(string poid)
         {
             //check if poll is availble
@@ -155,32 +221,63 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
             }
             else
             {
-                
+
                 ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int pollID = int.Parse(poid);
                 var poll = db.Polls.Find(pollID);
 
+                //if poll have time
                 if (poll.Time != null)
                 {
                     DateTime now = DateTime.Now;
-                    DateTime endTime = now.AddSeconds(double.Parse(poll.Time.ToString()));
-                    poll.EndTime = endTime;
-                    TimeSpan totalTime = (endTime - now);
-                    int countDown = (int)totalTime.TotalSeconds;
-                    ViewBag.CountDown = countDown + 10;
+                    if (poll.EndTime == null)
+                    {
+                        DateTime endTime = now.AddSeconds(double.Parse(poll.Time.ToString()));
+                        poll.EndTime = endTime;
+                        TimeSpan totalTime = (endTime - now);
+                        int countDown = (int)totalTime.TotalSeconds;
+                        ViewBag.CountDown = countDown + 10;
+                    }
+                    else
+                    {
+                        DateTime? endTime = poll.EndTime;
+                        //if poll is expired
+                        if (endTime < now)
+                        {
+                            poll.IsDoing = false;
+                            db.Entry(poll).State = EntityState.Modified;
+                            db.SaveChanges();
+                            return RedirectToAction("ShowPollResult", new { poid = poid });
+                        }
+                        else
+                        {
+                            TimeSpan? totalTime = (endTime - now);
+                            int countDown = 0;
+                            if (totalTime.HasValue)
+                            {
+                                countDown = (int)totalTime.Value.TotalSeconds;
+                            }
+
+                            ViewBag.CountDown = countDown + 10;
+                        }
+                    }
+
 
                 }
                 poll.IsDoing = true;
                 db.Entry(poll).State = EntityState.Modified;
                 db.SaveChanges();
                 ViewBag.Poll = poll;
-
+                string pollLinkEnCode = Base64Encode(poid);
+                /*ViewBag.PollLink = "https://inclassvoting.azurewebsites.net/Student/Poll/DoPoll?poid=" + pollLinkEnCode;*/
+                ViewBag.PollLink = "https://localhost:44350/Student/Poll/DoPoll?poid=" + pollLinkEnCode;
 
                 return View();
             }
         }
 
+        [HandleError]
         [HttpPost]
         public ActionResult EndPoll(string poid)
         {
@@ -193,9 +290,10 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
             return Redirect("~/Teacher/Poll/ShowPollResult?poid=" + pollID);
         }
 
+        [HandleError]
         public ActionResult ShowPollResult(string poid)
         {
-            
+
             ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
             ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             int pollID = int.Parse(poid);
@@ -211,6 +309,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
 
         }
 
+        [HandleError]
         public ActionResult PollResultProgressBar(string poid)
         {
             //check if poll is availble
@@ -220,17 +319,24 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
             }
             else
             {
-                
-                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
-                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int pollID = int.Parse(poid);
                 var poll = db.Polls.Find(pollID);
-                ViewBag.Poll = poll;
-                return View();
+                if (poll.IsDoing == true)
+                {
+                    return RedirectToAction("StartPoll", new { poid = poid });
+                }
+                else
+                {
+                    ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                    ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                    ViewBag.Poll = poll;
+                    return View();
+                }
             }
 
         }
 
+        [HandleError]
         public ActionResult PollResultPieChart(string poid)
         {
             //check if poll is availble
@@ -240,13 +346,21 @@ namespace InClassVoting.Areas.Teacher.Controllers.PollController
             }
             else
             {
-                
-                ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
-                ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+
+
                 int pollID = int.Parse(poid);
                 var poll = db.Polls.Find(pollID);
-                ViewBag.Poll = poll;
-                return View();
+                if (poll.IsDoing == true)
+                {
+                    return RedirectToAction("StartPoll", new { poid = poid });
+                }
+                else
+                {
+                    ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+                    ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+                    ViewBag.Poll = poll;
+                    return View();
+                }
             }
 
         }

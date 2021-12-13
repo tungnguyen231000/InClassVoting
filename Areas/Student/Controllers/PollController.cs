@@ -15,8 +15,6 @@ namespace InClassVoting.Areas.Student.Controllers
     {
         private DBModel db = new DBModel();
 
-
-
         private bool checkPollIdEncodeAvailbile(string poid)
         {
             bool check = true;
@@ -46,6 +44,7 @@ namespace InClassVoting.Areas.Student.Controllers
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        [HandleError]
         public ActionResult DoPoll(string poid)
         {
             //check if poll is availble
@@ -65,9 +64,7 @@ namespace InClassVoting.Areas.Student.Controllers
                 //if student already do poll
                 if (poll_Answer != null)
                 {
-                    ////////////////////////////////////-- trả về màn đã làm poll~
-                    return Redirect("~/Student/Home/Home");
-                    ////////////////////////////////////////
+                    return View("PollAlreadyDone");
                 }
                 else
                 {
@@ -75,8 +72,7 @@ namespace InClassVoting.Areas.Student.Controllers
                     //check if poll availble
                     if (!poll.IsDoing)
                     {
-                        //trả màn thông báo poll not availble
-                        return Redirect("~/Student/Home/Home");
+                        return View("PollNotAvailble");
                     }
                     else
                     {
@@ -93,7 +89,7 @@ namespace InClassVoting.Areas.Student.Controllers
                             }
                             else
                             {
-                                return Redirect("~/Student/Home/Home");
+                                return View("PollNotAvailble");
                             }
                         }
                     }
@@ -105,10 +101,13 @@ namespace InClassVoting.Areas.Student.Controllers
 
             }
         }
-
+        
+        [HandleError]
         [HttpPost]
         public ActionResult SubmitPoll(string poid, FormCollection form)
         {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             int pollID = int.Parse(poid);
             var poll = db.Polls.Find(pollID);
             int stID = Convert.ToInt32(HttpContext.Session["StudentId"]);
@@ -117,9 +116,7 @@ namespace InClassVoting.Areas.Student.Controllers
 
             if (studentPollAnswer != null)
             {
-
-                //trả về màn bạn đã làm poll này
-                return Redirect("~/Student/Home/Home");
+                return View("PollAlreadyDone");
             }
             else
             {
@@ -149,10 +146,17 @@ namespace InClassVoting.Areas.Student.Controllers
                 }
 
 
-                return Redirect("~/Student/Home/Home");
+                return RedirectToAction("PollFinished");
             }
 
         }
 
-    }
+        public ActionResult PollFinished()
+        {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+            return View();
+        }
+
+        }
 }
