@@ -19,7 +19,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
     public class QuizController : Controller
     {
         private DBModel db = new DBModel();
-        // GET: teacher/Quiz
+        
+        [HandleError]
         public ActionResult QuizLibrary()
         {
 
@@ -90,7 +91,29 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             return (check);
         }
 
+        private bool checkTempModeAvailble(string tempMode)
+        {
+            bool check = true;
+            //check if tempMode is null
+            if (tempMode == null)
+            {
+                check = false;
+            }
+            else
+            {
+                //check if temp mode is correct
+                if (!tempMode.Equals("1") && !tempMode.Equals("0"))
+                {
+                    check = false;
+                }
+            }
+
+
+            return (check);
+        }
+
         //view quiz inside course page
+        [HandleError]
         public ActionResult ViewQuizByCourse(string cid, string searchText, int? i)
         {
             //check if course is availble
@@ -108,7 +131,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 Course course = db.Courses.Find(courseID);
 
                 //get quizlist
-                var qzList = db.Quizs.Where(qz => qz.CourseID == courseID).OrderByDescending(qz => qz.QuizID).ToList();
+                var qzList = db.Quizs.Where(qz => qz.CourseID == courseID)/*.OrderByDescending(qz => qz.QuizID)*/.ToList();
                 List<Quiz> quizzes = new List<Quiz>();
 
                 if (searchText != null && !searchText.Trim().Equals(""))
@@ -150,6 +173,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //View Quiz Detail
+        [HandleError]
         public ActionResult QuizDetail(string qzID, int? i)
         {
             //check if quiz is availble
@@ -253,7 +277,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     }
 
 
-                    string domain = "https://inclassvoting.azurewebsites.net/Student/Quiz/DoQuiz?qzID=";
+                    /*string domain = "https://inclassvoting.azurewebsites.net/Student/Quiz/DoQuiz?qzID=";*/
+                    string domain = "https://localhost:44350/Student/Quiz/DoQuiz?qzID=";
                     string parameterPart = ViewBag.Quiz.QuizID.ToString();
                     string encodePart = Base64Encode(parameterPart);
                     ViewBag.QuizLink = domain + encodePart;
@@ -289,6 +314,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Edit Quiz Option
+        [HandleError]
         [HttpPost]
         public ActionResult SaveQuizOption(string qzID, string cbMixQuestions, string rdQuestionNum,
             string cbPublishMark, string cbPublishAnswer, string cbRandomQuestion, string qtypeChange)
@@ -351,6 +377,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Edit Quiz Name
+        [HandleError]
         [HttpPost]
         public ActionResult EditQuizName(string qzID, string newQuizName)
         {
@@ -364,6 +391,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Delete Quiz
+        [HandleError]
         [HttpPost]
         public ActionResult DeleteQuiz(string qzID)
         {
@@ -382,6 +410,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Show question to add to quiz
+        [HandleError]
         public PartialViewResult ShowQuestionForEditQuiz(string chid, string cid, string qzid, string qtype, string searchText/*, int? i*/)
         {
 
@@ -436,38 +465,21 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
 
             //on dropdownlist question type change
-            if (questionType == -1)
+            if (questionType != -1)
             {
-                if (!searchText.Trim().Equals(""))
+                if (questionType == 5)
                 {
-                    qListFromDB = qListFromDB.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim())).ToList();
-                    mListFromDB = mListFromDB.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
-                   m.ColumnB.ToLower().Contains(searchText.Trim())).ToList();
-                }
+                    qListFromDB = null;
+                    
 
-            }
-            else if (questionType == 5)
-            {
-                qListFromDB = null;
-                if (!searchText.Trim().Equals(""))
-                {
-                    mListFromDB = mListFromDB.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
-                   m.ColumnB.ToLower().Contains(searchText.Trim())).ToList();
-                }
-
-            }
-            else
-            {
-                mListFromDB = null;
-                if (!searchText.Trim().Equals(""))
-                {
-                    qListFromDB = qListFromDB.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim()) && q.Qtype == questionType).ToList();
                 }
                 else
                 {
+                    mListFromDB = null;
                     qListFromDB = qListFromDB.Where(q => q.Qtype == questionType).ToList();
                 }
             }
+
 
             List<Question> questList = new List<Question>();
             List<MatchQuestion> matchList = new List<MatchQuestion>();
@@ -568,13 +580,21 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 }
             }
 
+            if (searchText != null)
+            {
+                searchText = searchText.Replace('%', ' ');
+                questList = questList.Where(q => q.Text.ToLower().Contains(searchText.ToLower())).ToList();
+            }
             ViewBag.Questions = questList.OrderBy(q => q.CreatedDate).ToList();
+            
+            ViewBag.LoList = db.QuestionLOes.Where(ql => ql.LearningOutcome.CourseID == courseID).ToList();
             /*ViewBag.Matchings = matchList;*/
             return PartialView("_ShowQuestionForEditQuiz"/*, questList.ToPagedList(i ?? 1, 10)*/);
         }
 
-        [HttpPost]
         //Add QuestionTo Quiz
+        [HandleError]
+        [HttpPost]
         public ActionResult AddQuestionToQuiz(FormCollection collection, string qzID)
         {
 
@@ -694,7 +714,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Delete Question Inside Quiz
-        /*[HttpPost]*/
+        [HandleError]
         public ActionResult DeleteQuestionsInsideQuiz(string qzID, string qid, string qtype, int? i)
         {
             ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
@@ -754,12 +774,13 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Create Quiz View
-        public ActionResult CreateNewQuiz(string cid, string tempName, int? i)
+        [HandleError]
+        public ActionResult CreateNewQuiz(string cid, string tempName, int? i, string tempMode)
         {
             //check if course is availble
             if (checkCourserIdAvailbile(cid) == false)
             {
-                Debug.WriteLine("nope");
+                /* Debug.WriteLine("nope");*/
                 return RedirectToAction("QuizLibrary");
             }
             else
@@ -813,10 +834,22 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
 
                 }
+
                 ViewBag.TempName = tempName;
+
+                Debug.WriteLine("hihih3+=== " + tempMode);
+                if (checkTempModeAvailble(tempMode) == false)
+                {
+                    tempMode = "1";
+                    Debug.WriteLine("hihih+=== " + tempMode);
+                }
+
+                Debug.WriteLine("hihih2+=== " + tempMode);
+                ViewBag.TempMode = tempMode;
                 ViewBag.Course = course;
                 ViewBag.QuestionType = db.QuestionTypes.ToList();
                 ViewBag.ChapterList = db.Chapters.Where(ch => ch.CourseID == course.CID);
+                ViewBag.LoList = db.QuestionLOes.Where(ql => ql.LearningOutcome.CourseID == course.CID).ToList();
                 ViewBag.Questions = questions;
                 int totalQuestion = qList.Count();
                 ViewBag.CountQuest = totalQuestion;
@@ -845,8 +878,9 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Create new quiz
+        [HandleError]
         [HttpPost]
-        public ActionResult CreateNewQuiz(string cid, string quizName, string cbMixQuestions, string rdQuestionNum,
+        public ActionResult CreateNewQuiz(string cid, string quizName, string quizMode, string cbMixQuestions, string rdQuestionNum,
             string cbPublishMark, string cbPublishAnswer)
         {
             string questions = Convert.ToString(HttpContext.Session["TemporaryQuestions"]);
@@ -929,7 +963,15 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
                 }
             }
-            quiz.QuizType = "ShowAllQuestion";
+            if (quizMode.Equals("0"))
+            {
+                quiz.QuizType = "ShowQuestionByQuestion";
+            }
+            else
+            {
+                quiz.QuizType = "ShowAllQuestion";
+            }
+
             db.Quizs.Add(quiz);
             db.SaveChanges();
             Session["TemporaryQuestions"] = null;
@@ -939,7 +981,8 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         //Show question list for new quiz
-        public PartialViewResult ShowQuestionForNewQuiz(string chid, string cid, string qtype, string searchText/*, string questions*/)
+        [HandleError]
+        public PartialViewResult ShowQuestionForNewQuiz(string chid, string cid, string qtype, string searchText)
         {
             string questions = Convert.ToString(HttpContext.Session["TemporaryQuestions"]);
             /*Debug.WriteLine("0000099999" + questions);*/
@@ -988,35 +1031,17 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
 
             //on dropdownlist question type change
-            if (questionType == -1)
+            if (questionType != -1)
             {
-                if (!searchText.Trim().Equals(""))
+                if (questionType == 5)
                 {
-                    qListFromDB = qListFromDB.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim())).ToList();
-                    mListFromDB = mListFromDB.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
-                   m.ColumnB.ToLower().Contains(searchText.Trim())).ToList();
-                }
+                    qListFromDB = null;
 
-            }
-            else if (questionType == 5)
-            {
-                qListFromDB = null;
-                if (!searchText.Trim().Equals(""))
-                {
-                    mListFromDB = mListFromDB.Where(m => m.ColumnA.ToLower().Contains(searchText.ToLower().Trim()) ||
-                   m.ColumnB.ToLower().Contains(searchText.Trim())).ToList();
-                }
 
-            }
-            else
-            {
-                mListFromDB = null;
-                if (!searchText.Trim().Equals(""))
-                {
-                    qListFromDB = qListFromDB.Where(q => q.Text.ToLower().Contains(searchText.ToLower().Trim()) && q.Qtype == questionType).ToList();
                 }
                 else
                 {
+                    mListFromDB = null;
                     qListFromDB = qListFromDB.Where(q => q.Qtype == questionType).ToList();
                 }
             }
@@ -1117,14 +1142,20 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                 }
             }
 
-
+            if (searchText != null)
+            {
+                searchText = searchText.Replace('%', ' ');
+                questList = questList.Where(q => q.Text.ToLower().Contains(searchText.ToLower())).ToList();
+            }
+            ViewBag.LoList = db.QuestionLOes.Where(ql => ql.LearningOutcome.CourseID == courseID).ToList();
             ViewBag.Questions = questList.OrderBy(q => q.CreatedDate).ToList();
             return PartialView("_ShowQuestionForNewQuiz");
         }
 
         //Add question to a temporary list
+        [HandleError]
         [HttpPost]
-        public ActionResult AddQuestionToTemporaryQuiz(FormCollection collection, string cid, /*string questSet,*/ string tempName)
+        public ActionResult AddQuestionToTemporaryQuiz(FormCollection collection, string cid, string tempName, string tempMode)
         {
             string questSet = Convert.ToString(HttpContext.Session["TemporaryQuestions"]);
             var questions = collection["qIDAndType"];
@@ -1196,8 +1227,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
             if (questSet == null || questSet.Trim().Equals(""))
             {
-                Debug.WriteLine("oklaaa-" + questSet);
-                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId/* + "&questions="*/ + "&tempName=" + tempName);
+                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId + "&tempName=" + tempName + "&tempMode=" + tempMode);
             }
             else
             {
@@ -1212,14 +1242,15 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                     page = (question / 10) + 1;
                 }
                 Session["TemporaryQuestions"] = questSet;
-                Debug.WriteLine("okla2222aa-" + questSet + tempName);
+                /*Debug.WriteLine("okla2222aa-" + questSet + tempName);*/
 
-                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId /*+ "&questions=" + questSet*/ + "&tempName=" + tempName + "&i=" + page);
+                return Redirect("~/Teacher/Quiz/CreateNewQuiz?cid=" + courseId + "&tempName=" + tempName + "&tempMode=" + tempMode + "&i=" + page);
 
             }
         }
 
         //Delete question inside temporary list
+        [HandleError]
         public ActionResult DeleteQuestionsInsideTemporaryQuiz(string qid, string qtype, /*string questSet,*/ string cid, string tempName, int? i)
         {
             string questSet = Convert.ToString(HttpContext.Session["TemporaryQuestions"]);
@@ -1252,6 +1283,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         // teacher click on start quiz button
+        [HandleError]
         public ActionResult QuizStarted(string qzid, int? i, FormCollection form)
         {
             //check if quiz is availble
@@ -1573,6 +1605,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
         }
 
         // teacher click on finish quiz button
+        [HandleError]
         [HttpPost]
         public ActionResult FinishQuiz(string qzid)
         {
@@ -1593,10 +1626,12 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
              }
  */
             db.SaveChanges();
-            return Redirect("~/Teacher/Quiz/QuizDetail?qzID=" + quiz.QuizID);
+            var quizDoneID = db.QuizDones.OrderByDescending(qd => qd.QuizDoneID).Where(qd => qd.QuizID == quizID).Select(qd => qd.QuizDoneID).FirstOrDefault();
+            return Redirect("~/Teacher/Report/ReportByStudent?qzid=" + quizDoneID);
 
         }
 
+        [HandleError]
         public ActionResult PreviewQuiz(string qzid, int rdPreview)
         {
             //check if quiz is availble
@@ -1621,7 +1656,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
             }
         }
 
-
+        [HandleError]
         public ActionResult PreviewQuizPaperTest(string qzid)
         {
             //check if quiz is availble
@@ -1802,6 +1837,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
 
         }
 
+        [HandleError]
         public ActionResult PreviewQuizQuestionByQuestion(string qzid)
         {
             //check if quiz is availble
@@ -1838,7 +1874,7 @@ namespace InClassVoting.Areas.teacher.Controllers.QuizLibraryController
                         if (qType == 5)
                         {
                             int mID = int.Parse(questAndType[0]);
-                            var matchQuest = db.MatchQuestionDones.Find(mID);
+                            var matchQuest = db.MatchQuestions.Find(mID);
                             Question matching = new Question();
                             matching.QID = mID;
                             matching.Text = matchQuest.ColumnA + "//" + matchQuest.ColumnB;

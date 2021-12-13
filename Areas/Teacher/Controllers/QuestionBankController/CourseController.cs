@@ -12,7 +12,8 @@ namespace InClassVoting.Areas.teacher.Controllers
     public class CourseController : Controller
     {
         private DBModel db = new DBModel();
-        
+
+        [HandleError]
         public PartialViewResult ShowCourseListForQuestionBank()
         {
             int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
@@ -20,9 +21,12 @@ namespace InClassVoting.Areas.teacher.Controllers
             ViewBag.CourseList = courseList;
             ViewBag.ChapterList = db.Chapters.Where(ch=>ch.Course.TeacherID==teacherId).ToList();
             ViewBag.CourseCount = courseList.Count;
+            ViewBag.SelectedCourse = Convert.ToInt32(HttpContext.Session["SelectedCourse"]);
+            ViewBag.SelectedChapter = Convert.ToInt32(HttpContext.Session["SelectedChapter"]);
             return PartialView("_ShowCourseListForQuestionBank");
         }
 
+        [HandleError]
         public PartialViewResult ShowCourseListForQuizLibrary()
         {
             int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
@@ -34,6 +38,7 @@ namespace InClassVoting.Areas.teacher.Controllers
        
         }
 
+        [HandleError]
         public PartialViewResult ShowCourseListForReport()
         {
             int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
@@ -45,10 +50,12 @@ namespace InClassVoting.Areas.teacher.Controllers
 
         }
 
+        [HandleError]
         //Create New Course
         [HttpPost]
         public ActionResult CreateCourse(string newcourseName)
         {
+            try { 
             Course course = new Course();
             int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
             course.TeacherID = teacherId;
@@ -57,8 +64,12 @@ namespace InClassVoting.Areas.teacher.Controllers
             db.SaveChanges();
 
             return Redirect(Request.UrlReferrer.ToString());
+
+            }
+            catch
+            { return Redirect("~Error/NotFound"); }
         }
-        
+
         //Check New Course Name
         [HttpPost]
         public JsonResult CheckDuplicateCourse(string text)
@@ -95,11 +106,13 @@ namespace InClassVoting.Areas.teacher.Controllers
             return Json(new { mess = message, check = check }) ;
 
         }
-       
+
+        [HandleError]
         //Edit CourseName
         [HttpPost]
         public ActionResult EditCourse(string newCourseName, string courseIdUpdate/*, string chid*/) 
         {
+            try { 
             int courseIdToUpdate = int.Parse(courseIdUpdate);
             var updateCourse = db.Courses.Find(courseIdToUpdate);
             updateCourse.Name = newCourseName.ToUpper().Trim();
@@ -115,6 +128,10 @@ namespace InClassVoting.Areas.teacher.Controllers
                  return Redirect("~/Teacher/Question/ViewQuestionByChapter?chid=" + chapID);
              }*/
             return Redirect(Request.UrlReferrer.ToString());
+
+            }
+            catch
+            { return Redirect("~Error/NotFound"); }
         }
 
 
@@ -168,6 +185,7 @@ namespace InClassVoting.Areas.teacher.Controllers
 
         }
 
+        [HandleError]
         //delete course
         [HttpPost]
         public ActionResult DeleteCourse(string courseIdDelete/*, string chid*/)

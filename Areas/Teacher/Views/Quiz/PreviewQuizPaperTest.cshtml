@@ -9,7 +9,7 @@
 <!-- sidebar content -->
 <div id="sideBar" class="relative flex flex-col flex-wrap bg-white border-r border-gray-300 p-6 flex-none w-64 animated faster">
 
-    <div class="fixed ">
+    <div class="fixed" style="top: 0; bottom: 0; overflow-y: scroll; overflow-x: hidden; ">
         <div>
             <!--Time CountDown-->
             <div class="topcontent w-full items-center p-6">
@@ -248,7 +248,8 @@
                                         else if (countAnswer == 6)
                                         {<label>F.</label>}
                                         &nbsp;
-                                        <input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="multipleOption" value="@answers.Text" readonly>
+                                        @*<input type="text" style="width:95%" class="w-full pl-3 bg-gray-100" name="multipleOption" value="@answers.Text" readonly>*@
+                                        <span type="text" style="width:95%" class="w-full pl-3 bg-gray-100">@answers.Text</span>
                                     </td>
                                 </tr>
 
@@ -673,12 +674,12 @@
 
 
         <div class=" inline-block mt-4">
-            <input type="button" class="float-right btn btn-bs-primary" id="btnSubmit" name="name" value="Finish Quiz"  disabled/>
+            <input type="button" class="float-right btn btn-bs-primary" id="btnSubmit" name="name" value="Finish Quiz" disabled />
         </div>
 
         <!--End Form Test-->
     </div>
-    
+
 </div>
 
 <script src="~/Scripts/jquery-3.4.1.min.js"></script>

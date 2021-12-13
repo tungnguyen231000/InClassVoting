@@ -47,8 +47,8 @@ namespace InClassVoting.Areas.Teacher.Controllers.QuestionBankController
             }
             return (check);
         }
-        // Create New LO
 
+        [HandleError]
         public ActionResult ViewLearningOutcome(string cid, string searchText, int? i)
         {
             //check if course is availble
@@ -58,7 +58,7 @@ namespace InClassVoting.Areas.Teacher.Controllers.QuestionBankController
             }
             else
             {
-                
+
                 ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
                 ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
                 int courseID = int.Parse(cid);
@@ -93,49 +93,158 @@ namespace InClassVoting.Areas.Teacher.Controllers.QuestionBankController
                 }
 
                 ViewBag.LONo = (i - 1) * 10;
+                Session["SelectedChapter"] = null;
+                Session["SelectedCourse"] = courseID;
                 return View(loList.ToPagedList(i ?? 1, 10));
             }
         }
 
-        //Update LO
+        // Create New LO
+        [HandleError]
         [HttpPost]
         public ActionResult CreateLearningOutcome(string cid, string loName, string loDes)
         {
-            LearningOutcome lo = new LearningOutcome();
-            int courseID = int.Parse(cid);
-            lo.CourseID = courseID;
-            lo.LO_Name = loName;
-            lo.LO_Description = loDes;
-            db.LearningOutcomes.Add(lo);
-            db.SaveChanges();
-            int lastPage = 0;
-            int countLo = db.LearningOutcomes.Count(l => l.CourseID == courseID);
-            if ((countLo % 10) != 0)
+            try
             {
-                lastPage = (countLo / 10) + 1;
+                LearningOutcome lo = new LearningOutcome();
+                int courseID = int.Parse(cid);
+                lo.CourseID = courseID;
+                lo.LO_Name = loName.ToUpper();
+                lo.LO_Description = loDes;
+                db.LearningOutcomes.Add(lo);
+                db.SaveChanges();
+                int lastPage = 0;
+                int countLo = db.LearningOutcomes.Count(l => l.CourseID == courseID);
+                if ((countLo % 10) != 0)
+                {
+                    lastPage = (countLo / 10) + 1;
 
+                }
+                else
+                {
+                    lastPage = countLo / 10;
+                }
+                return Redirect("~/Teacher/LearningOutcome/ViewLearningOutcome?cid=" + cid + "&i=" + lastPage);
+
+            }
+            catch
+            { return Redirect("~Error/NotFound"); }
+        }
+
+        //Check New LO Name
+        [HttpPost]
+        public JsonResult CheckDuplicateNewLO(string text, string cid)
+        {
+            string dataInput = text;
+            int courseId = int.Parse(cid);
+            string check = "";
+            string message = "";
+
+
+            if (dataInput.Trim().Equals("") || dataInput == null)
+            {
+                check = "0";
+                message = "Please enter learning outcome name !";
             }
             else
             {
-                lastPage = countLo / 10;
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var lo = db.LearningOutcomes.Where(l => l.Course.TeacherID == teacherId &&
+                l.CourseID == courseId &&
+                l.LO_Name.ToLower().Trim().Equals(dataInput.ToLower().Trim())).FirstOrDefault();
+                /*var currentCourse = db.Courses.Find(courseId);*/
+
+                if (lo != null)
+                {
+                    check = "0";
+                    message = "This learning outcome name already existed!";
+                }
+                else
+                {
+                    check = "1";
+                    message = "";
+                }
             }
-            return Redirect("~/Teacher/LearningOutcome/ViewLearningOutcome?cid=" + cid + "&i=" + lastPage);
+
+            return Json(new { mess = message, check = check });
+
         }
 
+
+        //Update LO
+        [HandleError]
         [HttpPost]
         public ActionResult EditLearningOutcome(string cid, string newLoName, string newLoDes, string loid)
         {
-            var lo = db.LearningOutcomes.Find(int.Parse(loid));
-            lo.LO_Name = newLoName;
-            lo.LO_Description = newLoDes;
-            db.Entry(lo).State = EntityState.Modified;
-            db.SaveChanges();
-            return Redirect(Request.UrlReferrer.ToString());
+            try
+            {
+                var lo = db.LearningOutcomes.Find(int.Parse(loid));
+                lo.LO_Name = newLoName.ToUpper();
+                lo.LO_Description = newLoDes;
+                db.Entry(lo).State = EntityState.Modified;
+                db.SaveChanges();
+                return Redirect(Request.UrlReferrer.ToString());
+            }
+            catch
+            { return Redirect("~Error/NotFound"); }
         }
 
+
+        //Check edit LO Name
+        [HttpPost]
+        public JsonResult CheckDuplicateEditLO(string text, string cid, string loid)
+        {
+            ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
+            ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
+            string dataInput = text;
+            int courseId = int.Parse(cid);
+            int loId = int.Parse(loid);
+            string check = "";
+            string message = "";
+
+
+            if (dataInput.Trim() == "")
+            {
+                check = "0";
+                message = "Please enter learning outcome name !";
+            }
+            else
+            {
+                int teacherId = Convert.ToInt32(HttpContext.Session["TeacherId"]);
+                var lo = db.LearningOutcomes.Where(l => l.Course.TeacherID == teacherId &&
+                l.CourseID == courseId && l.LOID != loId &&
+                l.LO_Name.ToLower().Trim().Equals(dataInput.ToLower().Trim())).FirstOrDefault();
+                var curentLO = db.LearningOutcomes.Find(loId);
+
+                if (lo != null)
+                {
+                    check = "0";
+                    message = "This learning outcome name already existed!";
+                }
+                else
+                {
+                    if (dataInput.Trim().ToLower().Equals(curentLO.LO_Name.Trim().ToLower()))
+                    {
+                        check = "0";
+                        message = "Your learning outcome name is unchange!";
+                    }
+                    else
+                    {
+                        check = "1";
+                        message = "";
+                    }
+                }
+            }
+
+
+            return Json(new { mess = message, check = check });
+
+        }
+
+        [HandleError]
         public ActionResult DeleteLearningOutcome(string cid, FormCollection collection)
         {
-            
+
             ViewBag.UserName = Convert.ToString(HttpContext.Session["Name"]);
             ViewBag.ImageURL = Convert.ToString(HttpContext.Session["ImageURL"]);
             int courseID = int.Parse(cid);

@@ -12,25 +12,53 @@ namespace InClassVoting.Controllers
     public class HomeTotalController : Controller
     {
         private DBModel db = new DBModel();
-        // GET: Home
+
+        [HandleError]
         public ActionResult Home()
         {
             return View();
         }
 
+        [HandleError]
         public ActionResult Login()
         {
             Session.Clear();
             return View();
         }
 
+        [HandleError]
         [HttpPost]
         public ActionResult LoginAdmin(string inputUserName, string inputPassword)
         {
-            //Debug.WriteLine("userName" + inputUserName);
-            //Debug.WriteLine("pass" + inputPassword);
-            return Redirect("~/Teacher/Home/Home");
+            var redirectUrl = "";
+            try
+            {
+                var adminAcc = db.Admins.Where(a => a.Username.Trim().Equals(inputUserName) && a.Password.Equals(inputPassword)).FirstOrDefault();
+                if (adminAcc != null /*inputUserName=="1"*/)
+                {
+                    Session["User"] = "Admin";
+
+                    Session["Name"] = adminAcc.Username /*"admin"*/;
+                    TempData["UserExist"] = "True";
+                    return Redirect("~/Admin/Home/Home");
+                }
+                else
+                {
+                   /* Debug.WriteLine("2222222");*/
+                    redirectUrl = new UrlHelper(Request.RequestContext).Action("Login", "HomeTotal");
+                    TempData["UserExist"] = "False";
+                    return Redirect(redirectUrl);
+                }
+            }
+            catch
+            {
+               /* Debug.WriteLine("333333");*/
+                redirectUrl = new UrlHelper(Request.RequestContext).Action("Login", "HomeTotal");
+                return Redirect(redirectUrl);
+            }
         }
+
+        [HandleError]
         [HttpPost]
         public ActionResult getInfoUser(string email, string name, string image_URL)
         {
@@ -71,11 +99,11 @@ namespace InClassVoting.Controllers
                         }
 
                         redirectUrl = new UrlHelper(Request.RequestContext).Action("Home", "Home", new { area = "teacher" });
-                       /* redirectUrl = Common.PreUrl;
-                        if (redirectUrl == null || redirectUrl.Equals(""))
-                        {
-                            redirectUrl = new UrlHelper(Request.RequestContext).Action("Home", "Home", new { area = "teacher" });
-                        }*/
+                        /* redirectUrl = Common.PreUrl;
+                         if (redirectUrl == null || redirectUrl.Equals(""))
+                         {
+                             redirectUrl = new UrlHelper(Request.RequestContext).Action("Home", "Home", new { area = "teacher" });
+                         }*/
                         return Json(new { Url = redirectUrl });
                     }
                     else if (words[words.Length - 1].Equals("fpt.edu.vn"))
@@ -91,7 +119,6 @@ namespace InClassVoting.Controllers
 
                         if (studentInDb != null)
                         {
-                            Debug.WriteLine("hihih1");
                             Session["StudentId"] = studentInDb.SID;
                         }
                         else
@@ -101,10 +128,8 @@ namespace InClassVoting.Controllers
                             newStudent.Name = name;
                             db.Students.Add(newStudent);
                             db.SaveChanges();
-                            Debug.WriteLine("123123" + newStudent.Email);
                             var getStudent = db.Students.Where(s => s.Email.ToLower().Trim().Equals(newStudent.Email.ToLower().Trim())).FirstOrDefault();
                             Session["StudentId"] = getStudent.SID;
-                            Debug.WriteLine(getStudent.Email + "=====" + getStudent.SID);
 
                         }
                         redirectUrl = new UrlHelper(Request.RequestContext).Action("Home", "Home", new { area = "Student" });
@@ -183,6 +208,50 @@ namespace InClassVoting.Controllers
                 redirectUrl = new UrlHelper(Request.RequestContext).Action("Login", "HomeTotal");
                 return Json(new { Url = redirectUrl });
             }
+        }
+
+        //Check Admin Account
+        [HttpPost]
+        public JsonResult CheckAdminAccount(string user, string pass)
+        {
+
+            string username = user;
+            string password = pass;
+            string check = "";
+            string message = "";
+
+            Debug.WriteLine("hihi11112312====fe" + username + password);
+            var adminAcc = db.Admins.Where(a => a.Username.Trim().Equals(username) && a.Password.Equals(password)).FirstOrDefault();
+
+            if (username == null || username.Trim().Equals(""))
+            {
+                check = "0";
+                message = "Please enter username!";
+            }
+            else if (password == null || password.Trim().Equals(""))
+            {
+                check = "0";
+                message = "Please enter password!";
+            }
+            else {
+                if (adminAcc == null)
+                {
+                    Debug.WriteLine("hihi111fe" + username + password);
+                    check = "0";
+                    message = "Username or password is incorrect!";
+                }
+                else
+                {
+                    Debug.WriteLine("hih222ife" + username+password);
+                    check = "1";
+                    message = "";
+                }
+            }
+            
+            Debug.WriteLine(check+" hihife " + message);
+
+            return Json(new { mess = message, check = check });
+
         }
     }
 }

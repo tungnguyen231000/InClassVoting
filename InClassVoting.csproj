@@ -146,6 +146,9 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
+    <Compile Include="Areas\Admin\Controllers\UserManagementController.cs" />
     <Compile Include="Areas\Student\Controllers\HomeController.cs" />
     <Compile Include="Areas\Student\Controllers\PollController.cs" />
     <Compile Include="Areas\Student\Controllers\QuizController.cs" />
@@ -263,6 +266,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\drag-and-drop.css" />
     <Content Include="Content\error.css" />
+    <Content Include="Content\img\admin.png" />
     <Content Include="Content\img\calendar.png" />
     <Content Include="Content\img\congrats.svg" />
     <Content Include="Content\img\editing.png" />
@@ -377,6 +381,16 @@
       <DependentUpon>DBModel.edmx</DependentUpon>
     </Content>
     <Content Include="Areas\Student\Views\Quiz\DoQuizShowAllQuestion.cshtml" />
+    <Content Include="Areas\Teacher\Views\Report\ReportPollList.cshtml" />
+    <Content Include="Areas\Student\Views\Poll\PollAlreadyDone.cshtml" />
+    <Content Include="Areas\Student\Views\Poll\PollFinished.cshtml" />
+    <Content Include="Areas\Student\Views\Poll\PollNotAvailble.cshtml" />
+    <Content Include="Areas\Student\Views\Quiz\QuizTimeOverDue.cshtml" />
+    <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Admin\Views\Home\Home.cshtml" />
+    <Content Include="Areas\Admin\Views\UserManagement\TeacherReport.cshtml" />
+    <Content Include="Areas\Admin\Views\UserManagement\StudentReport.cshtml" />
     <None Include="Properties\PublishProfiles\InClassVoting - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\InClassVoting - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
@@ -418,6 +432,7 @@
     <Content Include="Scripts\TestJS.js" />
     <Content Include="Scripts\validate.js" />
     <Content Include="Scripts\validate2.js" />
+    <Content Include="Scripts\validateAdmin.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -437,6 +452,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\images\" />
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Views\Report\" />
     <Folder Include="Areas\Student\Data\" />
     <Folder Include="Areas\Student\Views\Default\" />
     <Folder Include="Areas\Teacher\Data\" />

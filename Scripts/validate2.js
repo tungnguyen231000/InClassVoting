@@ -1,194 +1,216 @@
 ﻿$(document).ready(function () {
-    var fname = document.querySelector('#fname');
+    if ($('#createCourse').length != 0) {
+        var fname = document.querySelector('#fname');
+        $('#createCourse').click(function (e) {
+            $('.image-error').remove();
+            var fnameTxt = $(fname).val();
 
-    $('#createCourse').click(function (e) {
-        $('.image-error').remove();
-        var fnameTxt = $(fname).val();
-
-        $.ajax({
-            url: '/Course/CheckDuplicateCourse',
-            dataType: "json",
-            data: { text: fnameTxt },
-            type: "POST",
-            success: function (data) {
-                if (data.check == "0") {
-                    if ($('.image-error').length == 0) {
-                        $(fname).after('<div class="image-error">*' + data.mess + '</div>');
-                        $('.image-error').css("color", "red");
-                        $('.image-error').css("font-weight", "bold");
+            $.ajax({
+                url: '/Course/CheckDuplicateCourse',
+                dataType: "json",
+                data: { text: fnameTxt },
+                type: "POST",
+                success: function (data) {
+                    if (data.check == "0") {
+                        if ($('.image-error').length == 0) {
+                            $(fname).after('<div class="image-error">*' + data.mess + '</div>');
+                            $('.image-error').css("color", "red");
+                            $('.image-error').css("font-weight", "bold");
+                        }
                     }
-                }
-                if (data.check == "1") {
-                    $('.image-error').remove();
-                }
-                
-                $('#form-create-course').submit();
-                
-                
+                    if (data.check == "1") {
+                        $('.image-error').remove();
+                    }
 
-            },
-            error: function (xhr) {
-                alert('Error by Course');
+                    $('#form-create-course').submit();
+
+
+
+                },
+                error: function (xhr) {
+                    alert('Error by Course');
+                }
+            });
+
+            //Để không tự submit nữa
+            e.preventDefault();
+            return false;
+        });
+        //Khi submit sẽ check xem có class .image-error hay không
+        $('#form-create-course').submit(function (e) {
+            if ($('.image-error').length != 0) {
+                e.preventDefault();
+                return false;
             }
         });
 
-        //Để không tự submit nữa
-        e.preventDefault();
-        return false;
-    });
+        //check edit course
+        var newCourseName = document.querySelector('#newCourseName');
+        var courseID = document.querySelector('#cIdToUpdate');
 
-    //Khi submit sẽ check xem có class .image-error hay không
-    $('#form-create-course').submit(function (e) {
-        if ($('.image-error').length != 0) {
+        $('#editCourse').click(function (e) {
+            $('.image-error-2').remove();
+            var newName = $(newCourseName).val();
+            var oldCourseID = $(courseID).val();
+            $.ajax({
+                url: '/Course/CheckDuplicateEditCourse',
+                dataType: "json",
+                data: { text: newName, cid: oldCourseID },
+                type: "POST",
+                success: function (data) {
+                    if (data.check == "0") {
+                        if ($('.image-error-2').length == 0) {
+                            $(newCourseName).after('<div class="image-error-2">*' + data.mess + '</div>');
+                            $('.image-error-2').css("color", "red");
+                            $('.image-error-2').css("font-weight", "bold");
+                        }
+                    }
+                    if (data.check == "1") {
+                        $('.image-error-2').remove();
+                    }
+
+                    $('#form-edit-course').submit();
+
+
+
+                },
+                error: function (xhr) {
+                    alert('Error by Course');
+                }
+            });
+
+            //Để không tự submit nữa
             e.preventDefault();
             return false;
-        }
-    });
+        });
 
-    //check edit course
-    var newCourseName = document.querySelector('#newCourseName');
-    var courseID = document.querySelector('#cIdToUpdate');
-
-    $('#editCourse').click(function (e) {
-        $('.image-error-2').remove();
-        var newName = $(newCourseName).val();
-        var oldCourseID = $(courseID).val();
-        $.ajax({
-            url: '/Course/CheckDuplicateEditCourse',
-            dataType: "json",
-            data: { text: newName, cid: oldCourseID },
-            type: "POST",
-            success: function (data) {
-                if (data.check == "0") {
-                    if ($('.image-error-2').length == 0) {
-                        $(newCourseName).after('<div class="image-error-2">*' + data.mess + '</div>');
-                        $('.image-error-2').css("color", "red");
-                        $('.image-error-2').css("font-weight", "bold");
-                    }
-                }
-                if (data.check == "1") {
-                    $('.image-error-2').remove();
-                }
-                
-                $('#form-edit-course').submit();
-
-
-
-            },
-            error: function (xhr) {
-                alert('Error by Course');
+        //Khi submit sẽ check xem có class .image-error hay không
+        $('#form-edit-course').submit(function (e) {
+            if ($('.image-error-2').length != 0) {
+                e.preventDefault();
+                return false;
             }
         });
 
-        //Để không tự submit nữa
-        e.preventDefault();
-        return false;
-    });
 
-    //Khi submit sẽ check xem có class .image-error hay không
-    $('#form-edit-course').submit(function (e) {
-        if ($('.image-error-2').length != 0) {
+        //check new chapter 
+        var chapterName = document.querySelector('#createChapterName');
+        var courseIDToCreateChap = document.querySelector('#newChapCID');
+
+        $('#createChapter').click(function (e) {
+            $('.image-error-3').remove();
+            var chapName = $(chapterName).val();
+            var courseIDCreateChap = $(courseIDToCreateChap).val();
+
+            $.ajax({
+                url: '/Chapter/CheckDuplicateNewChapter',
+                dataType: "json",
+                data: { text: chapName, cid: courseIDCreateChap },
+                type: "POST",
+                success: function (data) {
+                    if (data.check == "0") {
+                        if ($('.image-error-3').length == 0) {
+                            $(chapterName).after('<div class="image-error-3">*' + data.mess + '</div>');
+                            $('.image-error-3').css("color", "red");
+                            $('.image-error-3').css("font-weight", "bold");
+                        }
+                    }
+                    if (data.check == "1") {
+                        $('.image-error-3').remove();
+                    }
+                    $('#form-create-chapter').submit();
+
+
+
+                },
+                error: function (xhr) {
+                    alert('Error by Chapter');
+                }
+            });
+
+            //Để không tự submit nữa
             e.preventDefault();
             return false;
-        }
-    });
+        });
 
-
-    //check new chapter 
-    var chapterName = document.querySelector('#createChapterName');
-    var courseIDToCreateChap = document.querySelector('#newChapCID');
-
-    $('#createChapter').click(function (e) {
-        $('.image-error-3').remove();
-        var chapName = $(chapterName).val();
-        var courseIDCreateChap = $(courseIDToCreateChap).val();
-
-        $.ajax({
-            url: '/Chapter/CheckDuplicateNewChapter',
-            dataType: "json",
-            data: { text: chapName, cid: courseIDCreateChap },
-            type: "POST",
-            success: function (data) {
-                if (data.check == "0") {
-                    if ($('.image-error-3').length == 0) {
-                        $(chapterName).after('<div class="image-error-3">*' + data.mess + '</div>');
-                        $('.image-error-3').css("color", "red");
-                        $('.image-error-3').css("font-weight", "bold");
-                    }
-                }
-                if (data.check == "1") {
-                    $('.image-error-3').remove();
-                }
-                $('#form-create-chapter').submit();
-
-                
-
-            },
-            error: function (xhr) {
-                alert('Error by Chapter');
+        //Khi submit sẽ check xem có class .image-error hay không
+        $('#form-create-chapter').submit(function (e) {
+            if ($('.image-error-3').length != 0) {
+                e.preventDefault();
+                return false;
             }
         });
 
-        //Để không tự submit nữa
-        e.preventDefault();
-        return false;
-    });
 
-    //Khi submit sẽ check xem có class .image-error hay không
-    $('#form-create-chapter').submit(function (e) {
-        if ($('.image-error-3').length != 0) {
+        //check edit chapter
+        var newChapterName = document.querySelector('#newNameEditChapter');
+        var courseIDEditChapter = document.querySelector('#cidEditChapter');
+        var chapterIdToEdit = document.querySelector('#chidEditChapter');
+
+        $('#editChapter').click(function (e) {
+            $('.image-error-4').remove();
+            var newChapName = $(newChapterName).val();
+            var courseIDToUpdate = $(courseIDEditChapter).val();
+            var chapIDToUpdate = $(chapterIdToEdit).val();
+            $.ajax({
+                url: '/Chapter/CheckDuplicateEditChapter',
+                dataType: "json",
+                data: { text: newChapName, cid: courseIDToUpdate, chid: chapIDToUpdate },
+                type: "POST",
+                success: function (data) {
+                    if (data.check == "0") {
+                        if ($('.image-error-4').length == 0) {
+                            $(newChapterName).after('<div class="image-error-4">*' + data.mess + '</div>');
+                            $('.image-error-4').css("color", "red");
+                            $('.image-error-4').css("font-weight", "bold");
+                        }
+                    }
+                    if (data.check == "1") {
+                        $('.image-error-4').remove();
+                    }
+
+                    $('#form-edit-chapter').submit();
+
+
+                },
+                error: function (xhr) {
+                    alert('Error by edit chapter');
+                }
+            });
+
+            //Để không tự submit nữa
             e.preventDefault();
             return false;
-        }
-    });
-
-
-    //check edit course
-    var newChapterName = document.querySelector('#newNameEditChapter');
-    var courseIDEditChapter = document.querySelector('#cidEditChapter');
-    var chapterIdToEdit = document.querySelector('#chidEditChapter');
-
-    $('#editChapter').click(function (e) {
-        $('.image-error-4').remove();
-        var newChapName = $(newChapterName).val();
-        var courseIDToUpdate = $(courseIDEditChapter).val();
-        var chapIDToUpdate = $(chapterIdToEdit).val();
-        $.ajax({
-            url: '/Chapter/CheckDuplicateEditChapter',
-            dataType: "json",
-            data: { text: newChapName, cid: courseIDToUpdate, chid: chapIDToUpdate },
-            type: "POST",
-            success: function (data) {
-                if (data.check == "0") {
-                    if ($('.image-error-4').length == 0) {
-                        $(newChapterName).after('<div class="image-error-4">*' + data.mess + '</div>');
-                        $('.image-error-4').css("color", "red");
-                        $('.image-error-4').css("font-weight", "bold");
-                    }
-                }
-                if (data.check == "1") {
-                    $('.image-error-4').remove();
-                }
-
-                $('#form-edit-chapter').submit();
-
-
-            },
-            error: function (xhr) {
-                alert('Error by edit chapter');
-            }
         });
 
-        //Để không tự submit nữa
-        e.preventDefault();
-        return false;
-    });
+        //Khi submit sẽ check xem có class .image-error hay không
+        $('#form-edit-chapter').submit(function (e) {
+            if ($('.image-error-4').length != 0) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
+    if ($('#form-create-lo').length != 0) {
 
-    //Khi submit sẽ check xem có class .image-error hay không
-    $('#form-edit-chapter').submit(function (e) {
-        if ($('.image-error-4').length != 0) {
-            e.preventDefault();
-            return false;
-        }
-    });
+        $('#form-create-lo').validate({
+            onfocusout: false,
+            onkeyup: false,
+            onclick: false,
+            rules: {
+                "loDes": {
+                    required: true,
+                }
+            },
+            messages: {
+                "loDes": {
+                    required: "*Learning Outcome description is required"
+                }
+            }
+        });
+    }
 });
+
+function deleteQuestion() {
+    document.getElementById("formDeleteQuestion").submit();
+}

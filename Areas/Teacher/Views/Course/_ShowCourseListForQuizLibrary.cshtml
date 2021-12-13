@@ -21,7 +21,7 @@
         <div class="layout-content">
             @if (ViewBag.CourseCount == 0)
             {
-                <p style="text-align: center; margin-top: 10%; font-size: larger;">Course List Is Empty</p>
+                <p style="text-align: center; margin-top: 10%; font-size: larger;">Course list is empty</p>
             }
             else
             {
@@ -33,12 +33,12 @@
                         <a href="~/Teacher/Quiz/ViewQuizByCourse?cid=@course.CID" style="margin-left:20px" class="mb-3 capitalize font-medium text-sm hover:text-teal-600 transition ease-in-out duration-500">
                             <i class="fas fa-graduation-cap "></i>
                             @{
-                                int coutnQuiz = 0;
-                            }
+                                int coutnQuiz = course.Quizs.Count;
+                            }@*
                             @foreach (var quiz in course.Quizs)
                             {
                                 coutnQuiz++;
-                            }
+                            }*@
                             @course.Name (@coutnQuiz quiz)
                         </a>
 

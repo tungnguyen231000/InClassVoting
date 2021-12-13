@@ -36,15 +36,15 @@
                 </div>
             </div>
             <div class="col-6 borderCol4 shadow">
-                @using (Html.BeginForm("LoginAdmin", "HomeTotal", FormMethod.Post))
+                @using (Html.BeginForm("LoginAdmin", "HomeTotal", FormMethod.Post, new { id = "form-login-admin" }))
                 {
                     <div class="pd-20">
                         <h1 class="txtLogin">Login</h1>
                         <h5 class="txtLogin">User name :</h5>
-                        <input name="inputUserName" class="txtInput color-input" type="text" required />
+                        <input name="inputUserName" class="txtInput color-input" id="usernameInput" type="text" required />
                         <h5 class="txtLogin">Password :</h5>
-                        <input name="inputPassword" class="txtInput color-input" type="password" required />
-                        <button type="submit" class="txt-btn-login btnSignIn txtInput txtPosLogin ">Login</button>
+                        <input name="inputPassword" class="txtInput color-input" id="passwordInput" type="password" required />
+                        <button type="submit" id="adminLogin" class="txt-btn-login btnSignIn txtInput txtPosLogin ">Login</button>
                     </div>
                 }
                 <div class="txtInput btnSignIn">
@@ -58,6 +58,10 @@
 
     <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/validateAdmin.js"></script>
 </body>
 
 </html>
+
+

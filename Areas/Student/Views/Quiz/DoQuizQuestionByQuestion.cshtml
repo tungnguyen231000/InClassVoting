@@ -38,6 +38,33 @@
                                             <div class="w-full items-center bg-gray p-6 mb-6">
                                                 <div class="float-left">
                                                     <span class="question-num">Question @countQuestion </span>
+                                                    @{
+                                                        int countCorrectAnswer = 0;
+                                                        if (question.Qtype == 1 || question.Qtype == 2)
+                                                        {
+                                                            foreach (var answers in question.QuestionAnswerDones)
+                                                            {
+                                                                if (answers.IsCorrect)
+                                                                {
+                                                                    countCorrectAnswer++;
+                                                                }
+                                                            }
+                                                            <p>
+                                                                (Choose @countCorrectAnswer
+                                                                @if (countCorrectAnswer > 1)
+                                                                {<span>answers</span>}
+                                                                else
+                                                                {<span>answer</span>})
+                                                            </p>
+                                                        }
+                                                        else if (question.Qtype == 6)
+                                                        {
+                                                            <p>
+                                                                (Choose 1 answer)
+                                                            </p>
+                                                        }
+
+                                                    }
                                                 </div>
 
 
@@ -53,7 +80,6 @@
                                             <!--Mutiple Question-->
                                             @if (question.Qtype == 1)
                                             {
-
                                                 <input type="hidden" name="qid" value="@question.Q_DoneID" />
                                                 <div class="w-full items-center bg-gray  ">
                                                     <div>

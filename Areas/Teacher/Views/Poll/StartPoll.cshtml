@@ -18,18 +18,31 @@
                 </h1>
             </div>
 
+            <div style="display:flex;margin:auto">
+                <h1 style=" margin-right:15px;margin-left:20px; margin-top:3px; font-size:17px" class="quiz-lable2">Link Poll: </h1>
+                <p class="linkquiz-lable-3" @*style="margin: auto; margin-left: 10px;"*@>@ViewBag.PollLink</p>
+                <input type="hidden" id="pollLink" value="@ViewBag.PollLink" />
+                <a style="background-color:cornflowerblue;margin-left:20px;margin-right:10px;color:white" class="btn" onclick="copyLink()">Copy</a>
+            </div>
+
+
             <div class="w-full items-center bg-gray p-6 ">
                 @if (ViewBag.CountDown != null)
                 {
-                    <span class="float-left">Time Left:</span>
-                    <span class="border-none pl-6 float-left h6" size="3" type="text" id="time" name="create-question-time" data-time="@ViewBag.CountDown" placeholder="Time">00:00</span>
+                    <span class="float-left" style="margin-top:2px">Time Left:</span>
+                    <span class="border-none pl-6 float-left" style="font-weight:500;font-size:18px" size="3" type="text" id="time" name="create-question-time" data-time="@ViewBag.CountDown" placeholder="Time">00:00</span>
                 }
 
             </div>
             <div class="w-full items-center bg-gray p-6 ">
                 <div>
+                    <div>
+                        <span class="question-num">
+                            Question:
+                        </span>
+                    </div>
                     <div class="w-full items-center p-6 ">
-                        <div contenteditable="false" class="w-full items-center bg-gray question-num-2">
+                        <div contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold">
                             @ViewBag.Poll.Question
                         </div>
                     </div>
@@ -62,6 +75,12 @@
                     }
                 </table>
             </div>
+            if (ViewBag.Poll.Time == null)
+            {
+                <div class=" inline-block mt-4">
+                    <input type="submit" class="float-left btn btn-bs-primary" value="End This Poll" />
+                </div>
+            }
         }
         <!-- End Form Poll-->
 
@@ -70,3 +89,14 @@
 </div>
 
 <script src="~/Scripts/teacher.poll.countdown.js"></script>
+<script type="text/javascript">
+
+
+    function copyLink() {
+        var copyText = document.getElementById("pollLink");
+
+        copyText.select();
+        navigator.clipboard.writeText(copyText.value);
+
+    }
+</script>

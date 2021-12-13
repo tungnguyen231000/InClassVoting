@@ -5,15 +5,14 @@
 }
 
 
-<link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css">
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
-    @using (Html.BeginForm("EditFillBlankQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "fillblank-form" }))
+    @using (Html.BeginForm("EditFillBlankQuestion", "Question", FormMethod.Post, new { enctype = "multipart/form-data", id = "fillblank-form", autocomplete = "off" }))
     {
         <div class="grid grid-cols-1 w-full ">
 
             <div class="w-full items-center bg-gray">
                 <div class="text-center">
-                    <h1 class="h3">
+                    <h1 class="h4">
                         <span>Question Type:</span>
                         <span>Fill Blank</span>
                         <input type="hidden" name="previousUrl" value="@ViewBag.Previous" />
@@ -26,8 +25,8 @@
                     <div class="m-6">
                         <span class="label-mode-4">Learning outcome</span>
                     </div>
-                    <div class="m-6">
-                        @if (ViewBag.LoList != null)
+                    <div class="m-6" style="display:flex">
+                        @if (ViewBag.LoList != null && ViewBag.LoList.Count != 0)
                         {
                             foreach (var lo in ViewBag.LoList)
                             {
@@ -56,8 +55,10 @@
                                     <h4 class="label-mode-content-2">@lo.LO_Name</h4>
                                 </div>
                             }
+                        }  else
+                        {
+                        <p style="text-align: center; font-size: medium;">There is no learning outcome to choose!!</p>
                         }
-
 
 
                     </div>
@@ -65,12 +66,12 @@
 
                 <div class="flex md:mx-16">
                     <div class="m-6  ">
-                        <span><b>Time:</b></span>
-                        <input class="border border-black-400 pl-1" size="3" type="number" name="time" placeholder="..." value="@ViewBag.Question.Time">
+                        <span class="label-mode-4">Time (second): </span>   
+                        <input class="border border-black-400 pl-1 w-4/12" size="3" min="15" max="3600" step="1" type="number" name="time" placeholder="..." value="@ViewBag.Question.Time">
                     </div>
                     <div class="m-6  ">
-                        <span><b>Mark:</b></span>
-                        <input class="border border-black-400 pl-1" size="3" type="number" name="mark" placeholder="..." value="@ViewBag.Question.Mark">
+                        <span class="label-mode-4">Mark: </span>
+                        <input class="border border-black-400 pl-1 w-6/12" size="3" step="0.5"  min="0.5" max="10" type="number" name="mark" placeholder="..." value="@ViewBag.Question.Mark">
                     </div>
                     <div class="m-6">
                         @if (ViewBag.Question.GivenWord == true)
@@ -92,13 +93,13 @@
                 <div>
                     <span><b>Question:</b> </span>
                 </div>
-                <div class="w-10/12  float-left mt-3">
-                    <textarea class="p-2 w-full" name="questionText" rows="4" id="questionFill" placeholder=" ...">@ViewBag.Question.Text</textarea>
+                <div class="w-full  float-left mt-3">
+                    <textarea class="p-2 w-full" name="questionText" rows="5" id="questionFill" placeholder=" ...">@ViewBag.Question.Text</textarea>
                 </div>
             </div>
 
             <div class="text-center flex flex-wrap items-center justify-center column-gap inline-block mt-4">
-                <button type="button" id="previewFill" class="btn btn-primary mr-6" data-toggle="modal" data-target="#fillPreview">
+                <button type="button" id="previewFill" class="btn mr-6" data-bs-toggle="modal" data-bs-target="#fillPreview">
                     Preview
                 </button>
                 <input type="submit" class="btn btn-bs-primary w-3/12" name="submit" value="Save Changes">
@@ -151,26 +152,26 @@
 
     <!--Thêm Dialog Paper Preview-->
     <div class="modal fade" id="fillPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog w-9/12" style="max-width:none" role="document">
             <div class="modal-content ">
                 <div class="">
                     <button type="button" class="close float-right p-3" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="text-center" id="exampleModalLabel">Preview</h4>
+                    <h4 class="text-center h4" id="exampleModalLabel">Preview</h4>
                 </div>
                 <div id="multiple-test" class="p-5">
                     <div class="w-full items-center bg-gray  ">
                         <div>
                             <div id="questionFill-preview" contenteditable="false" class="w-full bg-gray p-6 font-sans font-semibold">
-                                </div>
                             </div>
-
                         </div>
 
                     </div>
+
                 </div>
             </div>
+        </div>
     </div>
 </div>
 

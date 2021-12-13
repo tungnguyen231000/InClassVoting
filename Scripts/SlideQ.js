@@ -20,7 +20,14 @@
             $(this).hide();
     });
 
-    $("#next").click(function () {
+    if (listTime.length == 1) {
+        $("#next").val("Submit");
+        if (checkPreview) {
+            $("#next").prop("disabled", true);
+        }
+    }
+
+    $("#next").click(function (e) {
         if ($(".divs > .cls:visible").next().length != 0) {
             $(".divs > .cls:visible").next().show().prev().hide();
 
@@ -50,10 +57,12 @@
             $("#orderTest").submit();
 
         }
+        e.preventDefault();
+
         return false;
     });
 
-    $("#prev").click(function () {
+    $("#prev").click(function (e) {
         if ($(".divs > .cls:visible").prev().length != 0) {
             $(".divs > .cls:visible").prev().show().next().hide();
             --indexItem;
@@ -77,6 +86,8 @@
             $(".divs > .cls:visible").hide();
             $(".divs > .cls:last").show();
         }
+
+        e.preventDefault();
         return false;
     });
 

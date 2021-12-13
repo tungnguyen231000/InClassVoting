@@ -21,7 +21,7 @@ $(document).ready(function () {
 		$(".file-input").change(function () {
 			let files = $(".file-input").prop('files');
 			if (files.length > 0) {
-				if (files[0].size > 2 * 1024 * 1024) {
+				if (files[0].size > 4 * 1024 * 1024) {
 					if ($('.image-error').length == 0) {
 						$(".file-input").after('<div class="image-error">*Image size exceeds 2MB</div>');
 						$('.image-error').css("color", "red");
@@ -77,13 +77,17 @@ $(document).ready(function () {
 			var fillText = $("#questionFill").val();
 			var arrGroup = fillText.match(regexGroup);
 
+			
+
 			if ($("#givenFill").prop("checked") == true) {
 				if (arrGroup != null) {
 					$('.question-error').remove();
 					for (var i = 0; i < arrGroup.length; i++) {
+						var listTotal = [];
+
 						arrGroup[i] = arrGroup[i].replace("(", "");
 						arrGroup[i] = arrGroup[i].replace(")", "");
-						var listOption = arrGroup[i].match(/\~[^,. ][aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890,. ]+/g);
+						var listOption = arrGroup[i].match(/\~[^,.= ][aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890,. ]+/g);
 						var listAnswer = arrGroup[i].match(/\~=[^,. ][aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ1234567890,. ]+/g);
 						if (listOption == null) {
 							if ($('.question-error').length == 0) {
@@ -106,7 +110,37 @@ $(document).ready(function () {
 						} else {
 							$('.question-error').remove();
 						}
+
+						for (let j = 0; j < listOption.length; j++) {
+							if (jQuery.inArray(listOption[j].trim().replace("~", ""), listTotal) !== -1) {
+								console.log("option exist");
+							} else {
+								listTotal.push(listOption[j].trim().replace("~", ""));
+							}
+						}
+						for (let j = 0; j < listAnswer.length; j++) {
+							if (jQuery.inArray(listAnswer[j].trim().replace("~=", ""), listTotal) !== -1) {
+								console.log("answer exist");
+							} else {
+								listTotal.push(listAnswer[j].trim().replace("~=", ""));
+							}
+						}
+
+						console.log("index " + i + ": " + listTotal.length + " - " + (listOption.length + listAnswer.length));
+
+						if (listTotal.length != (listOption.length + listAnswer.length)) {
+							if ($('.question-error').length == 0) {
+								$('#questionFill').after('<div class="question-error">*Duplicate at ' + (i + 1) +'</div>');
+								$('.question-error').css("color", "red");
+								$('.question-error').css("font-weight", "bold");
+								return false;
+							} else {
+								$('.question-error').remove();
+							}
+						}
 					}
+
+
 				} else {
 					if ($('.question-error').length == 0) {
 						$('#questionFill').after('<div class="question-error">*Require at least 1 option</div>');
@@ -133,6 +167,7 @@ $(document).ready(function () {
                 }
 			}
 
+			/*
 			if ($('#answerFill').val().trim() == '') {
 				if ($('.question-error').length == 0) {
 					$('#answerFill').after('<div class="question-error">*Answer is required</div>');
@@ -143,6 +178,7 @@ $(document).ready(function () {
 			} else {
 				$('.question-error').remove();
 			}
+			*/
 
 		});
 	}
@@ -215,19 +251,28 @@ $(document).ready(function () {
 
 			
 			if (countText < 2) {
-				$('.ms-error').html("*Need to fill in at least 2 option fields");
+				$('.ms-error').html("*You need to fill at least 2 answers");
 				return false;
 			} else {
 				$('.ms-error').html("");
 			}
-
 			
+			/*
 			if (countText <= countCheckbox || countCheckbox == 0) {
 				$('.ms-error').html("*Number of checkbox invalid");
 				return false;
 			} else {
 				$('.ms-error').html("");
-			}
+			}*/
+
+			if (countText <= countCheckbox) {
+				$('.ms-error').html("*You cannot check on all answers");
+				return false;
+			} else if (countCheckbox == 0) {
+				$('.ms-error').html("You must check on at least 1 correct answer");
+			} else {
+				$('.ms-error').html("");
+            }
 
 		});
 
@@ -298,7 +343,7 @@ $(document).ready(function () {
 			if ($(".file-input").val() == '') {
 				if ($('#paragraphReading').val().trim() == '') {
 					if ($('.para-error').length == 0) {
-						$('#paragraphReading').after('<div class="para-error">*Paragraph is required</div>');
+						$('#paragraphReading').after('<div class="para-error">*Passage is required</div>');
 						$('.para-error').css("color", "red");
 						$('.para-error').css("font-weight", "bold");
                     }
@@ -326,7 +371,7 @@ $(document).ready(function () {
 			for (var i = 0; i < listMark.length; i++) {
 				if ($(listMark[i]).val().trim() == '') {
 					if ($('.mark-error').length == 0) {
-						$(listMark[i]).after('<span class="mark-error">*Mark is required</span>');
+						$(listMark[i]).after('<label class="mark-error error">*Mark is required</label>');
 						$('.mark-error').css("color", "red");
 						$('.mark-error').css("font-weight", "bold");
 					}
@@ -339,7 +384,7 @@ $(document).ready(function () {
 			for (var i = 0; i < listTime.length; i++) {
 				if ($(listTime[i]).val().trim() == '') {
 					if ($('.time-error').length == 0) {
-						$(listTime[i]).after('<span class="time-error">*Time is required</span>');
+						$(listTime[i]).after('<label class="time-error error">*Time is required</label>');
 						$('.time-error').css("color", "red");
 						$('.time-error').css("font-weight", "bold");
 					}
@@ -356,7 +401,6 @@ $(document).ready(function () {
 				let countCheckbox = 0;
 				listOptionText = listTableReading[i].querySelectorAll('#optionReading-text');
 				listCheckbox = listTableReading[i].querySelectorAll('#optionReading-checkbox');
-				console.log(listTableReading[i]);
 				$(listTableReading[i]).before('<div class="table-error"></div>');
 				$('.table-error').css("color", "red");
 				$('.table-error').css("font-weight", "bold");
@@ -374,18 +418,30 @@ $(document).ready(function () {
 						return false;
 					}
 				}
+
 				if (countText < 2) {
-					$('.table-error').html("*Need to fill in at least 2 option fields");
+					$('.table-error').html("*You need to fill at least 2 answers");
 					return false;
 				} else {
 					$('.table-error').html("");
 				}
-				if (countText <= countCheckbox || countCheckbox == 0) {
+
+				/*if (countText <= countCheckbox || countCheckbox == 0) {
 					$('.table-error').html("*Number of checkbox invalid");
 					return false;
 				} else {
 					$('.table-error').html("");
+				}*/
+
+				if (countText <= countCheckbox) {
+					$('.table-error').html("*You cannot check on all answers");
+					return false;
+				} else if (countCheckbox == 0) {
+					$('.table-error').html("You must check on at least 1 correct answer");
+				} else {
+					$('.table-error').html("");
 				}
+
 				$('.table-error').remove();
 			}
 			return checkValidate;
@@ -419,18 +475,6 @@ $(document).ready(function () {
 		let checkMatchingValidate = true;
 
 		$("#matching-form").submit(function(){
-			if ($("#matching-solution").length == 0) {
-				if ($(".solution-error").length == 0) {
-					$("#matching-option").after('<span class="solution-error">*Matching Solution is required</span>');
-					$('.solution-error').css("color", "red");
-					$('.solution-error').css("font-weight", "bold");
-				}
-				return false;
-				
-			} else {
-				$('.solution-error').remove();
-			}
-
 			if ($("#matching-left").val().trim() == '') {
 				if ($(".left-error").length == 0) {
 					$("#matching-left").after('<div class="left-error">*Matching Left is required</div>');
@@ -438,20 +482,34 @@ $(document).ready(function () {
 					$('.left-error').css("font-weight", "bold");
                 }
 				
-				return false;
+				checkMatchingValidate = false;
+
 			} else {
 				$('.left-error').remove();
 			}
 
 			if ($("#matching-right").val().trim() == '') {
 				if ($(".right-error").length == 0) {
-					$("#matching-right").after('<div class="right-error">*Matching Left is required</div>');
+					$("#matching-right").after('<div class="right-error">*Matching Right is required</div>');
 					$('.right-error').css("color", "red");
 					$('.right-error').css("font-weight", "bold");
 				}
-				return false;
+				checkMatchingValidate = false;
+
 			} else {
 				$('.right-error').remove();
+			}
+
+			if ($("#matching-solution").length == 0) {
+				if ($(".solution-error").length == 0) {
+					$("#matching-option").after('<span class="solution-error">*Matching Solution is required</span>');
+					$('.solution-error').css("color", "red");
+					$('.solution-error').css("font-weight", "bold");
+				}
+				checkMatchingValidate = false;
+
+			} else {
+				$('.solution-error').remove();
 			}
 
 			return checkMatchingValidate;
@@ -593,7 +651,7 @@ $(document).ready(function () {
 				required: "*Time is required"
 			},
 			"pollName": {
-				required: "*Poll Name is required"
+				required: "*Name is required"
 			}
 		}
 	});
@@ -625,7 +683,7 @@ $(document).ready(function () {
 			}
 
 			if (countText < 2) {
-				$('.ms-error').html("*Need to fill in at least 2 option fields");
+				$('.ms-error').html("*You need to fill at least 2 answers");
 				return false;
 			} else {
 				$('.ms-error').html("");

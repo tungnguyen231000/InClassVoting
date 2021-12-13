@@ -4,22 +4,8 @@
     Layout = "~/Areas/Student/Views/Shared/_Layout.cshtml";
 }
 
-<div class="bg-gray-100 flex-1 p-6 md:mt-16">
-    <!-- start navbar -->
-    <div style=" height: 63px; border-bottom: solid;">
-        <div style="display: flex; height: 40px;">
-            <h5 class="modal-title h5" id="exampleModalLabel">Your Teacher Hasn't Start This Quiz Yet..</h5>
-            <br />
-            <p>&nbsp;</p>
-        </div>
-
-    </div>
-    <div style="display: flex; height: 40px; margin-bottom:10px">
-        <h5 class="modal-title h5" id="exampleModalLabel">Return To Quiz Assign List </h5>
-        <br />
-    </div>
-    <div style="display: flex; margin-top:15px">
-        <a href="~/Student/Quiz/ShowAssignedQuiz" style="background-color: aquamarine; margin-left:10px " class="btn ">Return</a>
-    </div>
+<div class="bg-gray-100 flex-1 p-6 md:mt-16" style="text-align: center">
+    <p style="text-align: center; margin-top: 10%; font-size: x-large;color:indigo;font-weight:600">This quiz is not started yet!!</p>
+    <a href="~/Student/Home/Home" style=" margin-top: 30px; font-size: larger;color:blue;text-decoration:underline">Return Home</a>
 </div>
 

@@ -3,6 +3,10 @@ const header = document.querySelector(".header"),
 	btnBrowser = document.querySelector(".btn-image"),
 	input = document.querySelector(".file-input");
 
+var defaulte = '<div><i class="icon fas fa-cloud-upload-alt"></i></div>' +
+	'<div><h3 class="header">Drag and Drop to Upload File</h3></div>' +
+	'<div><h4 class="or">or</h4></div>';
+
 let file;
 //Thêm files và checkImage -new
 let files;
@@ -37,6 +41,7 @@ dragArea.addEventListener("dragleave", () => {
 // thả bên trong
 dragArea.addEventListener("drop", (event) => {
 	event.preventDefault();
+
 	file = event.dataTransfer.files[0];
 
 
@@ -47,10 +52,21 @@ dragArea.addEventListener("drop", (event) => {
 
 	//Check ảnh -new
 	if (checkImage == true) {
-		input.files = event.dataTransfer.files;
+		let validImage = ['image/jpeg', 'image/jpg', 'image/png'];
+		if (validImage.includes(file.type)) {
+			input.files = event.dataTransfer.files;
+		} else {
+			$(".file-input").val(null);
+			const dragArea2 = document.querySelector(".drag-area-preview");
+			dragArea2.innerHTML = "";
+			dragArea.innerHTML = defaulte;
+        }
 	}
 	if (checkImage == false) {
 		$(".file-input").val(null);
+		const dragArea2 = document.querySelector(".drag-area-preview");
+		dragArea2.innerHTML = "";
+		dragArea.innerHTML = defaulte;
 	}
 });
 
@@ -72,6 +88,7 @@ function show(file) {
 					$('.image-error').css("font-weight", "bold");
 				}
 				$(".file-input").val(null);
+				dragArea.innerHTML = defaulte;
 				checkImage = false;
 			} else {
 				$('.image-error').remove();

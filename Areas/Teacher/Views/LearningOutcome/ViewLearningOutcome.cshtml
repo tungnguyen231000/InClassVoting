@@ -8,6 +8,7 @@
 
 <link rel="stylesheet" type="text/css" href="~/Content/PagedList.css">
 <link rel="stylesheet" type="text/css" href="~/Content/LO.css">
+<link rel="stylesheet" type="text/css" href="~/Content/error.css">
 
 <div class="bg-gray-100 flex-1 p-6 md:mt-16">
     <!-- start navbar -->
@@ -24,10 +25,9 @@
         </div>
     </div>
 
-
     <!-- end navbar -->
     <!-- Modal new LO -->
-    @using (Html.BeginForm("CreateLearningOutcome", "LearningOutcome", FormMethod.Post))
+    @using (Html.BeginForm("CreateLearningOutcome", "LearningOutcome", FormMethod.Post, new { id = "form-create-lo" }))
     {
         <div class="modal fade" id="newLOModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -37,15 +37,18 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <h1 class="lo-label">Name </h1>
-                        <input class="txt-modal-newLO" type="text" name="loName" />
-                        <h1 class="lo-label">Description </h1>
-                        <textarea class="txt-modal-newLO area-lo-detail" rows="4" cols="60" type="text" name="loDes"></textarea>
+                        <div style="margin-bottom:10px">
+                            <h1 class="lo-label">Name </h1>
+                            <input class="txt-modal-newLO" type="text" id="newLoNameCreate" name="loName" />
+                        </div>
+                      
+                        <h1 class="lo-label-2">Description </h1>
+                        <textarea class="txt-modal-newLO area-lo-detail" rows="4" cols="60" type="text" id="createLoDes" name="loDes"></textarea>
 
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="cid" value="@ViewBag.Course.CID" />
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <input type="hidden" id="newLoCId" name="cid" value="@ViewBag.Course.CID" />
+                        <button type="submit" id="createLO" class="btn btn-primary">Create</button>
 
                     </div>
                 </div>
@@ -54,7 +57,7 @@
     }
     <!-- End Modal -->
     <!-- Modal edit LO -->
-    @using (Html.BeginForm("EditLearningOutcome", "LearningOutcome", FormMethod.Post))
+    @using (Html.BeginForm("EditLearningOutcome", "LearningOutcome", FormMethod.Post, new { id = "form-edit-lo" }))
     {
         <div class="modal fade" id="editLOModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -66,14 +69,14 @@
                     <div class="modal-body">
                         <h1 class="lo-label">Name</h1>
                         <input class="txt-modal-newLO" type="text" name="newLoName" id="loNameToUpdate" />
-                        <h1 class="lo-label">Description</h1>
+                        <h1 class="lo-label-2">Description</h1>
                         <textarea class="txt-modal-newLO area-lo-detail" rows="4" cols="60" type="text" name="newLoDes" id="loDesToUpdate"></textarea>
 
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="cid" value="@ViewBag.Course.CID" />
+                        <input type="hidden" name="cid" id="loCIdToUpdare" value="@ViewBag.Course.CID" />
                         <input type="hidden" name="loid" id="loIdToUpdate" />
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit"  id="editLO" class="btn btn-primary">Save Changes</button>
 
                     </div>
                 </div>
@@ -91,6 +94,7 @@
                 </div>
                 <div class="modal-body">
                     <h4 class="color-txt-confirm">You will delete all learning outcome which are selected</h4>
+                    <h4 class="color-txt-confirm">Do you wish to continue?</h4>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="submitDeleteForm()">Yes</button>
@@ -112,7 +116,7 @@
                 <div class="search-size text-gray-600 md:w-full md:flex md:flex-row md:justify-evenly md:pb-10 md:mb-10 md:border-b md:border-gray-200">
                     <div class="mr-2 transition duration-500 px-3 border-b">
                         <input type="hidden" name="cid" value="@ViewBag.Course.CID" />
-                        Search: <input class="search-box flex-1" type="text" name="searchText" placeholder="..." value="@ViewBag.Search">
+                        Search: <input class="search-box flex-1 border border-black-400" type="text" name="searchText" placeholder="..." value="@ViewBag.Search">
                         <button type="submit" class="search-box">
                             <i class="fad fa-search"></i>
                         </button>
@@ -129,7 +133,7 @@
         else
         {
             <div class="tb-mg-top">
-                @using (Html.BeginForm("DeleteLearningOutcome", "LearningOutcome", FormMethod.Post,new { id="formDeleteLO"}))
+                @using (Html.BeginForm("DeleteLearningOutcome", "LearningOutcome", FormMethod.Post, new { id = "formDeleteLO" }))
                 {
                     <table class="table">
                         <thead>
@@ -147,7 +151,7 @@
                                 ViewBag.LONo++;
                                 <tr>
                                     <th scope="row">@ViewBag.LONo</th>
-                                    <td><input type="checkbox" class="form-check-input" id="exampleCheck1" name="loid" value="@lo.LOID"></td>
+                                    <td><input type="checkbox" class="form-check-input" id="cbLOID" name="loid" value="@lo.LOID"></td>
                                     <td><label>@lo.LO_Name</label></td>
                                     <td><label>@lo.LO_Description</label></td>
                                     <td>
@@ -166,7 +170,7 @@
 
                     <div class="block-btn">
                         <input type="hidden" value="@ViewBag.Course.CID" name="cid" />
-                        <button type="button" class="btn-indigo mg_btn" data-bs-toggle="modal" data-bs-target="#confirmDeleteLoModal">Delete LO</button>
+                        <button type="button" class="btn-indigo mg_btn" id="deleteLOID" data-bs-toggle="modal" data-bs-target="#confirmDeleteLoModal">Delete LO</button>
                     </div>
                 }
             </div>
@@ -177,4 +181,8 @@
     @*<p style="text-align: center; margin-top: 10%; font-size: larger;">There is no Question...</p>*@
 
 </div>
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/teacher.lo.js"></script>
+<script src="~/Scripts/validate2.js"></script>
